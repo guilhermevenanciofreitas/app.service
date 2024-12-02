@@ -9,8 +9,6 @@ router.get('/hello', (req, res) => {
   res.json({ message: `Olá, ${name}!` })
 })
 
-app.use('/.netlify/functions/server', router)
-
 app.use('/api', router)
 
 // Exportar para Netlify
