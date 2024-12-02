@@ -1,18 +1,25 @@
-import express from 'express';
-import path from 'path';
-import bodyParser from 'body-parser';
-import routes from './routes.js';
+import express from 'express'
+import path from 'path'
+import serverless from 'serverless-http'
+import bodyParser from 'body-parser'
 
-const app = express();
+const app = express()
 
-// Middleware para parsing do corpo das requisições
-app.use(bodyParser.json());
+const router = express.Router()
 
-// Rotas da aplicação
-app.use('/.netlify/functions/server', routes);
+router.get('/', (req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/html' })
+  res.write('<h1>Hello from Express.js!</h1>')
+  res.end()
+})
 
-// Servir arquivo estático
-const __dirname = path.resolve();
-app.use('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+router.get('/another', (req, res) => res.json({ route: req.originalUrl }))
+router.post('/', (req, res) => res.json({ postBody: req.body }))
 
-export default app;
+app.use(bodyParser.json())
+app.use('/.netlify/functions/server', router)
+app.use('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')))
+
+export const server = app
+
+export default serverless(app)
