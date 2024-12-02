@@ -4,11 +4,11 @@
   publish = "src/pages"
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "/api"
+  to = "/.netlify/functions/server"
   status = 200
 
 [[redirects]]
-  from = "/api"
-  to = "/.netlify/functions/server"
+  from = "/*"
+  to = "/index.html"
   status = 200
