@@ -9,6 +9,8 @@ router.get('/hello', (req, res) => {
   res.json({ message: `Olá, ${name}!` })
 })
 
+app.use('/api', router)
+
 const _router = router
 
 export { _router as router }
