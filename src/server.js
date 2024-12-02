@@ -11,8 +11,6 @@ router.get('/hello', (req, res) => {
 
 app.use('/api', router)
 
-const _router = router
-
-export { _router as router }
+export { app }
 
 export const handler = serverless(app)
