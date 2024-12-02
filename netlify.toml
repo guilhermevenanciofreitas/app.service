@@ -1,8 +1,9 @@
 [build]
-  functions = "functions" # Pasta onde as funções Lambda são geradas
-  publish = "public"      # Pasta onde seus arquivos estáticos estão localizados (se aplicável)
+  command = "npm install"
+  functions = "functions"
+  publish = "src/pages"
 
 [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/server"
+  to = "/index.html"
   status = 200

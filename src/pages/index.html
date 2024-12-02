@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Netlify Express App</title>
+    <script>
+        async function fetchGreeting() {
+            const response = await fetch('/.netlify/functions/server/api/hello?name=Netlify');
+            const data = await response.json();
+            document.getElementById('greeting').textContent = data.message;
+        }
+        window.onload = fetchGreeting;
+    </script>
+</head>
+<body>
+    <h1>Bem-vindo ao Netlify com Express</h1>
+    <p id="greeting">Carregando...</p>
+</body>
+</html>
