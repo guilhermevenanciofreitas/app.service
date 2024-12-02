@@ -11,8 +11,8 @@ router.get('/hello', (req, res) => {
 
 app.use('/api', router)
 
-// Exportar para Netlify
 const _router = router
 
 export { _router as router }
+
 export const handler = serverless(app)
