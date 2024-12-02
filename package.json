@@ -1,6 +1,5 @@
 {
   "name": "netlify-express",
-  "type": "module",
   "version": "0.0.1",
   "description": "Example of how to deploy a Express.js Netlify app.",
   "main": "functions/server.js",
