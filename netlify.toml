@@ -1,17 +1,8 @@
 [build]
-  command = "npm install && npm run build"
-  functions = "functions"
-[[redirects]]
-  from = '/'
-  to = '/.netlify/functions/server/'
-  force = true
-  status = 200
-[[redirects]]
-  from = '/index.html'
-  to = '/.netlify/functions/server/'
-  force = true
-  status = 200
+  functions = "functions" # Pasta onde as funções Lambda são geradas
+  publish = "public"      # Pasta onde seus arquivos estáticos estão localizados (se aplicável)
+
 [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/server/:splat"
+  to = "/.netlify/functions/server"
   status = 200
