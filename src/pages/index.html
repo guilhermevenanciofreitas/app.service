@@ -4,7 +4,7 @@
     <title>Netlify Express App</title>
     <script>
         async function fetchGreeting() {
-            const response = await fetch('/.netlify/functions/server/api/hello?name=Netlify');
+            const response = await fetch('/api/hello?name=Netlify');
             const data = await response.json();
             document.getElementById('greeting').textContent = data.message;
         }

@@ -1,20 +1,23 @@
-const express = require('express');
-const serverless = require('serverless-http');
+import express, { Router } from 'express'
+import serverless from 'serverless-http'
 
-const app = express();
-const router = express.Router();
+const app = express()
+const router = Router()
 
 // Rotas
 router.get('/', (req, res) => {
-  res.json({ message: 'Bem-vindo ao Express com Netlify!' });
-});
+  res.json({ message: 'Bem-vindo ao Express com Netlify!' })
+})
 
 router.get('/api/hello', (req, res) => {
-  const name = req.query.name || 'Mundo';
-  res.json({ message: `Olá, ${name}!` });
-});
+  const name = req.query.name || 'Mundo'
+  res.json({ message: `Olá, ${name}!` })
+})
 
-app.use('/.netlify/functions/server', router);
+app.use('/.netlify/functions/server', router)
 
 // Exportar para Netlify
-module.exports.handler = serverless(app);
+const _router = router
+
+export { _router as router }
+export const handler = serverless(app)
