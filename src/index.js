@@ -24,6 +24,8 @@ app.use('/api', router)
  // res.sendFile('../public/index.html')
 //})
 
+app.use('/.netlify/functions/server', router)
+
 export const handler = serverless(app)
 
 export { app }
