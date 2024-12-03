@@ -1,7 +1,7 @@
 import express, { Router } from 'express'
 import serverless from 'serverless-http'
 
-import LoginRoute from './routes/login/login.route.js'
+import { LoginRoute } from './routes/login/login.route.js'
 
 class App {
 
