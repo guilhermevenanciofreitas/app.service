@@ -6,7 +6,7 @@ import LoginRoute from './routes/login/login.route.js'
 const app = express()
 
 //Login
-app.use('/api/login', LoginRoute)
+//app.use('/api/login', LoginRoute)
 
 const router = Router()
 
@@ -15,7 +15,7 @@ router.get('/api/hello', (req, res) => {
   res.json({ message: `Olá, ${name}!` })
 })
 
-app.use('/api', router)
+//app.use('/api', router)
 
 
 //app.use(express.static('public'))

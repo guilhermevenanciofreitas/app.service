@@ -1,4 +1,4 @@
-import { app } from './src/index.js'
+import { app } from './functions/index.js'
 
 const PORT = process.env.PORT || 3000
 
