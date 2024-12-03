@@ -1,7 +1,13 @@
 import express, { Router } from 'express'
 import cors from 'cors'
 import serverless from 'serverless-http'
+
+import { tasks } from "./task.js"
+import { taskEmitter } from "./taskEvents.js"
+
 import { LoginRoute } from './routes/login/login.route.js'
+
+
 
 class App {
 
@@ -40,6 +46,10 @@ class App {
   }
 
 }
+
+await tasks()
+
+taskEmitter.on('taskUpdated', tasks)
 
 export const app = new App()
 
