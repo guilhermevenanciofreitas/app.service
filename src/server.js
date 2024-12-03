@@ -19,8 +19,6 @@ router.get('/api/hello', (req, res) => {
 
 app.use('/', router)
 
-app.use('/.netlify/functions/server', router)
-
 app.get('/*', (req, res) => {
   res.sendFile('../public/index.html')
 })
