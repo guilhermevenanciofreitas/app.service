@@ -47,7 +47,7 @@ class App {
 
 }
 
-await tasks()
+tasks()
 
 taskEmitter.on('taskUpdated', tasks)
 
