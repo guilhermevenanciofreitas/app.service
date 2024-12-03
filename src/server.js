@@ -12,7 +12,7 @@ class App {
     this.initializeRoutes()
   }
 
-  initializeMiddlewares() {
+  initializeMiddlewares = () => {
 
     const corsOptions = {
       origin: '*',
@@ -24,7 +24,7 @@ class App {
 
   }
 
-  initializeRoutes() {
+  initializeRoutes = () => {
 
 
     this.express.use('/api/login', new LoginRoute().router)
@@ -33,7 +33,7 @@ class App {
 
   }
 
-  listen(port) {
+  listen = (port) => {
     this.express.listen(port, () => {
       console.log(`Server running on port ${port}`)
     })
