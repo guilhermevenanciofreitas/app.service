@@ -23,8 +23,6 @@ router.get('/api/hello', (req, res) => {
 
 app.use('/', router)
 
-app.use('/.netlify/functions/server', router)
-
 export const handler = serverless(app)
 
 export { app }
