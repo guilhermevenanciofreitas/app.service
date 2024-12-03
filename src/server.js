@@ -3,26 +3,36 @@ import serverless from 'serverless-http'
 
 import LoginRoute from './routes/login/login.route.js'
 
-const app = express()
+class App {
 
-//Login
-//app.use('/api/login', LoginRoute)
+  constructor() {
+    this.app = express()
+    this.initializeMiddlewares()
+    this.initializeRoutes()
+  }
 
-const router = Router()
+  initializeMiddlewares() {
+    this.app.use(express.json())
+  }
 
-router.get('/hello', (req, res) => {
-  const name = req.query.name || 'Mundo'
-  res.json({ message: `Olá, ${name}!` })
-})
+  initializeRoutes() {
 
-//app.use(express.static('public'))
+    this.app.get('/*', (req, res) => {
+      res.sendFile('../public/index.html')
+    })
 
-app.use('/api', router)
+    this.app.use('/api/login', LoginRoute)
 
-app.get('/*', (req, res) => {
-  res.sendFile('../public/index.html')
-})
+  }
+
+  listen(port) {
+    this.app.listen(port, () => {
+      console.log(`Server running on port ${port}`)
+    })
+  }
+
+}
+
+export const app = new App()
 
 export const handler = serverless(app)
-
-export { app }
