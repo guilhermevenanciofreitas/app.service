@@ -15,14 +15,13 @@ router.get('/api/hello', (req, res) => {
   res.json({ message: `Olá, ${name}!` })
 })
 
-//app.use('/api', router)
-
-
 //app.use(express.static('public'))
 
 //app.get('/*', (req, res) => {
  // res.sendFile('../public/index.html')
 //})
+
+app.use('/', router)
 
 app.use('/.netlify/functions/server', router)
 
