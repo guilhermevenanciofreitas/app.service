@@ -10,14 +10,14 @@ const app = express()
 
 const router = Router()
 
-router.get('/api/hello', (req, res) => {
+router.get('/hello', (req, res) => {
   const name = req.query.name || 'Mundo'
   res.json({ message: `Olá, ${name}!` })
 })
 
 //app.use(express.static('public'))
 
-app.use('/', router)
+app.use('/api', router)
 
 app.get('/*', (req, res) => {
   res.sendFile('../public/index.html')
