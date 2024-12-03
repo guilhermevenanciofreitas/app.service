@@ -19,7 +19,7 @@ class App {
 
     this.express.use('/api/login', new LoginRoute().router)
 
-    this.express.get('/*', (req, res) => res.sendFile('../public/index.html'))
+    //this.express.get('/*', (req, res) => res.sendFile('../public/index.html'))
 
   }
 
