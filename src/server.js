@@ -7,8 +7,6 @@ import { taskEmitter } from "./taskEvents.js"
 
 import { LoginRoute } from './routes/login/login.route.js'
 
-
-
 class App {
 
   express = express()

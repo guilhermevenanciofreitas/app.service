@@ -1,5 +1,6 @@
 import { QueryInterface, Sequelize } from 'sequelize'
 import pg from 'pg'
+import 'dotenv/config'
 
 import { Company } from './models/company.model.js'
 import { CompanyRole } from './models/companyRole.model.js'
@@ -90,7 +91,7 @@ export class AppContext extends Sequelize {
   
   constructor() {
 
-    super({host: "vps53636.publiccloud.com.br", port: 5433, database: "rsuite", password: "@Rped94ft", username: "postgres", dialect: "postgres", dialectModule: pg, timezone: "America/Sao_Paulo", define: {underscored: true, timestamps: false}, logging: false})
+    super({host: process.env.DB_HOST, port: process.env.DB_PORT, database: process.env.DB_DATABASE, password: process.env.DB_PASSWORD, username: process.env.DB_USER, dialect: "postgres", dialectModule: pg, timezone: "America/Sao_Paulo", define: {underscored: true, timestamps: false}, logging: false})
     
     this.CompanyIntegration.belongsTo(this.Integration, {as: 'integration', foreignKey: 'integrationId', targetKey: 'id'})
 
