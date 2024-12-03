@@ -18,11 +18,11 @@ router.get('/hello', (req, res) => {
 app.use('/api', router)
 
 
-app.use(express.static('public'))
+//app.use(express.static('public'))
 
-app.get('/*', (req, res) => {
-  res.sendFile('../public/index.html')
-})
+//app.get('/*', (req, res) => {
+ // res.sendFile('../public/index.html')
+//})
 
 export const handler = serverless(app)
 
