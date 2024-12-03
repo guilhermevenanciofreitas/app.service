@@ -45,9 +45,9 @@ class App {
 
 }
 
-tasks()
+//tasks()
 
-taskEmitter.on('taskUpdated', tasks)
+//taskEmitter.on('taskUpdated', tasks)
 
 export const app = new App()
 
