@@ -1,30 +1,18 @@
-import express from 'express';
+import { Router } from 'express';
+import { LoginController } from '../../controllers/login/login.controller.js';
+  
+export class LoginRoute {
 
-class LoginRoute {
+    router = Router();
+    controller = new LoginController();
 
-  constructor() {
-    this.router = express.Router();
-    this.initializeRoutes();
-  }
+    constructor() {
+        this.intializeRoutes();
+    }
 
-  initializeRoutes() {
-    this.router.get('/sign-in', this.getAllProducts);
-    this.router.post('/', this.createProduct);
-    this.router.get('/:id', this.getProductById);
-  }
+    intializeRoutes() {
+        this.router.post('/sign-in', async (req, res) => await this.controller.signIn(req, res));
+        this.router.post('/sign-out', async (req, res) => await this.controller.signOut(req, res));
+    }
 
-  getAllProducts(req, res) {
-    res.json({ message: 'List of all products' });
-  }
-
-  createProduct(req, res) {
-    res.json({ message: 'Product created' });
-  }
-
-  getProductById(req, res) {
-    const { id } = req.params;
-    res.json({ message: `Product with ID ${id}` });
-  }
 }
-
-export const LoginRoute = new LoginRoute().router;

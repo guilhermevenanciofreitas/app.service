@@ -1,32 +1,32 @@
 import express, { Router } from 'express'
 import serverless from 'serverless-http'
-
 import { LoginRoute } from './routes/login/login.route.js'
 
 class App {
 
+  express = express()
+
   constructor() {
-    this.app = express()
     this.initializeMiddlewares()
     this.initializeRoutes()
   }
 
   initializeMiddlewares() {
-    this.app.use(express.json())
+    this.express.use(express.json())
   }
 
   initializeRoutes() {
 
-    this.app.get('/*', (req, res) => {
+    this.express.get('/*', (req, res) => {
       res.sendFile('../public/index.html')
     })
 
-    this.app.use('/api/login', LoginRoute)
+    this.express.use('/api/login', new LoginRoute().router)
 
   }
 
   listen(port) {
-    this.app.listen(port, () => {
+    this.express.listen(port, () => {
       console.log(`Server running on port ${port}`)
     })
   }
@@ -35,4 +35,4 @@ class App {
 
 export const app = new App()
 
-export const handler = serverless(app)
+export const handler = serverless(app.express)

@@ -7,7 +7,9 @@
     "dev": "nodemon index.js"
   },
   "dependencies": {
+    "dayjs": "^1.11.13",
     "express": "^4.18.2",
+    "sequelize": "^6.37.5",
     "serverless-http": "^3.0.0"
   },
   "devDependencies": {
