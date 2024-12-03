@@ -10,7 +10,7 @@ app.use('/api/login', LoginRoute)
 
 const router = Router()
 
-router.get('/hello', (req, res) => {
+router.get('/api/hello', (req, res) => {
   const name = req.query.name || 'Mundo'
   res.json({ message: `Olá, ${name}!` })
 })
