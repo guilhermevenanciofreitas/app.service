@@ -74,13 +74,15 @@ export class LogisticCteController {
 
         const db = new AppContext()
 
-        await db.transaction(async (transaction) => {
+        
 
-          const form = formidable({});
+        const form = formidable({});
 
-          const archives = await form.parse(req)
-  
-          for (const file of archives[1].files) {
+        const archives = await form.parse(req)
+
+        for (const file of archives[1].files) {
+
+          await db.transaction(async (transaction) => {
 
             const xml = fs.readFileSync(file.filepath, 'utf8')
 
@@ -88,10 +90,10 @@ export class LogisticCteController {
 
             const json = await parser.parseStringPromise(xml)
 
-            let cte = await db.Cte.findOne({where: [{chaveCT: json.cteProc.protCTe.infProt.chCTe}]})
+            let cte = await db.Cte.findOne({attributes: ['id'], where: [{chaveCT: json.cteProc.protCTe.infProt.chCTe}]})
 
             if (cte) {
-              continue
+              return
             }
 
             const sender = await db.Partner.findOne({attributes: ['id', 'diasPrazoPagamento'], where: [{cpfCnpj: json.cteProc.CTe.infCte.rem.CNPJ || json.cteProc.CTe.infCte.rem.CPF}], transaction})
@@ -100,10 +102,13 @@ export class LogisticCteController {
               throw new Error('Remetente não está cadastrado!')
             }
 
-            const recipient = await db.Partner.findOne({where: {cpfCnpj: json.cteProc.CTe.infCte.dest.CNPJ || json.cteProc.CTe.infCte.dest.CPF}, transaction})
+            let recipient = await db.Partner.findOne({where: {cpfCnpj: json.cteProc.CTe.infCte.dest.CNPJ || json.cteProc.CTe.infCte.dest.CPF}, transaction})
 
             if (!recipient) {
-              throw new Error('Destinatário não está cadastrado!')
+
+              recipient = await db.Partner.create({cpfCnpj: json.cteProc.CTe.infCte.dest.CNPJ || json.cteProc.CTe.infCte.dest.CPF, name: json.cteProc.CTe.infCte.dest.xNome, surname: json.cteProc.CTe.infCte.dest.xNome, ISDestinatario: true})
+
+              //throw new Error('Destinatário não está cadastrado!')
             }
 
             cte = {
@@ -178,9 +183,10 @@ export class LogisticCteController {
 
             await db.Cte.create(cte, {transaction})
 
-          }
+          })
 
-        })
+        }
+
 
         res.status(200).json({})
 

@@ -28,4 +28,9 @@ export class Partner {
     type: Sequelize.SMALLINT
   }
 
+  ISDestinatario = {
+    field: 'ISDestinatario',
+    type: Sequelize.BOOLEAN
+  }
+
 }
