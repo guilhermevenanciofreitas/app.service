@@ -2,9 +2,6 @@ import express, { Router } from 'express'
 import cors from 'cors'
 import serverless from 'serverless-http'
 
-import { tasks } from "./task.js"
-import { taskEmitter } from "./taskEvents.js"
-
 import { LoginRoute } from './routes/login/login.route.js'
 
 import { TaskRoute } from './routes/task/task.route.js'
