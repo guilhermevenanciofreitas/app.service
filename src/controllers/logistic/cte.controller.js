@@ -1,107 +1,207 @@
-import { Exception } from "../../utils/exception.js"
 import { AppContext } from "../../database/index.js"
-import { Sequelize, Op } from "sequelize"
-import dayjs from 'dayjs'
 import { Authorization } from "../authorization.js"
-import * as cheerio from 'cheerio'
-import { parseStringPromise } from 'xml2js'
-import csv from 'csvtojson'
-import axios from 'axios'
+import formidable, {errors as formidableErrors} from 'formidable'
+import fs from 'fs'
+import path from 'path'
 import _ from 'lodash'
-
-const headers = {'Cookie': 'remember=1; useri=70145314170; sigla_emp=1TC; login=venancio; chave=5400DSKTVB; ssw_dom=1TC; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzI5MDY1NzUsInB4eSI6IjE3Mi4zMS41Ni4xOTQifQ.qIv1lwEd9OqitWUMn7aJm8KGB3nBUGMKvDrnXX0nMYc'}
+import { fileURLToPath } from 'url'
+import xml2js from 'xml2js'
+import dayjs from "dayjs"
 
 export class LogisticCteController {
 
-  import = async (req, res) => {
-    await Authorization.verify(req, res).then(async ({company}) => {
+  ctes = async (req, res) => {
+    //await Authorization.verify(req, res).then(async ({company}) => {
       try {
 
-        const response = await axios.post('https://sistema.ssw.inf.br/bin/ssw1440', null, {headers});
+        const db = new AppContext()
 
-        const $ = cheerio.load(response.data)
+        const limit = req.body.limit || 50
+        const offset = req.body.offset || 0
+        const filter = req.body.filter || { situation: ['active'] }
 
-        const json = await parseStringPromise($('xml').html().toString());
+        //const bankAccount = req.body.bankAccount
 
-        for (const item of json.rs.r) {
+        //const whereCompany = {'$bankAccount.companyId$': company.id}
 
-          if (item.f0[0] != '238449') {
-            return
+        const where = []
+
+        where.push({cStat: 100})
+
+        //if (bankAccount) {
+        //  where.push({bankAccountId: bankAccount.id})
+        //}
+
+        //const where = [{[Op.not]: {situation: 'deleted'}}]
+
+        //if (filter['situation']) where.push({situation: filter['situation']})
+
+        const ctes = await db.Cte.findAndCountAll({
+          attributes: ['id', 'dhEmi', 'nCT', 'serieCT', 'chaveCT', 'cStat'],
+          include: [
+            {model: db.Partner, as: 'recipient', attributes: ['id', 'surname']},
+            {model: db.Shippiment, as: 'shippiment', attributes: ['id'], include: [
+              {model: db.Partner, as: 'sender', attributes: ['id', 'surname']}
+            ]}
+          ],
+          //include: [
+          //  {model: db.Partner, as: 'partner', attributes: ['id', 'surname']},
+          //  {model: db.BankAccount, as: 'bankAccount', attributes: ['id', 'name', 'agency', 'agencyDigit', 'account', 'accountDigit'],
+          //    include: [
+          //      {model: db.Bank, as: 'bank', attributes: ['id', 'name', 'image']}
+          //    ]
+          //  },
+          //  {model: db.CurrencyMethod, as: 'currencyMethod', attributes: ['id', 'name']},
+          //  {model: db.ContabilityCategorie, as: 'categorie', attributes: ['id', 'name']}
+          //],
+          limit: limit,
+          offset: offset * limit,
+          order: [['id', 'desc']],
+          where,
+        })
+
+        //const bankAccounts = await db.BankAccount.findAll({
+        //  attributes: ['id', 'name', 'agency', 'agencyDigit', 'account', 'accountDigit', [Sequelize.literal(`(SELECT COALESCE(SUM("amount"), 0) FROM "bankAccountStatement" WHERE "bankAccountStatement"."bankAccountId" = "bankAccount"."id")`), 'balance']],
+        //  include: [
+        //    {model: db.Bank, as: 'bank', attributes: ['id', 'name', 'image']}
+        //  ],
+        //  where: [whereCompany]
+        //})
+
+        res.status(200).json({
+          request: {
+            filter, limit, offset
+          },
+          response: {
+            //bankAccounts,
+            rows: ctes.rows, count: ctes.count
           }
-
-          if (item.f1[0] == '930 - Gera BD de Ocorr&ecirc;ncias') {
-
-              console.log(`[Importando] - ${item.f0[0]} | ${item.f1[0]}`);
-
-              //await importarOcorrencias(item.f0[0]);
-
-          }
-
-          if (item.f1[0] == '455 - Fretes Expedidos/Recebidos - CTRCs') {
-
-              console.log(`[Importando] - ${item.f0[0]} | ${item.f1[0]}`);
-
-              await this.uploadCte(item.f0[0]);
-
-          }
-          
-        }
-        res.status(200).json({});
+        })
 
       } catch (error) {
         res.status(500).json({message: error.message})
       }
-    }).catch((error) => {
-      res.status(400).json({message: error.message})
-    })
+    //}).catch((error) => {
+    //  res.status(400).json({message: error.message})
+    //})
   }
 
-  uploadCte = async (code) => {
+  upload = async (req, res) => {
+    //await Authorization.verify(req, res).then(async ({company}) => {
+      try {
 
-    const db = new AppContext();
+        const db = new AppContext()
 
-    const ssw = await db.IntegrationSSW.findOne({attributes: ['id'], where: [{code}]});
+        await db.transaction(async (transaction) => {
 
-    if (ssw) {
-        return;
-    }
+          const form = formidable({});
 
-    const response = await this.downloadFile(code);
+          const archives = await form.parse(req)
+  
+          for (const file of archives[1].files) {
 
-    let data = response.data.split('\n');
+            const xml = fs.readFileSync(file.filepath, 'utf8')
 
-    data.shift();
-    data.pop();
+            const parser = new xml2js.Parser({ explicitArray: false, mergeAttrs: true });
 
-    const json = await csv({delimiter: ';'}).fromString(data.join('\n'));
+            const json = await parser.parseStringPromise(xml)
 
-    await db.transaction(async (transaction) => {
-        
-        await db.IntegrationSSW.create({code}, {transaction})
+            let cte = await db.Cte.findOne({where: [{chaveCT: json.cteProc.protCTe.infProt.chCTe}]})
 
-        for (const item of json) {
-
-            const row = {
-              serieCt: _.toNumber(item['Serie/Numero CT-e']?.substring(0, 3)),
-              numeroCt: _.toNumber(item['Serie/Numero CT-e']?.substring(4, 12)),
-              chaveCt: item['Chave CT-e']?.substring(0, 44),
+            if (cte) {
+              continue
             }
 
-            console.log(row)
+            const sender = await db.Partner.findOne({where: [{cpfCnpj: json.cteProc.CTe.infCte.rem.CNPJ || json.cteProc.CTe.infCte.rem.CPF}], transaction})
 
-        }
-    })
+            if (!sender) {
+              throw new Error('Remetente não está cadastrado!')
+            }
 
+            const recipient = await db.Partner.findOne({where: {cpfCnpj: json.cteProc.CTe.infCte.dest.CNPJ || json.cteProc.CTe.infCte.dest.CPF}, transaction})
+
+            if (!recipient) {
+              throw new Error('Destinatário não está cadastrado!')
+            }
+
+            cte = {
+
+              nCT: json.cteProc.CTe.infCte.ide.nCT,
+              cCT: json.cteProc.CTe.infCte.ide.cCT,
+              serieCT: json.cteProc.CTe.infCte.ide.serie,
+              chaveCT: json.cteProc.protCTe.infProt.chCTe,
+              tpCTe: json.cteProc.CTe.infCte.ide.tpCTe,
+              dhEmi: dayjs(json.cteProc.CTe.infCte.ide.dhEmi).format('YYYY-MM-DD HH:mm:ss'),
+              CFOP: json.cteProc.CTe.infCte.ide.CFOP,
+
+              cStat: json.cteProc.protCTe.infProt.cStat,
+              xMotivo: json.cteProc.protCTe.infProt.xMotivo,
+              nProt: json.cteProc.protCTe.infProt.nProt,
+              dhRecbto: dayjs(json.cteProc.protCTe.infProt.dhRecbto).format('YYYY-MM-DD HH:mm:ss'),
+
+              codigoUnidade: 1,
+              vTPrest: json.cteProc.CTe.infCte.vPrest.vTPrest,
+              valorAReceber: json.cteProc.CTe.infCte.vPrest.vRec,
+
+              recipientId: recipient.id
+
+            }
+
+            if (json.cteProc.CTe.infCte.imp.ICMS.ICMS00) {
+              cte.baseCalculo = json.cteProc.CTe.infCte.imp.ICMS.ICMS00.vBC
+              cte.CST = json.cteProc.CTe.infCte.imp.ICMS.ICMS00.CST
+            }
+
+            if (json.cteProc.CTe.infCte.imp.ICMS.ICMS20) {
+              cte.pRedBC = json.cteProc.CTe.infCte.imp.ICMS.ICMS20.pRedBC
+              cte.baseCalculo = json.cteProc.CTe.infCte.imp.ICMS.ICMS20.vBC
+              cte.CST = json.cteProc.CTe.infCte.imp.ICMS.ICMS20.CST
+            }
+
+            if (json.cteProc.CTe.infCte.imp.ICMS.ICMS45) {
+              cte.baseCalculo = json.cteProc.CTe.infCte.imp.ICMS.ICMS45.vBC
+              cte.CST = json.cteProc.CTe.infCte.imp.ICMS.ICMS45.CST
+            }
+
+            if (json.cteProc.CTe.infCte.imp.ICMS.ICMS60) {
+              cte.pICMS = json.cteProc.CTe.infCte.imp.ICMS.ICMS60.pICMSSTRet
+              cte.baseCalculo = json.cteProc.CTe.infCte.imp.ICMS.ICMS60.vBC
+              cte.CST = json.cteProc.CTe.infCte.imp.ICMS.ICMS60.CST
+            }
+
+            console.log(cte)
+            
+            //for(const infNFe of json.cteProc.CTe.infCte.infCTeNorm.infDoc.infNFe) {
+            //  console.log(infNFe.chave)
+            //}
+
+            
+
+            //const sender = await db.Partner.findOne({where: {cpfCnpj: json.cteProc.CTe.infCte.rem.CNPJ || json.cteProc.CTe.infCte.rem.CPF}, transaction})
+
+            //console.log(sender)
+
+
+            cte = await db.Cte.create(cte, {transaction})
+
+            console.log(cte.id)
+
+          }
+
+        })
+
+        res.status(200).json({})
+
+      } catch (error) {
+        res.status(500).json({message: error.message})
+      }
+    //}).catch((error) => {
+    //  res.status(400).json({message: error.message})
+    //})
   }
 
-  downloadFile = async (code) => {
+  distNfe = async (chNFe) => {
 
-    const url = `https://sistema.ssw.inf.br/bin/ssw0424?act=CSV1TC00${code}.sswweb&filename=CSV1TC00${code}.csv&path=/usr/aws/jobs/1TC/&down=1`;
-
-    return await axios.get(url, {headers});
-
-}
-
-
+  }
 
 }

@@ -3,25 +3,19 @@ import { DataTypes } from 'sequelize'
 export class User {
 
   id = {
-    field: 'id',
+    field: 'UserId',
     primaryKey: true,
-    autoIncrement: true,
-    type: DataTypes.UUID,
+    type: DataTypes.UUID
   }
 
-  name = {
-    field: 'name',
-    type: DataTypes.STRING(100)
-  }
-
-  email = {
-    field: 'email',
-    type: DataTypes.STRING(80)
+  login = {
+    field: 'UserName',
+    type: DataTypes.STRING
   }
 
   password = {
     field: 'password',
-    type: DataTypes.STRING(15)
+    type: DataTypes.STRING
   }
 
   inactivatedAt = {

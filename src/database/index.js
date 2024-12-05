@@ -1,5 +1,4 @@
 import { QueryInterface, Sequelize } from 'sequelize'
-import pg from 'pg'
 import 'dotenv/config'
 
 import { Company } from './models/company.model.js'
@@ -26,10 +25,10 @@ import { ReceivementMethod } from './models/reeceivementMethod.model.js'
 import { CurrencyMethod } from './models/currencyMethod.model.js'
 import { BankAccountStatement } from './models/bankAccountStatement.model.js'
 import { Cte } from './models/cte.model.js'
-import { IntegrationSSW } from './models/integrationSSW.model.js'
 import { TaskMethod } from './models/taskMethod.model.js'
 import { Task } from './models/task.model.js'
 import { TaskHistory } from './models/taskHistory.model.js'
+import { Shippiment } from './models/shippiment.model.js'
 
 export class AppContext extends Sequelize {
   
@@ -45,12 +44,10 @@ export class AppContext extends Sequelize {
 
   ContabilityCategorie = this.define('contabilityCategorie', new ContabilityCategorie(), { tableName: 'contabilityCategorie' })
   
-  Cte = this.define('cte', new Cte(), { tableName: 'cte' })
+  Cte = this.define('cte', new Cte(), { tableName: 'ctes' })
   
   Integration = this.define('integration', new Integration(), { tableName: 'integration' })
 
-  IntegrationSSW = this.define('integrationSSW', new IntegrationSSW(), { tableName: 'integrationSSW' })
-  
   Bank = this.define('bank', new Bank(), { tableName: 'bank' })
 
   BankAccount = this.define('bankAccount', new BankAccount(), { tableName: 'bankAccount' })
@@ -58,6 +55,8 @@ export class AppContext extends Sequelize {
   BankAccountStatement = this.define('bankAccountStatement', new BankAccountStatement(), { tableName: 'bankAccountStatement' })
 
   Cashier = this.define('cashier', new Cashier(), { tableName: 'cashier' })
+
+  Partner = this.define('partner', new Partner(), { tableName: 'pessoa' })
 
   Payment = this.define('payment', new Payment(), { tableName: 'payment' })
 
@@ -75,9 +74,9 @@ export class AppContext extends Sequelize {
 
   Rule = this.define('rule', new Rule(), { tableName: 'rule' })
 
-  Partner = this.define('partner', new Partner(), { tableName: 'partner' })
-
   Session = this.define('session', new Session(), { tableName: 'session' })
+
+  Shippiment = this.define('shippiment', new Shippiment(), { tableName: 'carga' })
 
   Statement = this.define('statement', new Statement(), { tableName: 'statement' })
 
@@ -87,11 +86,11 @@ export class AppContext extends Sequelize {
 
   TaskHistory = this.define('taskHistory', new TaskHistory(), { tableName: 'taskHistory' })
 
-  User = this.define('user', new User(), { tableName: 'user' })
+  User = this.define('user', new User(), { tableName: 'aspnet_Users' })
   
   constructor() {
 
-    super({host: process.env.DB_HOST, port: process.env.DB_PORT, database: process.env.DB_DATABASE, password: process.env.DB_PASSWORD, username: process.env.DB_USER, dialect: "postgres", dialectModule: pg, timezone: "America/Sao_Paulo", define: {underscored: true, timestamps: false}, logging: false})
+    super({host: process.env.DB_HOST, port: process.env.DB_PORT, database: process.env.DB_DATABASE, password: process.env.DB_PASSWORD, username: process.env.DB_USER, dialect: 'mssql', databaseVersion: '10.50.1600', timezone: "America/Sao_Paulo", dialectOptions: { options: { encrypt: false }}, define: { timestamps: false }})
     
     this.CompanyIntegration.belongsTo(this.Integration, {as: 'integration', foreignKey: 'integrationId', targetKey: 'id'})
 
@@ -100,6 +99,10 @@ export class AppContext extends Sequelize {
     this.CompanyUser.belongsTo(this.Company, {as: 'company', foreignKey: 'companyId', targetKey: 'id'})
     this.CompanyUser.belongsTo(this.User, {as: 'user', foreignKey: 'userId', targetKey: 'id'})
     this.CompanyUser.belongsTo(this.Role, {as: 'role', foreignKey: 'roleId', targetKey: 'id'})
+
+    
+    this.Cte.belongsTo(this.Partner, {as: 'recipient', foreignKey: 'recipientId', targetKey: 'id'})
+    this.Cte.belongsTo(this.Shippiment, {as: 'shippiment', foreignKey: 'shippimentId', targetKey: 'id'})
 
     this.BankAccount.belongsTo(this.Bank, {as: 'bank', foreignKey: 'bankId', targetKey: 'id'})
     this.BankAccount.hasMany(this.BankAccountStatement, {as: 'bankAccountStatements', foreignKey: 'bankAccountId'})
@@ -131,6 +134,8 @@ export class AppContext extends Sequelize {
 
     this.Session.belongsTo(this.Company, {as: 'company', foreignKey: 'companyId', targetKey: 'id'})
     this.Session.belongsTo(this.User, {as: 'user', foreignKey: 'userId', targetKey: 'id'})
+
+    this.Shippiment.belongsTo(this.Partner, {as: 'sender', foreignKey: 'senderId', targetKey: 'id'})
 
     this.Statement.belongsTo(this.BankAccount, {as: 'bankAccount', foreignKey: 'bankAccountId', targetKey: 'id'})
 
