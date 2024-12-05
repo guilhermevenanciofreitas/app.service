@@ -1,26 +1,26 @@
-import { DataTypes } from 'sequelize';
+import Sequelize from 'sequelize';
 
 export class CompanyIntegration {
 
   id = {
     field: 'id',
     primaryKey: true,
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   companyId = {
     field: 'companyId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   integrationId = {
     field: 'integrationId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   options = {
     field: 'options',
-    type: DataTypes.JSONB
+    type: Sequelize.JSONB
   }
 
 }

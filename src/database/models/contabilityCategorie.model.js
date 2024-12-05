@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize'
+import Sequelize from 'sequelize'
 
 export class ContabilityCategorie {
 
@@ -6,17 +6,17 @@ export class ContabilityCategorie {
     field: 'id',
     primaryKey: true,
     autoIncrement: true,
-    type: DataTypes.UUID,
+    type: Sequelize.UUID,
   }
 
   companyId = {
     field: 'companyId',
-    type: DataTypes.UUID,
+    type: Sequelize.UUID,
   }
 
   name = {
     field: 'name',
-    type: DataTypes.STRING(30)
+    type: Sequelize.STRING(30)
   }
 
 }

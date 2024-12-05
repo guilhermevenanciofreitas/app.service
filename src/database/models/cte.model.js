@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize'
+import Sequelize from 'sequelize'
 
 export class Cte {
 
@@ -6,107 +6,112 @@ export class Cte {
     field: 'id',
     primaryKey: true,
     autoIncrement: true,
-    type: DataTypes.BIGINT,
+    type: Sequelize.BIGINT,
   }
 
   tripId = {
     field: 'IdViagem',
-    type: DataTypes.BIGINT
+    type: Sequelize.BIGINT
   }
 
   takerId = {
     field: 'IdTomador',
-    type: DataTypes.BIGINT
+    type: Sequelize.BIGINT
   }
 
   shippimentId = {
     field: 'IDCarga',
-    type: DataTypes.BIGINT
+    type: Sequelize.BIGINT
   }
 
   dhEmi = {
     field: 'dhEmi',
-    type: DataTypes.STRING
+    type: Sequelize.STRING
   }
 
   nCT = {
     field: 'nCT',
-    type: DataTypes.SMALLINT
+    type: Sequelize.SMALLINT
   }
 
   serieCT = {
     field: 'serieCT',
-    type: DataTypes.BIGINT
+    type: Sequelize.BIGINT
   }
 
   chaveCT = {
     field: 'ChaveCT',
-    type: DataTypes.STRING(44)
+    type: Sequelize.STRING(44)
   }
 
   tpCTe = {
     field: 'tpCTe',
-    type: DataTypes.SMALLINT
+    type: Sequelize.SMALLINT
   }
 
   CFOP = {
     field: 'CFOP',
-    type: DataTypes.INTEGER
+    type: Sequelize.INTEGER
   }
 
   cStat = {
     field: 'cStat',
-    type: DataTypes.INTEGER
+    type: Sequelize.INTEGER
   }
 
   nProt = {
     field: 'nProt',
-    type: DataTypes.STRING
+    type: Sequelize.STRING
   }
   
   dhRecbto = {
     field: 'dhRecbto',
-    type: DataTypes.STRING
+    type: Sequelize.STRING
   }
 
   vTPrest = {
     field: 'vTPrest',
-    type: DataTypes.DECIMAL
+    type: Sequelize.DECIMAL
   }
 
   valorAReceber = {
     field: 'valorAReceber',
-    type: DataTypes.DECIMAL
+    type: Sequelize.DECIMAL
   }
 
   codigoUnidade = {
     field: 'codigoUnidade',
-    type: DataTypes.SMALLINT
+    type: Sequelize.SMALLINT
   }
 
   baseCalculo = {
     field: 'baseCalculo',
-    type: DataTypes.DECIMAL
+    type: Sequelize.DECIMAL
   }
 
   pRedBC = {
     field: 'pRedBC',
-    type: DataTypes.DECIMAL
+    type: Sequelize.DECIMAL
   }
 
   pICMS = {
     field: 'pICMS',
-    type: DataTypes.DECIMAL
+    type: Sequelize.DECIMAL
   }
 
   recipientId = {
     field: 'IDCliente',
-    type: DataTypes.BIGINT
+    type: Sequelize.BIGINT
+  }
+
+  receivementId = {
+    field: 'IDMovimento',
+    type: Sequelize.BIGINT
   }
 
   xml = {
     field: 'Xml',
-    type: DataTypes.BLOB
+    type: Sequelize.BLOB
   }
 
 }

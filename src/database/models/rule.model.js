@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import Sequelize from 'sequelize';
 
 export class Rule {
 
@@ -6,12 +6,12 @@ export class Rule {
     field: 'id',
     primaryKey: true,
     autoIncrement: true,
-    type: DataTypes.UUID,
+    type: Sequelize.UUID,
   };
 
   description = {
     field: 'description',
-    type: DataTypes.STRING(100)
+    type: Sequelize.STRING(100)
   };
 
 }

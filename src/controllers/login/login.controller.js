@@ -1,4 +1,4 @@
-import { Sequelize, Op } from "sequelize"
+import { Sequelize } from "sequelize"
 
 import { AppContext } from "../../database/index.js"
 
@@ -69,7 +69,7 @@ export class LoginController {
         const lastAcess = dayjs()
         const expireIn = 120
 
-        await db.Session.destroy({where: [{userId: user.id, [Op.and]: Sequelize.literal(`"lastAcess" + ("expireIn" ||' minutes')::interval <= '${dayjs().format('YYYY-MM-DD HH:mm:ss')}'`)}], transaction})
+        await db.Session.destroy({where: [{userId: user.id, [Sequelize.and]: Sequelize.literal(`"lastAcess" + ("expireIn" ||' minutes')::interval <= '${dayjs().format('YYYY-MM-DD HH:mm:ss')}'`)}], transaction})
 
         const session = await db.Session.create({companyId: company.id, userId: user.id, lastAcess: lastAcess.format('YYYY-MM-DD HH:mm:ss'), expireIn}, {transaction})
 

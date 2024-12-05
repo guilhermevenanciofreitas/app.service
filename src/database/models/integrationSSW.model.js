@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import Sequelize from 'sequelize';
 
 export class IntegrationSSW {
 
@@ -6,12 +6,12 @@ export class IntegrationSSW {
     field: 'id',
     primaryKey: true,
     autoIncrement: true,
-    type: DataTypes.UUID,
+    type: Sequelize.UUID,
   }
 
   code = {
     field: 'code',
-    type: DataTypes.STRING(10)
+    type: Sequelize.STRING(10)
   }
 
 }

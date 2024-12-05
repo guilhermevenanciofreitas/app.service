@@ -1,36 +1,36 @@
-import { DataTypes } from 'sequelize'
+import Sequelize from 'sequelize'
 
 export class User {
 
   id = {
     field: 'UserId',
     primaryKey: true,
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   login = {
     field: 'UserName',
-    type: DataTypes.STRING
+    type: Sequelize.STRING
   }
 
   password = {
     field: 'password',
-    type: DataTypes.STRING
+    type: Sequelize.STRING
   }
 
   inactivatedAt = {
     field: 'inactivatedAt',
-    type: DataTypes.DATE
+    type: Sequelize.DATE
   }
 
   deletedAt = {
     field: 'deletedAt',
-    type: DataTypes.DATE
+    type: Sequelize.DATE
   }
 
   status = {
     field: 'status',
-    type: DataTypes.STRING
+    type: Sequelize.STRING
   }
 
 }

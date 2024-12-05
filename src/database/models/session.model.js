@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import Sequelize from 'sequelize';
 
 export class Session {
 
@@ -6,27 +6,27 @@ export class Session {
     field: 'id',
     primaryKey: true,
     autoIncrement: true,
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   };
 
   userId = {
     field: 'userId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   };
 
   companyId = {
     field: 'companyId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   };
 
   lastAcess = {
     field: 'lastAcess',
-    type: DataTypes.DATE
+    type: Sequelize.DATE
   };
 
   expireIn = {
     field: 'expireIn',
-    type: DataTypes.INTEGER
+    type: Sequelize.INTEGER
   };
 
 }

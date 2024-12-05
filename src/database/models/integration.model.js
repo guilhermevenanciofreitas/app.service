@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import Sequelize from 'sequelize';
 
 export class Integration {
 
@@ -6,17 +6,17 @@ export class Integration {
     field: 'id',
     primaryKey: true,
     autoIncrement: true,
-    type: DataTypes.UUID,
+    type: Sequelize.UUID,
   }
 
   name = {
     field: 'name',
-    type: DataTypes.STRING(50)
+    type: Sequelize.STRING(50)
   }
 
   image = {
     field: 'image',
-    type: DataTypes.STRING(200)
+    type: Sequelize.STRING(200)
   }
 
 }

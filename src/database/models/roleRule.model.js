@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import Sequelize from 'sequelize';
 
 export class RoleRule {
 
@@ -6,17 +6,17 @@ export class RoleRule {
     field: 'id',
     primaryKey: true,
     autoIncrement: true,
-    type: DataTypes.UUID,
+    type: Sequelize.UUID,
   }
 
   roleId = {
     field: 'roleId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   ruleId = {
     field: 'ruleId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
 }

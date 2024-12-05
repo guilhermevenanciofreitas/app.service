@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize'
+import Sequelize from 'sequelize'
 
 export class ReceivementMethod {
 
@@ -6,17 +6,17 @@ export class ReceivementMethod {
     field: 'id',
     primaryKey: true,
     autoIncrement: true,
-    type: DataTypes.UUID,
+    type: Sequelize.UUID,
   }
 
   companyId = {
     field: 'companyId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   currencyMethodId = {
     field: 'currencyMethodId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
 }

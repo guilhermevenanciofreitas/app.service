@@ -1,36 +1,36 @@
-import { DataTypes } from 'sequelize'
+import Sequelize from 'sequelize'
 
 export class Shippiment {
 
   id = {
     field: 'codigo_carga',
     primaryKey: true,
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   tripId = {
     field: 'codigo_viagem',
-    type: DataTypes.BIGINT
+    type: Sequelize.BIGINT
   }
 
   documento_transporte = {
     field: 'documento_transporte',
-    type: DataTypes.STRING
+    type: Sequelize.STRING
   }
 
   peso = {
     field: 'peso',
-    type: DataTypes.DECIMAL
+    type: Sequelize.DECIMAL
   }
 
   valor_frete = {
     field: 'valor_frete',
-    type: DataTypes.DECIMAL
+    type: Sequelize.DECIMAL
   }
 
   senderId = {
     field: 'codigo_cliente',
-    type: DataTypes.BIGINT
+    type: Sequelize.BIGINT
   }
 
 }

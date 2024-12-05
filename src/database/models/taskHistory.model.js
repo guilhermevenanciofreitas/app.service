@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize'
+import Sequelize from 'sequelize'
 
 export class TaskHistory {
 
@@ -6,27 +6,27 @@ export class TaskHistory {
     field: 'id',
     primaryKey: true,
     autoIncrement: true,
-    type: DataTypes.UUID,
+    type: Sequelize.UUID,
   }
 
   entryAt = {
     field: 'entryAt',
-    type: DataTypes.DATE
+    type: Sequelize.DATE
   }
 
   taskId = {
     field: 'taskId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   finishedAt = {
     field: 'finishedAt',
-    type: DataTypes.DATE
+    type: Sequelize.DATE
   }
 
   error = {
     field: 'error',
-    type: DataTypes.STRING(200)
+    type: Sequelize.STRING(200)
   }
   
 }

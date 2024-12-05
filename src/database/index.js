@@ -1,4 +1,4 @@
-import { QueryInterface, Sequelize } from 'sequelize'
+import { Sequelize } from 'sequelize'
 import tedious from 'tedious'
 import 'dotenv/config'
 
@@ -30,6 +30,7 @@ import { TaskMethod } from './models/taskMethod.model.js'
 import { Task } from './models/task.model.js'
 import { TaskHistory } from './models/taskHistory.model.js'
 import { Shippiment } from './models/shippiment.model.js'
+import { ReceivementInstallment } from './models/receivementInstallment.model.js'
 
 export class AppContext extends Sequelize {
   
@@ -65,7 +66,9 @@ export class AppContext extends Sequelize {
 
   Product = this.define('product', new Product(), { tableName: 'product' })
 
-  Receivement = this.define('receivement', new Receivement(), { tableName: 'receivement' })
+  Receivement = this.define('receivement', new Receivement(), { tableName: 'movimentos' })
+
+  ReceivementInstallment = this.define('receivementInstallment', new ReceivementInstallment(), { tableName: 'movimentos_detalhe' })
 
   ReceivementMethod = this.define('receivementMethod', new ReceivementMethod(), { tableName: 'receivementMethod' })
 

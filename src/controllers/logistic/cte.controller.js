@@ -20,60 +20,29 @@ export class LogisticCteController {
         const offset = req.body.offset || 0
         const filter = req.body.filter || { situation: ['active'] }
 
-        //const bankAccount = req.body.bankAccount
-
-        //const whereCompany = {'$bankAccount.companyId$': company.id}
-
         const where = []
 
         where.push({cStat: 100})
 
-        //if (bankAccount) {
-        //  where.push({bankAccountId: bankAccount.id})
-        //}
-
-        //const where = [{[Op.not]: {situation: 'deleted'}}]
-
-        //if (filter['situation']) where.push({situation: filter['situation']})
-
         const ctes = await db.Cte.findAndCountAll({
-          attributes: ['id', 'dhEmi', 'nCT', 'serieCT', 'chaveCT', 'cStat'],
+          attributes: ['id', 'dhEmi', 'nCT', 'serieCT', 'chaveCT', 'cStat', 'baseCalculo'],
           include: [
             {model: db.Partner, as: 'recipient', attributes: ['id', 'surname']},
             {model: db.Shippiment, as: 'shippiment', attributes: ['id'], include: [
               {model: db.Partner, as: 'sender', attributes: ['id', 'surname']}
             ]}
           ],
-          //include: [
-          //  {model: db.Partner, as: 'partner', attributes: ['id', 'surname']},
-          //  {model: db.BankAccount, as: 'bankAccount', attributes: ['id', 'name', 'agency', 'agencyDigit', 'account', 'accountDigit'],
-          //    include: [
-          //      {model: db.Bank, as: 'bank', attributes: ['id', 'name', 'image']}
-          //    ]
-          //  },
-          //  {model: db.CurrencyMethod, as: 'currencyMethod', attributes: ['id', 'name']},
-          //  {model: db.ContabilityCategorie, as: 'categorie', attributes: ['id', 'name']}
-          //],
           limit: limit,
           offset: offset * limit,
           order: [['id', 'desc']],
           where,
         })
 
-        //const bankAccounts = await db.BankAccount.findAll({
-        //  attributes: ['id', 'name', 'agency', 'agencyDigit', 'account', 'accountDigit', [Sequelize.literal(`(SELECT COALESCE(SUM("amount"), 0) FROM "bankAccountStatement" WHERE "bankAccountStatement"."bankAccountId" = "bankAccount"."id")`), 'balance']],
-        //  include: [
-        //    {model: db.Bank, as: 'bank', attributes: ['id', 'name', 'image']}
-        //  ],
-        //  where: [whereCompany]
-        //})
-
         res.status(200).json({
           request: {
             filter, limit, offset
           },
           response: {
-            //bankAccounts,
             rows: ctes.rows, count: ctes.count
           }
         })
@@ -169,22 +138,29 @@ export class LogisticCteController {
               cte.CST = json.cteProc.CTe.infCte.imp.ICMS.ICMS60.CST
             }
 
-            console.log(cte)
-            
-            //for(const infNFe of json.cteProc.CTe.infCte.infCTeNorm.infDoc.infNFe) {
-            //  console.log(infNFe.chave)
-            //}
+            const receivement = await db.Receivement.create({
+              payerId: sender.id,
+              documentNumber: cte.nCT,
+              description: `Recebimento do CT-e ${cte.nCT}`,
+              total: cte.valorAReceber,
+              releaseDate: cte.dhEmi,
+              issueDate: cte.dhEmi,
+              createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+            }, {transaction})
 
-            
+            console.log(receivement.id)
 
-            //const sender = await db.Partner.findOne({where: {cpfCnpj: json.cteProc.CTe.infCte.rem.CNPJ || json.cteProc.CTe.infCte.rem.CPF}, transaction})
+            await db.ReceivementInstallment.create({
+              receivementId: receivement.id,
+              description: receivement.description,
+              installment: 1,
+              amount: cte.valorAReceber,
+              createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+            }, {transaction})
 
-            //console.log(sender)
-
+            cte.receivementId = receivement.id
 
             cte = await db.Cte.create(cte, {transaction})
-
-            console.log(cte.id)
 
           }
 

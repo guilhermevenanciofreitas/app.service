@@ -1,5 +1,4 @@
-import { DataTypes } from 'sequelize';
-import _ from 'lodash'
+import Sequelize from 'sequelize';
 
 export class Product {
 
@@ -7,27 +6,27 @@ export class Product {
     field: 'id',
     primaryKey: true,
     autoIncrement: true,
-    type: DataTypes.UUID,
+    type: Sequelize.UUID,
   };
 
   name = {
     field: 'name',
-    type: DataTypes.STRING(100)
+    type: Sequelize.STRING(100)
   };
 
   inactivatedAt = {
     field: 'inactivatedAt',
-    type: DataTypes.DATE
+    type: Sequelize.DATE
   }
 
   deteledAt = {
     field: 'deteledAt',
-    type: DataTypes.DATE
+    type: Sequelize.DATE
   }
 
   situation = {
     field: 'situation',
-    type: new DataTypes.VIRTUAL,
+    type: Sequelize.VIRTUAL,
   }
 
 }

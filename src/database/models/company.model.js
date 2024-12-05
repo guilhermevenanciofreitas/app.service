@@ -1,21 +1,21 @@
-import { DataTypes } from 'sequelize';
+import Sequelize from 'sequelize';
 
 export class Company {
 
   id = {
     field: 'id',
     primaryKey: true,
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   };
 
   name = {
     field: 'name',
-    type: DataTypes.STRING(100)
+    type: Sequelize.STRING(100)
   };
 
   surname = {
     field: 'surname',
-    type: DataTypes.STRING(80)
+    type: Sequelize.STRING(80)
   };
 
 }

@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize'
+import Sequelize from 'sequelize'
 
 export class Payment {
 
@@ -6,47 +6,47 @@ export class Payment {
     field: 'id',
     primaryKey: true,
     autoIncrement: true,
-    type: DataTypes.UUID,
+    type: Sequelize.UUID,
   }
 
   companyId = {
     field: 'companyId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   documentNumber = {
     field: 'documentNumber',
-    type: DataTypes.STRING(15)
+    type: Sequelize.STRING(15)
   }
 
   beneficiaryId = {
     field: 'beneficiaryId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   categorieId = {
     field: 'categorieId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   currencyMethodId = {
     field: 'currencyMethodId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   issueDate = {
     field: 'issueDate',
-    type: DataTypes.DATE
+    type: Sequelize.DATE
   }
 
   dueDate = {
     field: 'dueDate',
-    type: DataTypes.DATE
+    type: Sequelize.DATE
   }
 
   bankAccountId = {
     field: 'bankAccountId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   /*
@@ -58,7 +58,7 @@ export class Payment {
 
   amount = {
     field: 'amount',
-    type: DataTypes.DECIMAL(18, 2)
+    type: Sequelize.DECIMAL(18, 2)
   }
 
   /*

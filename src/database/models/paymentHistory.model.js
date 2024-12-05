@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize'
+import Sequelize from 'sequelize'
 
 export class PaymentHistory {
 
@@ -6,22 +6,22 @@ export class PaymentHistory {
     field: 'id',
     primaryKey: true,
     autoIncrement: true,
-    type: DataTypes.UUID,
+    type: Sequelize.UUID,
   }
 
   paymentId = {
     field: 'paymentId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   cashierBalanceStatementId = {
     field: 'cashierBalanceStatementId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   bankAccountStatementId = {
     field: 'bankAccountStatementId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
 }

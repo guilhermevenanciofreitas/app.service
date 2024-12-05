@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import Sequelize from 'sequelize';
 
 export class BankAccount {
 
@@ -6,47 +6,47 @@ export class BankAccount {
     field: 'id',
     primaryKey: true,
     autoIncrement: true,
-    type: DataTypes.UUID,
+    type: Sequelize.UUID,
   }
 
   companyId = {
     field: 'companyId',
-    type: DataTypes.UUID,
+    type: Sequelize.UUID,
   }
 
   name = {
     field: 'name',
-    type: DataTypes.STRING(30),
+    type: Sequelize.STRING(30),
   }
 
   bankId = {
     field: 'bankId',
-    type: DataTypes.UUID,
+    type: Sequelize.UUID,
   }
 
   agency = {
     field: 'agency',
-    type: DataTypes.STRING(4)
+    type: Sequelize.STRING(4)
   }
 
   agencyDigit = {
     field: 'agencyDigit',
-    type: DataTypes.STRING(1)
+    type: Sequelize.STRING(1)
   }
 
   account = {
     field: 'account',
-    type: DataTypes.STRING(10)
+    type: Sequelize.STRING(10)
   }
 
   accountDigit = {
     field: 'accountDigit',
-    type: DataTypes.STRING(1)
+    type: Sequelize.STRING(1)
   }
 
   integrationId = {
     field: 'integrationId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
 }

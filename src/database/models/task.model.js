@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize'
+import Sequelize from 'sequelize'
 
 export class Task {
 
@@ -6,42 +6,42 @@ export class Task {
     field: 'id',
     primaryKey: true,
     autoIncrement: true,
-    type: DataTypes.UUID,
+    type: Sequelize.UUID,
   }
 
   companyId = {
     field: 'companyId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   schedule = {
     field: 'schedule',
-    type: DataTypes.STRING(20)
+    type: Sequelize.STRING(20)
   }
   
   methodId = {
     field: 'methodId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   arguments = {
     field: 'arguments',
-    type: DataTypes.JSONB
+    type: Sequelize.JSONB
   }
 
   inactivatedAt = {
     field: 'inactivatedAt',
-    type: DataTypes.DATE
+    type: Sequelize.DATE
   }
 
   deletedAt = {
     field: 'deletedAt',
-    type: DataTypes.DATE
+    type: Sequelize.DATE
   }
 
   status = {
     field: 'status',
-    type: DataTypes.STRING
+    type: Sequelize.STRING
   }
 
 }

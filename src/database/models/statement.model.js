@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import Sequelize from 'sequelize';
 
 export class Statement {
 
@@ -6,32 +6,32 @@ export class Statement {
     field: 'id',
     primaryKey: true,
     autoIncrement: true,
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   bankAccountId = {
     field: 'bankAccountId',
-    type: DataTypes.UUID,
+    type: Sequelize.UUID,
   }
 
   sourceId = {
     field: 'sourceId',
-    type: DataTypes.STRING,
+    type: Sequelize.STRING,
   }
 
   createdAt = {
     field: 'createdAt',
-    type: DataTypes.DATE
+    type: Sequelize.DATE
   }
 
   begin = {
     field: 'begin',
-    type: DataTypes.DATE
+    type: Sequelize.DATE
   }
 
   end = {
     field: 'end',
-    type: DataTypes.DATE
+    type: Sequelize.DATE
   }
 
 }

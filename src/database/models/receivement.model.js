@@ -1,54 +1,67 @@
-import { DataTypes } from 'sequelize'
+import Sequelize from 'sequelize'
 
 export class Receivement {
 
   id = {
-    field: 'id',
+    field: 'codigo_movimento',
     primaryKey: true,
     autoIncrement: true,
-    type: DataTypes.UUID,
+    type: Sequelize.BIGINT,
   }
 
   companyId = {
-    field: 'companyId',
-    type: DataTypes.UUID
+    field: 'CodigoEmpresaFilial',
+    type: Sequelize.SMALLINT
   }
 
-  documentNumber = {
-    field: 'documentNumber',
-    type: DataTypes.STRING(15)
-  }
-
-  payerId = {
-    field: 'payerId',
-    type: DataTypes.UUID
-  }
-
-  categorieId = {
-    field: 'categorieId',
-    type: DataTypes.UUID
-  }
-
-  currencyMethodId = {
-    field: 'currencyMethodId',
-    type: DataTypes.UUID
+  releaseDate = {
+    field: 'data_movimento',
+    type: Sequelize.TEXT
   }
 
   issueDate = {
-    field: 'issueDate',
-    type: DataTypes.DATE
+    field: 'dataEmissao',
+    type: Sequelize.TEXT
   }
+
+  documentNumber = {
+    field: 'numero_documento',
+    type: Sequelize.INTEGER
+  }
+
+  payerId = {
+    field: 'codigo_pessoa',
+    type: Sequelize.BIGINT
+  }
+
+  categorieId = {
+    field: 'IDPlanoContasContabil',
+    type: Sequelize.INTEGER
+  }
+
+  description = {
+    field: 'descricao',
+    type: Sequelize.STRING(1000)
+  }
+
+  /*
+  currencyMethodId = {
+    field: 'currencyMethodId',
+    type: Sequelize.UUID
+  }
+
+  
 
   dueDate = {
     field: 'dueDate',
-    type: DataTypes.DATE
+    type: Sequelize.DATE
   }
 
   bankAccountId = {
     field: 'bankAccountId',
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
-
+  */
   /*
   cashierBalanceId = {
     field: 'cashierBalanceId',
@@ -56,9 +69,9 @@ export class Receivement {
   }
   */
 
-  amount = {
-    field: 'amount',
-    type: DataTypes.DECIMAL(18, 2)
+  total = {
+    field: 'valor_total',
+    type: Sequelize.DECIMAL(18, 2)
   }
 
   /*
@@ -72,5 +85,10 @@ export class Receivement {
     type: DataTypes.DECIMAL(18, 2)
   }
   */
+
+  createdAt = {
+    field: 'DataInsert',
+    type: Sequelize.TEXT
+  }
 
 }

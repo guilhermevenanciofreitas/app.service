@@ -1,16 +1,16 @@
-import { DataTypes } from 'sequelize'
+import Sequelize from 'sequelize'
 
 export class CurrencyMethod {
 
   id = {
     field: 'id',
     primaryKey: true,
-    type: DataTypes.UUID
+    type: Sequelize.UUID
   }
 
   name = {
     field: 'name',
-    type: DataTypes.STRING(50)
+    type: Sequelize.STRING(50)
   }
 
 }
