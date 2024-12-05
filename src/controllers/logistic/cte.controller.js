@@ -125,7 +125,9 @@ export class LogisticCteController {
               vTPrest: json.cteProc.CTe.infCte.vPrest.vTPrest,
               valorAReceber: json.cteProc.CTe.infCte.vPrest.vRec,
 
-              recipientId: recipient.id
+              recipientId: recipient.id,
+
+              xml
 
             }
 
