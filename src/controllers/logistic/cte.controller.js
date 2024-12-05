@@ -161,6 +161,7 @@ export class LogisticCteController {
               total: cte.valorAReceber,
               releaseDate: cte.dhEmi,
               issueDate: cte.dhEmi,
+              categorieId: 1766,
               createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
             }, {transaction})
 
