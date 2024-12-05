@@ -7,6 +7,7 @@ import _ from 'lodash'
 import { fileURLToPath } from 'url'
 import xml2js from 'xml2js'
 import dayjs from "dayjs"
+import Sequelize from "sequelize"
 
 export class LogisticCteController {
 
@@ -18,10 +19,22 @@ export class LogisticCteController {
 
         const limit = req.body.limit || 50
         const offset = req.body.offset || 0
-        const filter = req.body.filter || { situation: ['active'] }
+        const search = req.body.search
 
         const where = []
 
+        if (search?.input) {
+
+          if (search?.picker == 'nCT') {
+            where.push({nCT: search.input.match(/\d+/g)})
+          }
+  
+          if (search?.picker == 'sender') {
+            where.push({'$shippiment.sender.RazaoSocial$': {[Sequelize.Op.like]: `%${search.input.replace(' ', "%")}%`}})
+          }
+
+        }
+        
         where.push({cStat: 100})
 
         const ctes = await db.Cte.findAndCountAll({
@@ -40,7 +53,7 @@ export class LogisticCteController {
 
         res.status(200).json({
           request: {
-            filter, limit, offset
+            limit, offset
           },
           response: {
             rows: ctes.rows, count: ctes.count
@@ -81,7 +94,7 @@ export class LogisticCteController {
               continue
             }
 
-            const sender = await db.Partner.findOne({where: [{cpfCnpj: json.cteProc.CTe.infCte.rem.CNPJ || json.cteProc.CTe.infCte.rem.CPF}], transaction})
+            const sender = await db.Partner.findOne({attributes: ['id', 'diasPrazoPagamento'], where: [{cpfCnpj: json.cteProc.CTe.infCte.rem.CNPJ || json.cteProc.CTe.infCte.rem.CPF}], transaction})
 
             if (!sender) {
               throw new Error('Remetente não está cadastrado!')
@@ -139,6 +152,7 @@ export class LogisticCteController {
             }
 
             const receivement = await db.Receivement.create({
+              companyId: 1,
               payerId: sender.id,
               documentNumber: cte.nCT,
               description: `Recebimento do CT-e ${cte.nCT}`,
@@ -148,19 +162,18 @@ export class LogisticCteController {
               createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
             }, {transaction})
 
-            console.log(receivement.id)
-
             await db.ReceivementInstallment.create({
               receivementId: receivement.id,
               description: receivement.description,
               installment: 1,
+              dueDate: dayjs(cte.dhEmi).add(sender?.diasPrazoPagamento || 0, 'day').format('YYYY-MM-DD'),
               amount: cte.valorAReceber,
               createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
             }, {transaction})
 
             cte.receivementId = receivement.id
 
-            cte = await db.Cte.create(cte, {transaction})
+            await db.Cte.create(cte, {transaction})
 
           }
 

@@ -23,4 +23,9 @@ export class Partner {
     type: Sequelize.STRING(100)
   }
 
+  diasPrazoPagamento = {
+    field: 'diasPrazoPagamento',
+    type: Sequelize.SMALLINT
+  }
+
 }
