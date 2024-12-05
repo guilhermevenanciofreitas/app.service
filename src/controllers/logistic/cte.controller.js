@@ -1,6 +1,6 @@
 import { AppContext } from "../../database/index.js"
 import { Authorization } from "../authorization.js"
-import formidable, {errors as formidableErrors} from 'formidable'
+import { formidable } from 'formidable'
 import fs from 'fs'
 import path from 'path'
 import _ from 'lodash'
