@@ -117,8 +117,8 @@ export class LogisticCteController {
 
         let cte = {
           id: req.body.id,
-          takerId: req.body.taker?.id,
-          recipientId: req.body.recipient?.id,
+          takerId: req.body.taker?.id || null,
+          recipientId: req.body.recipient?.id || null,
           originId: req.body.origin?.id || null,
           destinyId: req.body.destiny?.id || null,
         }
@@ -289,9 +289,11 @@ export class LogisticCteController {
 
           const nfe = await db.Nfe.findOne({attributes: ['id'], where: [{chaveNf: req.body.chaveNf}], transaction})
 
+          let cteNfe
+
           if (nfe) {
 
-            const cteNfe = await db.CteNfe.findOne({attributes: ['id'], where: [{IDCte: req.body.cteId, IDNota: nfe.id}], transaction})
+            cteNfe = await db.CteNfe.findOne({attributes: ['id'], where: [{IDCte: req.body.cteId, IDNota: nfe.id}], transaction})
 
             if (cteNfe) {
               res.status(201).json({message: 'Nota fiscal já está incluída!'})
@@ -309,7 +311,7 @@ export class LogisticCteController {
             //console.log(r)
           }
 
-          await db.CteNfe.create({cteId: req.body.cteId, nfeId: nfe.id})
+          cteNfe = await db.CteNfe.create({cteId: req.body.cteId, nfeId: nfe.id})
           
           res.status(200).json({cteNfe})
 
