@@ -43,12 +43,16 @@ export class LogisticCteController {
             {model: db.Partner, as: 'recipient', attributes: ['id', 'surname']},
             {model: db.Shippiment, as: 'shippiment', attributes: ['id'], include: [
               {model: db.Partner, as: 'sender', attributes: ['id', 'surname']}
-            ]}
+            ]},
+            {model: db.CteNfe, as: 'cteNfes', attributes: ['id', 'nfeId'], include: [
+              {model: db.Nfe, as: 'nfe', attributes: ['id', 'chaveNf']},
+            ]},
           ],
           limit: limit,
           offset: offset * limit,
           order: [['id', 'desc']],
           where,
+          subQuery: false
         })
 
         res.status(200).json({
@@ -106,7 +110,11 @@ export class LogisticCteController {
 
             if (!recipient) {
 
-              recipient = await db.Partner.create({cpfCnpj: json.cteProc.CTe.infCte.dest.CNPJ || json.cteProc.CTe.infCte.dest.CPF, name: json.cteProc.CTe.infCte.dest.xNome, surname: json.cteProc.CTe.infCte.dest.xNome, ISDestinatario: true})
+              const partner = {cpfCnpj: json.cteProc.CTe.infCte.dest.CNPJ || json.cteProc.CTe.infCte.dest.CPF, name: json.cteProc.CTe.infCte.dest.xNome, surname: json.cteProc.CTe.infCte.dest.xNome, ISDestinatario: 1, ativo: 1}
+
+              console.log(partner)
+
+              recipient = await db.Partner.create(partner, {transaction})
 
               //throw new Error('Destinatário não está cadastrado!')
             }
@@ -198,8 +206,62 @@ export class LogisticCteController {
     //})
   }
 
-  distNfe = async (chNFe) => {
+  async addNfe(req, res) {
+    //await Authorization.verify(req, res).then(async () => {
+      try {
 
+        const db = new AppContext();
+
+        await db.transaction(async (transaction) => {
+
+          const nfe = await db.Nfe.findOne({attributes: ['id'], where: [{chaveNf: req.body.chaveNf}], transaction})
+
+          const cteNfe = await db.CteNfe.findOne({attributes: ['id'], where: [{IDCte: req.body.cteId, IDNota: nfe.id}], transaction})
+
+          if (cteNfe) {
+            res.status(201).json({message: 'Nota fiscal já está incluída!'})
+            return
+          }
+
+          if (!nfe) {
+
+          }
+
+          await db.CteNfe.create({cteId: req.body.cteId, nfeId: nfe.id})
+          
+          res.status(200).json({cteNfe})
+
+        })
+
+
+      } catch (error) {
+        res.status(500).json({message: error.message})
+      }
+    //}).catch((error) => {
+    //  res.status(400).json({message: error.message})
+    //})
+  }
+
+  async deleteNfe(req, res) {
+    //await Authorization.verify(req, res).then(async () => {
+      try {
+
+        const db = new AppContext();
+
+        await db.transaction(async (transaction) => {
+
+          await db.CteNfe.destroy({where: [{id: req.body.id}], transaction})
+
+        })
+
+        res.status(200).json({})
+
+      } catch (error) {
+        res.status(500).json({message: error.message})
+      }
+    //}).catch((error) => {
+    //  res.status(400).json({message: error.message})
+    //})
   }
 
 }

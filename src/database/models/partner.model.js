@@ -5,6 +5,7 @@ export class Partner {
   id = {
     field: 'codigo_pessoa',
     primaryKey: true,
+    autoIncrement: true,
     type: Sequelize.UUID
   }
 
@@ -28,9 +29,19 @@ export class Partner {
     type: Sequelize.SMALLINT
   }
 
+  ISRemetente = {
+    field: 'ISRemetente',
+    type: Sequelize.SMALLINT
+  }
+
   ISDestinatario = {
     field: 'ISDestinatario',
-    type: Sequelize.BOOLEAN
+    type: Sequelize.SMALLINT
+  }
+
+  ativo = {
+    field: 'ativo',
+    type: Sequelize.SMALLINT
   }
 
 }

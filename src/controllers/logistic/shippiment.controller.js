@@ -69,4 +69,73 @@ export class LogisticShippimentController {
     //})
   }
 
+  
+  async detail(req, res) {
+    //await Authorization.verify(req, res).then(async () => {
+      try {
+
+        const { id } = req.body
+
+        const db = new AppContext()
+
+        await db.transaction(async (transaction) => {
+            
+          const shippiment = await db.Shippiment.findOne({
+            attributes: ['id', 'documento_transporte', 'proPred', 'quantidade_entrega', 'peso', 'valor_frete'],
+            include: [
+              {model: db.Partner, as: 'sender', attributes: ['id', 'name']}
+            ],
+            where: [{codigo_carga: id}],
+            transaction
+          })
+
+          res.status(200).json(shippiment)
+          
+        })
+
+      } catch (error) {
+        res.status(500).json({message: error.message})
+      }
+    //}).catch((error) => {
+    //  res.status(400).json({message: error.message})
+    //})
+  }
+
+  async submit(req, res) {
+    //await Authorization.verify(req, res).then(async () => {
+      try {
+
+        let shippiment = {
+          id: req.body.id,
+          documento_transporte: req.body.documento_transporte,
+          senderId: req.body.sender?.id,
+          quantidade_entrega: req.body.quantidade_entrega,
+          peso: req.body.peso,
+          valor_frete: req.body.valor_frete
+        }
+
+        console.log(shippiment)
+
+        const db = new AppContext();
+
+        await db.transaction(async (transaction) => {
+
+          if (_.isEmpty(shippiment.id)) {
+            shippiment = await db.Shippiment.create(shippiment, {transaction})
+          } else {
+            await db.Shippiment.update(shippiment, {where: [{codigo_carga: shippiment.id}], transaction})
+          }
+
+        })
+
+        res.status(200).json(shippiment)
+
+      } catch (error) {
+        res.status(500).json({message: error.message})
+      }
+    //}).catch((error) => {
+    //  res.status(400).json({message: error.message})
+    //})
+  }
+
 }

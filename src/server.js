@@ -8,6 +8,7 @@ import { TaskRoute } from './routes/task/task.route.js'
 import { IntegrationRoute } from './routes/integration/integration.route.js'
 import { CteRoute } from './routes/logistic/cte.route.js'
 import { LogisticShippimentRoute } from './routes/logistic/shippiment.route.js'
+import { SearchRoute } from './routes/search.js'
 
 class App {
 
@@ -41,6 +42,9 @@ class App {
 
     this.express.use('/api/task', new TaskRoute().router)
     this.express.use('/api/integration', new IntegrationRoute().router)
+
+    
+    this.express.use('/api/search', new SearchRoute().router)
 
     //this.express.get('/*', (req, res) => res.sendFile('../public/index.html'))
 

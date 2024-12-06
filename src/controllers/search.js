@@ -1,6 +1,6 @@
 import { Authorization } from "./authorization.js";
 import { AppContext } from '../database/index.js'
-import { Op } from "sequelize"
+import Sequelize from "sequelize"
 import _ from "lodash"
 
 export class SearchController {
@@ -18,7 +18,7 @@ export class SearchController {
                     ],
                     where: [{
                         '$userId$': user.id,
-                        '$company.surname$': {[Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}
+                        '$company.surname$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}
                     }],
                     order: [
                         ['company', 'surname', 'asc']
@@ -29,10 +29,10 @@ export class SearchController {
                 res.status(200).json(_.map(companies, (companyUser) => companyUser.company.dataValues));
 
             } catch (error) {
-                Exception.error(res, error);
+                //Exception.error(res, error);
             }
         }).catch((error) => {
-            Exception.unauthorized(res, error);
+            //Exception.unauthorized(res, error);
         });
     }
 
@@ -46,7 +46,7 @@ export class SearchController {
                     attributes: ['id', 'name', 'surname'],
                     where: [{
                         '$companyId$': company.id,
-                        '$surname$': {[Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}
+                        '$surname$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}
                     }],
                     order: [
                         ['surname', 'asc']
@@ -57,11 +57,39 @@ export class SearchController {
                 res.status(200).json(partners);
 
             } catch (error) {
-                Exception.error(res, error);
+                //Exception.error(res, error);
             }
         }).catch((error) => {
-            Exception.unauthorized(res, error);
+            //Exception.unauthorized(res, error);
         });
+    }
+
+    async sender(req, res) {
+        //Authorization.verify(req, res).then(async ({company}) => {
+            try {
+
+                const db = new AppContext()
+
+                const senders = await db.Partner.findAll({
+                    attributes: ['id', 'name', 'surname'],
+                    where: [{
+                        '$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
+                        ISRemetente: 1
+                    }],
+                    order: [
+                        ['surname', 'asc']
+                    ],
+                    limit: 20
+                });
+
+                res.status(200).json(senders);
+
+            } catch (error) {
+                res.status(500).json({message: error.message});
+            }
+        //}).catch((error) => {
+        //    //Exception.unauthorized(res, error);
+        //});
     }
 
     async employee(req, res) {
@@ -73,7 +101,7 @@ export class SearchController {
                 const partners = await db.Partner.findAll({
                     attributes: ['id', 'name', 'surname'],
                     where: [{
-                        '$surname$': {[Op.like]: `%${req.body?.search.replace(' ', "%")}%`}
+                        '$surname$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%")}%`}
                     }],
                     order: [
                         ['surname', 'asc']
@@ -84,10 +112,10 @@ export class SearchController {
                 res.status(200).json(partners);
 
             } catch (error) {
-                Exception.error(res, error);
+                //Exception.error(res, error);
             }
         }).catch((error) => {
-            Exception.unauthorized(res, error);
+            //Exception.unauthorized(res, error);
         });
     }
 
@@ -104,11 +132,11 @@ export class SearchController {
                     ],
                     where: [{
                         [Op.or]: {
-                            '$bank.name$': {[Op.like]: `%${req.body?.search.replace(' ', "%")}%`},
-                            'agency': {[Op.like]: `%${req.body?.search.replace(' ', "%")}%`},
-                            'agencyDigit': {[Op.like]: `%${req.body?.search.replace(' ', "%")}%`},
-                            'account': {[Op.like]: `%${req.body?.search.replace(' ', "%")}%`},
-                            'accountDigit': {[Op.like]: `%${req.body?.search.replace(' ', "%")}%`},
+                            '$bank.name$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%")}%`},
+                            'agency': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%")}%`},
+                            'agencyDigit': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%")}%`},
+                            'account': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%")}%`},
+                            'accountDigit': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%")}%`},
                         }
                     }],
                     order: [
@@ -120,10 +148,10 @@ export class SearchController {
                 res.status(200).json(bankAccounts);
 
             } catch (error) {
-                Exception.error(res, error);
+                //Exception.error(res, error);
             }
         }).catch((error) => {
-            Exception.unauthorized(res, error);
+            //Exception.unauthorized(res, error);
         });
     }
 
@@ -147,10 +175,10 @@ export class SearchController {
                 res.status(200).json(contabilityCategories);
 
             } catch (error) {
-                Exception.error(res, error);
+                //Exception.error(res, error);
             }
         }).catch((error) => {
-            Exception.unauthorized(res, error);
+            //Exception.unauthorized(res, error);
         });
     }
 
@@ -178,10 +206,10 @@ export class SearchController {
                 res.status(200).json(_.map(receivementMethods, (receivementMethod) => Object.create(receivementMethod.currencyMethod)));
 
             } catch (error) {
-                Exception.error(res, error);
+                //Exception.error(res, error);
             }
         }).catch((error) => {
-            Exception.unauthorized(res, error);
+            //Exception.unauthorized(res, error);
         });
     }
 
@@ -202,10 +230,10 @@ export class SearchController {
                 res.status(200).json(taskMethods);
 
             } catch (error) {
-                Exception.error(res, error);
+                //Exception.error(res, error);
             }
         }).catch((error) => {
-            Exception.unauthorized(res, error);
+            //Exception.unauthorized(res, error);
         });
     }
 

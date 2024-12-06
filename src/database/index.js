@@ -31,6 +31,8 @@ import { Task } from './models/task.model.js'
 import { TaskHistory } from './models/taskHistory.model.js'
 import { Shippiment } from './models/shippiment.model.js'
 import { ReceivementInstallment } from './models/receivementInstallment.model.js'
+import { CteNfe } from './models/cteNfe.model.js'
+import { NFe } from './models/nfe.model.js'
 
 export class AppContext extends Sequelize {
   
@@ -47,6 +49,8 @@ export class AppContext extends Sequelize {
   ContabilityCategorie = this.define('contabilityCategorie', new ContabilityCategorie(), { tableName: 'contabilityCategorie' })
   
   Cte = this.define('cte', new Cte(), { tableName: 'ctes' })
+  
+  CteNfe = this.define('cteNfe', new CteNfe(), { tableName: 'CteNotas' })
   
   Integration = this.define('integration', new Integration(), { tableName: 'integration' })
 
@@ -78,6 +82,8 @@ export class AppContext extends Sequelize {
 
   Rule = this.define('rule', new Rule(), { tableName: 'rule' })
 
+  Nfe = this.define('nfe', new NFe(), { tableName: 'nota' })
+
   Session = this.define('session', new Session(), { tableName: 'session' })
 
   Shippiment = this.define('shippiment', new Shippiment(), { tableName: 'carga' })
@@ -107,6 +113,8 @@ export class AppContext extends Sequelize {
     
     this.Cte.belongsTo(this.Partner, {as: 'recipient', foreignKey: 'recipientId', targetKey: 'id'})
     this.Cte.belongsTo(this.Shippiment, {as: 'shippiment', foreignKey: 'shippimentId', targetKey: 'id'})
+
+    this.Cte.hasMany(this.CteNfe, {as: 'cteNfes', foreignKey: 'cteId'})
 
     this.BankAccount.belongsTo(this.Bank, {as: 'bank', foreignKey: 'bankId', targetKey: 'id'})
     this.BankAccount.hasMany(this.BankAccountStatement, {as: 'bankAccountStatements', foreignKey: 'bankAccountId'})
@@ -146,7 +154,9 @@ export class AppContext extends Sequelize {
     this.Task.belongsTo(this.TaskMethod, {as: 'method', foreignKey: 'methodId', targetKey: 'id'})
     this.Task.hasMany(this.TaskHistory, {as: 'taskHistories', foreignKey: 'taskId'})
 
-    this.User.hasMany(this.CompanyUser, {as: 'companyUsers', foreignKey: 'userId'})    
+    this.User.hasMany(this.CompanyUser, {as: 'companyUsers', foreignKey: 'userId'})
+    
+    this.CteNfe.belongsTo(this.Nfe, {as: 'nfe', foreignKey: 'cteId', targetKey: 'id'})
 
   }
 
