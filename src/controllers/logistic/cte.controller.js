@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url'
 import xml2js from 'xml2js'
 import dayjs from "dayjs"
 import Sequelize from "sequelize"
-import axios from 'axios'
+//import axios from 'axios'
 
 export class LogisticCteController {
 
@@ -303,8 +303,8 @@ export class LogisticCteController {
           const xml = `<distDFeInt xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"1.01\"><tpAmb>1</tpAmb><cUFAutor>52</cUFAutor><CNPJ>04058687000177</CNPJ><consChNFe><chNFe>${req.body.chaveNf}</chNFe></consChNFe></distDFeInt>`
 
           if (!nfe) {
-            const r = await axios.post('http://localhost:5290/dfe/distribuicao', {certificate: {file, password: '040586'}, tpAmb: '1', xml})
-            console.log(r)
+            //const r = await axios.post('http://localhost:5290/dfe/distribuicao', {certificate: {file, password: '040586'}, tpAmb: '1', xml})
+            //console.log(r)
           }
 
           await db.CteNfe.create({cteId: req.body.cteId, nfeId: nfe.id})
