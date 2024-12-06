@@ -20,6 +20,10 @@ export class LogisticShippimentController {
 
         if (search?.input) {
 
+          if (search?.picker == 'code') {
+            where.push({codigo_carga: search.input.match(/\d+/g)})
+          }
+
           if (search?.picker == 'documentTransport') {
             where.push({documento_transporte: {[Sequelize.Op.like]: `%${search.input.replace(' ', "%")}%`}})
           }
@@ -78,7 +82,7 @@ export class LogisticShippimentController {
         await db.transaction(async (transaction) => {
             
           const shippiment = await db.Shippiment.findOne({
-            attributes: ['id', 'documento_transporte', 'proPred', 'quantidade_entrega', 'peso', 'valor_frete'],
+            attributes: ['id', 'documento_transporte', 'proPred'],
             include: [
               {model: db.Partner, as: 'sender', attributes: ['id', 'name']}
             ],
@@ -144,9 +148,7 @@ export class LogisticShippimentController {
           id: req.body.id,
           documento_transporte: req.body.documento_transporte,
           senderId: req.body.sender?.id,
-          quantidade_entrega: req.body.quantidade_entrega,
-          peso: req.body.peso,
-          valor_frete: req.body.valor_frete
+          proPred: req.body.proPred
         }
 
         console.log(shippiment)

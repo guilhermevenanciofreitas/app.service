@@ -3,15 +3,15 @@ import Sequelize from 'sequelize';
 export class City {
 
   id = {
-    field: 'id',
+    field: 'codigo_municipio',
     primaryKey: true,
     autoIncrement: true,
     type: Sequelize.UUID,
   };
 
   name = {
-    field: 'name',
-    type: Sequelize.STRING(30)
+    field: 'nome_municipio',
+    type: Sequelize.STRING(100)
   };
 
 }

@@ -19,6 +19,16 @@ export class Cte {
     type: Sequelize.BIGINT
   }
 
+  originId = {
+    field: 'Origem',
+    type: Sequelize.BIGINT
+  }
+
+  destinyId = {
+    field: 'Destino',
+    type: Sequelize.BIGINT
+  }
+
   shippimentId = {
     field: 'IDCarga',
     type: Sequelize.BIGINT

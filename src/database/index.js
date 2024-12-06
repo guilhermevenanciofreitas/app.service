@@ -33,6 +33,7 @@ import { Shippiment } from './models/shippiment.model.js'
 import { ReceivementInstallment } from './models/receivementInstallment.model.js'
 import { CteNfe } from './models/cteNfe.model.js'
 import { NFe } from './models/nfe.model.js'
+import { City } from './models/city.model.js'
 
 export class AppContext extends Sequelize {
   
@@ -49,6 +50,8 @@ export class AppContext extends Sequelize {
   ContabilityCategorie = this.define('contabilityCategorie', new ContabilityCategorie(), { tableName: 'contabilityCategorie' })
   
   Cte = this.define('cte', new Cte(), { tableName: 'ctes' })
+
+  City = this.define('city', new City(), { tableName: 'municipio' })
   
   CteNfe = this.define('cteNfe', new CteNfe(), { tableName: 'CteNotas' })
   
@@ -112,7 +115,12 @@ export class AppContext extends Sequelize {
 
     
     this.Cte.belongsTo(this.Partner, {as: 'recipient', foreignKey: 'recipientId', targetKey: 'id'})
+    this.Cte.belongsTo(this.Partner, {as: 'taker', foreignKey: 'takerId', targetKey: 'id'})
     this.Cte.belongsTo(this.Shippiment, {as: 'shippiment', foreignKey: 'shippimentId', targetKey: 'id'})
+
+    
+    this.Cte.belongsTo(this.City, {as: 'origin', foreignKey: 'originId', targetKey: 'id'})
+    this.Cte.belongsTo(this.City, {as: 'destiny', foreignKey: 'destinyId', targetKey: 'id'})
 
     this.Cte.hasMany(this.CteNfe, {as: 'cteNfes', foreignKey: 'cteId'})
 
@@ -157,7 +165,7 @@ export class AppContext extends Sequelize {
 
     this.User.hasMany(this.CompanyUser, {as: 'companyUsers', foreignKey: 'userId'})
     
-    this.CteNfe.belongsTo(this.Nfe, {as: 'nfe', foreignKey: 'cteId', targetKey: 'id'})
+    this.CteNfe.belongsTo(this.Nfe, {as: 'nfe', foreignKey: 'nfeId', targetKey: 'id'})
 
   }
 

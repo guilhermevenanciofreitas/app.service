@@ -64,13 +64,40 @@ export class SearchController {
         });
     }
 
+    async city(req, res) {
+        //Authorization.verify(req, res).then(async ({company}) => {
+            try {
+
+                const db = new AppContext()
+
+                const city = await db.City.findAll({
+                    attributes: ['id', 'name'],
+                    where: [{
+                        nome_municipio: {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
+                    }],
+                    order: [
+                        ['name', 'asc']
+                    ],
+                    limit: 20
+                });
+
+                res.status(200).json(city);
+
+            } catch (error) {
+                res.status(500).json({message: error.message});
+            }
+        //}).catch((error) => {
+        //    //Exception.unauthorized(res, error);
+        //});
+    }
+
     async sender(req, res) {
         //Authorization.verify(req, res).then(async ({company}) => {
             try {
 
                 const db = new AppContext()
 
-                const senders = await db.Partner.findAll({
+                const sender = await db.Partner.findAll({
                     attributes: ['id', 'name', 'surname'],
                     where: [{
                         '$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
@@ -82,7 +109,35 @@ export class SearchController {
                     limit: 20
                 });
 
-                res.status(200).json(senders);
+                res.status(200).json(sender);
+
+            } catch (error) {
+                res.status(500).json({message: error.message});
+            }
+        //}).catch((error) => {
+        //    //Exception.unauthorized(res, error);
+        //});
+    }
+
+    async recipient(req, res) {
+        //Authorization.verify(req, res).then(async ({company}) => {
+            try {
+
+                const db = new AppContext()
+
+                const recipient = await db.Partner.findAll({
+                    attributes: ['id', 'name', 'surname'],
+                    where: [{
+                        '$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
+                        ISDestinatario: 1
+                    }],
+                    order: [
+                        ['surname', 'asc']
+                    ],
+                    limit: 20
+                });
+
+                res.status(200).json(recipient);
 
             } catch (error) {
                 res.status(500).json({message: error.message});

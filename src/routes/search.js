@@ -11,7 +11,9 @@ export class SearchRoute {
     }
 
     intializeRoutes() {
+        this.router.post('/city', async (req, res) => await this.controller.city(req, res))
         this.router.post('/sender', async (req, res) => await this.controller.sender(req, res))
+        this.router.post('/recipient', async (req, res) => await this.controller.recipient(req, res))
     }
 
 }
