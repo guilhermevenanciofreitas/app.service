@@ -16,6 +16,7 @@ export class LogisticShippimentRoute {
         this.router.post('/shippiments', async (req, res) => await this.controller.shippiments(req, res))
         this.router.post('/detail', async (req, res) => await this.controller.detail(req, res))
         this.router.post('/submit', async (req, res) => await this.controller.submit(req, res))
+        this.router.post('/add-cte', async (req, res) => await this.controller.addCte(req, res))
     }
 
 }

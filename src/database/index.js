@@ -148,6 +148,7 @@ export class AppContext extends Sequelize {
     this.Session.belongsTo(this.User, {as: 'user', foreignKey: 'userId', targetKey: 'id'})
 
     this.Shippiment.belongsTo(this.Partner, {as: 'sender', foreignKey: 'senderId', targetKey: 'id'})
+    this.Shippiment.hasMany(this.Cte, {as: 'ctes', foreignKey: 'shippimentId'})
 
     this.Statement.belongsTo(this.BankAccount, {as: 'bankAccount', foreignKey: 'bankAccountId', targetKey: 'id'})
 

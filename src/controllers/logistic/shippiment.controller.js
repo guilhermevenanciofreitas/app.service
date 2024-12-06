@@ -2,6 +2,7 @@ import { AppContext } from "../../database/index.js"
 import dayjs from 'dayjs'
 import { Authorization } from "../authorization.js"
 import _ from 'lodash'
+import { Sequelize } from "sequelize"
 
 export class LogisticShippimentController {
 
@@ -13,33 +14,29 @@ export class LogisticShippimentController {
 
         const limit = req.body.limit || 50
         const offset = req.body.offset || 0
-        const filter = req.body.filter || { situation: ['active'] }
+        const search = req.body.search
 
-        //const bankAccount = req.body.bankAccount
+        const where = []
 
-        //const whereCompany = {'$bankAccount.companyId$': company.id}
+        if (search?.input) {
 
-        //const where = []
+          if (search?.picker == 'documentTransport') {
+            where.push({documento_transporte: {[Sequelize.Op.like]: `%${search.input.replace(' ', "%")}%`}})
+          }
 
-        //where.push(whereCompany)
-
-        //if (bankAccount) {
-        //  where.push({bankAccountId: bankAccount.id})
-        //}
-
-        //const where = [{[Op.not]: {situation: 'deleted'}}]
-
-        //if (filter['situation']) where.push({situation: filter['situation']})
+        }
 
         const shippiments = await db.Shippiment.findAndCountAll({
           attributes: ['id', 'documento_transporte', 'peso', 'valor_frete'],
           include: [
             {model: db.Partner, as: 'sender', attributes: ['id', 'surname']},
+            {model: db.Cte, as: 'ctes', attributes: ['id', 'chaveCt']},
           ],
           limit: limit,
           offset: offset * limit,
           order: [['id', 'desc']],
-          //where,
+          where,
+          subQuery: false
         })
 
         /*
@@ -54,7 +51,7 @@ export class LogisticShippimentController {
 
         res.status(200).json({
           request: {
-            filter, limit, offset
+            limit, offset
           },
           response: {
             rows: shippiments.rows, count: shippiments.count
@@ -92,6 +89,44 @@ export class LogisticShippimentController {
           res.status(200).json(shippiment)
           
         })
+
+      } catch (error) {
+        res.status(500).json({message: error.message})
+      }
+    //}).catch((error) => {
+    //  res.status(400).json({message: error.message})
+    //})
+  }
+
+  async addCte(req, res) {
+    //await Authorization.verify(req, res).then(async () => {
+      try {
+
+        const db = new AppContext();
+
+        await db.transaction(async (transaction) => {
+
+          //const cte = await db.Cte.findOne({attributes: ['id'], where: [{chaveCt: req.body.chaveCt}], transaction})
+
+          /*
+          const cteNfe = await db.CteNfe.findOne({attributes: ['id'], where: [{IDCte: req.body.cteId, IDNota: nfe.id}], transaction})
+
+          if (cteNfe) {
+            res.status(201).json({message: 'Conhecimento já está incluída!'})
+            return
+          }
+
+          if (!nfe) {
+
+          }
+          */
+
+          await db.Cte.update({shippimentId: req.body.shippimentId}, {where: [{chaveCt: req.body.chaveCt}], transaction})
+          
+          res.status(200).json({})
+
+        })
+
 
       } catch (error) {
         res.status(500).json({message: error.message})

@@ -33,6 +33,10 @@ export class LogisticCteController {
             where.push({'$shippiment.sender.RazaoSocial$': {[Sequelize.Op.like]: `%${search.input.replace(' ', "%")}%`}})
           }
 
+          if (search?.picker == 'chaveCt') {
+            where.push({chaveCT: search.input.match(/\d+/g)})
+          }
+
         }
         
         where.push({cStat: 100})
