@@ -92,8 +92,8 @@ export class LogisticCteController {
             include: [
               {model: db.Partner, as: 'taker', attributes: ['id', 'name', 'surname']},
               {model: db.Partner, as: 'recipient', attributes: ['id', 'name', 'surname']},
-              {model: db.Partner, as: 'origin', attributes: ['id', 'name']},
-              {model: db.Partner, as: 'destiny', attributes: ['id', 'name']}
+              {model: db.City, as: 'origin', attributes: ['id', 'name']},
+              {model: db.City, as: 'destiny', attributes: ['id', 'name']}
             ],
             where: [{id: id}],
             transaction
@@ -118,7 +118,9 @@ export class LogisticCteController {
         let cte = {
           id: req.body.id,
           takerId: req.body.taker?.id,
-          recipientId: req.body.recipient?.id
+          recipientId: req.body.recipient?.id,
+          originId: req.body.origin?.id || null,
+          destinyId: req.body.destiny?.id || null,
         }
 
         const db = new AppContext();
