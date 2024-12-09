@@ -148,10 +148,9 @@ export class LogisticShippimentController {
           id: req.body.id,
           documento_transporte: req.body.documento_transporte,
           senderId: req.body.sender?.id,
-          proPred: req.body.proPred
+          proPred: req.body.proPred,
+          quantidade_entrega: 0
         }
-
-        console.log(shippiment)
 
         const db = new AppContext();
 
