@@ -19,6 +19,7 @@ export class CteRoute {
         this.router.post('/upload', async (req, res) => await this.controller.upload(req, res))
         this.router.post('/add-nfe', async (req, res) => await this.controller.addNfe(req, res))
         this.router.post('/delete-nfe', async (req, res) => await this.controller.deleteNfe(req, res))
+        this.router.post('/dacte', async (req, res) => await this.controller.dacte(req, res))
     }
 
 }

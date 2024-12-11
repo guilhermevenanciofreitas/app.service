@@ -151,7 +151,8 @@ export class LogisticShippimentController {
           senderId: req.body.sender?.id,
           proPred: req.body.proPred,
           quantidade_entrega: 0,
-          peso: 0
+          peso: 0,
+          valor_frete: 0
         }
 
         const db = new AppContext();

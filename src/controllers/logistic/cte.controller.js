@@ -10,6 +10,9 @@ import dayjs from "dayjs"
 import Sequelize from "sequelize"
 //import axios from 'axios'
 
+import fetch from 'node-fetch';
+import { Buffer } from 'buffer';
+
 export class LogisticCteController {
 
   ctes = async (req, res) => {
@@ -40,7 +43,7 @@ export class LogisticCteController {
 
         }
         
-        where.push({cStat: 100})
+        where.push({cStat: 100, IDCarga: {[Sequelize.Op.eq]: null}})
 
         const ctes = await db.Cte.findAndCountAll({
           attributes: ['id', 'dhEmi', 'nCT', 'serieCT', 'chaveCT', 'cStat', 'baseCalculo'],
@@ -339,6 +342,59 @@ export class LogisticCteController {
         })
 
         res.status(200).json({})
+
+      } catch (error) {
+        res.status(500).json({message: error.message})
+      }
+    //}).catch((error) => {
+    //  res.status(400).json({message: error.message})
+    //})
+  }
+
+  async dacte(req, res) {
+    //await Authorization.verify(req, res).then(async () => {
+      try {
+
+        const db = new AppContext()
+
+        const cte = await db.Cte.findOne({attributes: ['xml'], where: [{id: req.body.id}]})
+
+        const url = `http://vps53636.publiccloud.com.br/sped-da/dacte.php`;
+        const headers = {
+          'Content-Type': 'application/json'
+        };
+
+        console.log(cte.xml)
+
+        const postData = {
+          logo: "TCL Transporte e Logistica.jpeg",
+          xml: Buffer.from(cte.xml.toString(), 'utf8').toString('base64')
+        };
+
+
+        console.log(1)
+
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(postData)
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const pdfBuffer = await response.arrayBuffer();
+          const pdfBase64 = Buffer.from(pdfBuffer).toString('base64');
+          
+          res.status(200).json({pdf: pdfBase64})
+
+        } catch (error) {
+          console.error('Erro na solicitação:', error);
+          throw error;
+        }
+      
 
       } catch (error) {
         res.status(500).json({message: error.message})
