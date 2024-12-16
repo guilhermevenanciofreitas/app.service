@@ -43,7 +43,7 @@ export class SearchController {
                 const db = new AppContext()
 
                 const partners = await db.Partner.findAll({
-                    attributes: ['id', 'name', 'surname'],
+                    attributes: ['id', 'cpfCnpj', 'name', 'surname'],
                     where: [{
                         '$companyId$': company.id,
                         '$surname$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}
@@ -98,7 +98,7 @@ export class SearchController {
                 const db = new AppContext()
 
                 const sender = await db.Partner.findAll({
-                    attributes: ['id', 'name', 'surname'],
+                    attributes: ['id', 'cpfCnpj', 'name', 'surname'],
                     where: [{
                         '$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
                         ISRemetente: 1
