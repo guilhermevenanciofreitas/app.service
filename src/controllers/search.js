@@ -101,6 +101,7 @@ export class SearchController {
                     attributes: ['id', 'cpfCnpj', 'name', 'surname'],
                     where: [{
                         '$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
+                        '$cpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
                         ISRemetente: 1
                     }],
                     order: [
