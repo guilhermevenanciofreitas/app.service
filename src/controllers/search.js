@@ -100,9 +100,11 @@ export class SearchController {
                 const sender = await db.Partner.findAll({
                     attributes: ['id', 'cpfCnpj', 'name', 'surname'],
                     where: [{
-                        '$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
-                        '$cpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
-                        ISRemetente: 1
+                        [Sequelize.Op.or]: {
+                            '$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
+                            '$cpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
+                        },
+                        //ISRemetente: 1
                     }],
                     order: [
                         ['surname', 'asc']

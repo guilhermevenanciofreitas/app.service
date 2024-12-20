@@ -84,7 +84,7 @@ export class LogisticShippimentController {
           const shippiment = await db.Shippiment.findOne({
             attributes: ['id', 'documento_transporte', 'proPred'],
             include: [
-              {model: db.Partner, as: 'sender', attributes: ['id', 'name']}
+              {model: db.Partner, as: 'sender', attributes: ['id', 'cpfCnpj', 'name']}
             ],
             where: [{codigo_carga: id}],
             transaction
