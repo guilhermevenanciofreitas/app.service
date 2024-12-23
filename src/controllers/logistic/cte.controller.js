@@ -243,35 +243,35 @@ export class LogisticCteController {
               cte.CST = json.cteProc.CTe.infCte.imp.ICMS.ICMS60.CST
             }
 
-            const receivement = await db.Receivement.create({
-              companyId: 1,
-              payerId: sender.id,
-              documentNumber: cte.nCT,
-              description: `Recebimento do CT-e ${cte.nCT}`,
-              total: cte.valorAReceber,
-              releaseDate: cte.dhEmi,
-              issueDate: cte.dhEmi,
-              categorieId: 1766,
-              createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-            }, {transaction})
-
-            await db.ReceivementInstallment.create({
-              receivementId: receivement.id,
-              description: receivement.description,
-              installment: 1,
-              dueDate: dayjs(cte.dhEmi).add(sender?.diasPrazoPagamento || 0, 'day').format('YYYY-MM-DD'),
-              amount: cte.valorAReceber,
-              createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-            }, {transaction})
-
-            cte.receivementId = receivement.id
-
-            console.log(cte.id)
-
             if (cte.id) {
               await db.Cte.update(cte, {where: [{id: cte.id}], transaction})
             } else {
+
+              const receivement = await db.Receivement.create({
+                companyId: 1,
+                payerId: sender.id,
+                documentNumber: cte.nCT,
+                description: `Recebimento do CT-e ${cte.nCT}`,
+                total: cte.valorAReceber,
+                releaseDate: cte.dhEmi,
+                issueDate: cte.dhEmi,
+                categorieId: 1766,
+                createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+              }, {transaction})
+  
+              await db.ReceivementInstallment.create({
+                receivementId: receivement.id,
+                description: receivement.description,
+                installment: 1,
+                dueDate: dayjs(cte.dhEmi).add(sender?.diasPrazoPagamento || 0, 'day').format('YYYY-MM-DD'),
+                amount: cte.valorAReceber,
+                createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+              }, {transaction})
+  
+              cte.receivementId = receivement.id
+
               await db.Cte.create(cte, {transaction})
+              
             }
             
           })
