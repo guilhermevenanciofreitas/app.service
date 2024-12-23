@@ -168,6 +168,8 @@ export class LogisticCteController {
 
             const json = await parser.parseStringPromise(xml)
 
+            console.log(json.cteProc.protCTe.infProt.chCTe)
+
             let cte = await db.Cte.findOne({attributes: ['id'], where: [{chaveCT: json.cteProc.protCTe.infProt.chCTe}]})
 
             //if (cte) {
@@ -193,7 +195,7 @@ export class LogisticCteController {
 
             cte = {
 
-              id: cte.id,
+              id: cte?.id,
 
               nCT: json.cteProc.CTe.infCte.ide.nCT,
               cCT: json.cteProc.CTe.infCte.ide.cCT,
