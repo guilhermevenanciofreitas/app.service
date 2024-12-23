@@ -154,8 +154,6 @@ export class LogisticCteController {
 
         const db = new AppContext()
 
-        
-
         const form = formidable({});
 
         const archives = await form.parse(req)
@@ -172,9 +170,9 @@ export class LogisticCteController {
 
             let cte = await db.Cte.findOne({attributes: ['id'], where: [{chaveCT: json.cteProc.protCTe.infProt.chCTe}]})
 
-            if (cte) {
-              return
-            }
+            //if (cte) {
+            //  return
+            //}
 
             const sender = await db.Partner.findOne({attributes: ['id', 'diasPrazoPagamento'], where: [{cpfCnpj: json.cteProc.CTe.infCte.rem.CNPJ || json.cteProc.CTe.infCte.rem.CPF}], transaction})
 
@@ -188,14 +186,14 @@ export class LogisticCteController {
 
               const partner = {cpfCnpj: json.cteProc.CTe.infCte.dest.CNPJ || json.cteProc.CTe.infCte.dest.CPF, name: json.cteProc.CTe.infCte.dest.xNome, surname: json.cteProc.CTe.infCte.dest.xNome, ISDestinatario: 1, ativo: 1}
 
-              console.log(partner)
-
               recipient = await db.Partner.create(partner, {transaction})
 
               //throw new Error('Destinatário não está cadastrado!')
             }
 
             cte = {
+
+              id: cte.id,
 
               nCT: json.cteProc.CTe.infCte.ide.nCT,
               cCT: json.cteProc.CTe.infCte.ide.cCT,
@@ -215,6 +213,7 @@ export class LogisticCteController {
               valorAReceber: json.cteProc.CTe.infCte.vPrest.vRec,
 
               recipientId: recipient.id,
+              takerId: sender.id,
 
               xml
 
@@ -265,8 +264,14 @@ export class LogisticCteController {
 
             cte.receivementId = receivement.id
 
-            await db.Cte.create(cte, {transaction})
+            console.log(cte.id)
 
+            if (cte.id) {
+              await db.Cte.update(cte, {where: [{id: cte.id}], transaction})
+            } else {
+              await db.Cte.create(cte, {transaction})
+            }
+            
           })
 
         }
