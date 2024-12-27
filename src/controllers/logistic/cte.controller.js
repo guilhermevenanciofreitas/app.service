@@ -43,12 +43,13 @@ export class LogisticCteController {
 
         }
         
-        where.push({cStat: 100, IDCarga: {[Sequelize.Op.eq]: null}})
+        where.push({cStat: 100})
 
         const ctes = await db.Cte.findAndCountAll({
           attributes: ['id', 'dhEmi', 'nCT', 'serieCT', 'chaveCT', 'cStat', 'baseCalculo'],
           include: [
-            {model: db.Partner, as: 'recipient', attributes: ['id', 'surname']},
+            {model: db.Partner, as:
+               'recipient', attributes: ['id', 'surname']},
             {model: db.Shippiment, as: 'shippiment', attributes: ['id'], include: [
               {model: db.Partner, as: 'sender', attributes: ['id', 'surname']}
             ]},
@@ -168,13 +169,13 @@ export class LogisticCteController {
 
             const json = await parser.parseStringPromise(xml)
 
+            if (!json.cteProc || !json.cteProc.protCTe) {
+              return
+            }
+
             console.log(json.cteProc.protCTe.infProt.chCTe)
 
             let cte = await db.Cte.findOne({attributes: ['id'], where: [{chaveCT: json.cteProc.protCTe.infProt.chCTe}]})
-
-            //if (cte) {
-            //  return
-            //}
 
             const sender = await db.Partner.findOne({attributes: ['id', 'diasPrazoPagamento'], where: [{cpfCnpj: json.cteProc.CTe.infCte.rem.CNPJ || json.cteProc.CTe.infCte.rem.CPF}], transaction})
 
@@ -190,7 +191,6 @@ export class LogisticCteController {
 
               recipient = await db.Partner.create(partner, {transaction})
 
-              //throw new Error('Destinatário não está cadastrado!')
             }
 
             cte = {
@@ -244,7 +244,9 @@ export class LogisticCteController {
             }
 
             if (cte.id) {
+              
               await db.Cte.update(cte, {where: [{id: cte.id}], transaction})
+
             } else {
 
               const receivement = await db.Receivement.create({

@@ -37,7 +37,7 @@ import { City } from './models/city.model.js'
 
 export class AppContext extends Sequelize {
   
-  Company = this.define('company', new Company(), { tableName: 'company' })
+  Company = this.define('company', new Company(), { tableName: 'empresa_filial' })
 
   CompanyIntegration = this.define('companyIntegration', new CompanyIntegration(), { tableName: 'companyIntegration' })
 
