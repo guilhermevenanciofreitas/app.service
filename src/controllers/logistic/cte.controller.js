@@ -94,10 +94,14 @@ export class LogisticCteController {
           const cte = await db.Cte.findOne({
             attributes: ['id', 'nCT', 'serieCT', 'chaveCt'],
             include: [
-              {model: db.Partner, as: 'taker', attributes: ['id', 'name', 'surname']},
-              {model: db.Partner, as: 'recipient', attributes: ['id', 'name', 'surname']},
-              {model: db.City, as: 'origin', attributes: ['id', 'name']},
-              {model: db.City, as: 'destiny', attributes: ['id', 'name']}
+              {model: db.Partner, as: 'taker', attributes: ['id', 'cpfCnpj', 'name', 'surname']},
+              {model: db.Partner, as: 'recipient', attributes: ['id', 'cpfCnpj', 'name', 'surname']},
+              {model: db.City, as: 'origin', attributes: ['id', 'name'],
+                include: [{model: db.State, as: 'state', attributes: ['id', 'acronym']}]
+              },
+              {model: db.City, as: 'destiny', attributes: ['id', 'name'],
+                include: [{model: db.State, as: 'state', attributes: ['id', 'acronym']}]
+              },
             ],
             where: [{id: id}],
             transaction

@@ -34,6 +34,8 @@ import { ReceivementInstallment } from './models/receivementInstallment.model.js
 import { CteNfe } from './models/cteNfe.model.js'
 import { NFe } from './models/nfe.model.js'
 import { City } from './models/city.model.js'
+import { State } from './models/state.model.js'
+import { Cfop } from './models/cfop.model.js'
 
 export class AppContext extends Sequelize {
   
@@ -52,6 +54,8 @@ export class AppContext extends Sequelize {
   Cte = this.define('cte', new Cte(), { tableName: 'ctes' })
 
   City = this.define('city', new City(), { tableName: 'municipio' })
+  
+  Cfop = this.define('cfop', new Cfop(), { tableName: 'CFOP' })
   
   CteNfe = this.define('cteNfe', new CteNfe(), { tableName: 'CteNotas' })
   
@@ -91,6 +95,8 @@ export class AppContext extends Sequelize {
 
   Shippiment = this.define('shippiment', new Shippiment(), { tableName: 'carga' })
 
+  State = this.define('state', new State(), { tableName: 'uf' })
+
   Statement = this.define('statement', new Statement(), { tableName: 'statement' })
 
   Task = this.define('task', new Task(), { tableName: 'task' })
@@ -104,7 +110,9 @@ export class AppContext extends Sequelize {
   constructor() {
 
     super({host: process.env.DB_HOST, port: process.env.DB_PORT, database: process.env.DB_DATABASE, password: process.env.DB_PASSWORD, username: process.env.DB_USER, dialect: 'mssql', dialectModule: tedious, databaseVersion: '10.50.1600', timezone: "America/Sao_Paulo", dialectOptions: { options: { requestTimeout: 300000, encrypt: false }}, define: { timestamps: false }})
-    
+
+    this.City.belongsTo(this.State, {as: 'state', foreignKey: 'stateId', targetKey: 'id'})
+
     this.CompanyIntegration.belongsTo(this.Integration, {as: 'integration', foreignKey: 'integrationId', targetKey: 'id'})
 
     this.CompanyRole.belongsTo(this.Role, {as: 'role', foreignKey: 'roleId', targetKey: 'id'})

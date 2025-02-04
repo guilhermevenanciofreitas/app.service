@@ -45,8 +45,10 @@ export class SearchController {
                 const partners = await db.Partner.findAll({
                     attributes: ['id', 'cpfCnpj', 'name', 'surname'],
                     where: [{
-                        '$companyId$': company.id,
-                        '$surname$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}
+                        [Sequelize.Op.or]: [
+                            {'$CpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}},
+                            {'$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}
+                        ],
                     }],
                     order: [
                         ['surname', 'asc']
@@ -72,6 +74,9 @@ export class SearchController {
 
                 const city = await db.City.findAll({
                     attributes: ['id', 'name'],
+                    include: [
+                        {model: db.State, as: 'state', attributes: ['id', 'acronym']}
+                    ],
                     where: [{
                         nome_municipio: {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
                     }],
@@ -79,12 +84,12 @@ export class SearchController {
                         ['name', 'asc']
                     ],
                     limit: 20
-                });
+                })
 
-                res.status(200).json(city);
+                res.status(200).json(city)
 
             } catch (error) {
-                res.status(500).json({message: error.message});
+                this.error(res, error)
             }
         //}).catch((error) => {
         //    //Exception.unauthorized(res, error);
@@ -100,10 +105,10 @@ export class SearchController {
                 const sender = await db.Partner.findAll({
                     attributes: ['id', 'cpfCnpj', 'name', 'surname'],
                     where: [{
-                        [Sequelize.Op.or]: {
-                            '$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
-                            '$cpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
-                        },
+                        [Sequelize.Op.or]: [
+                            {'$CpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}},
+                            {'$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}
+                        ],
                         //ISRemetente: 1
                     }],
                     order: [
@@ -129,9 +134,12 @@ export class SearchController {
                 const db = new AppContext()
 
                 const recipient = await db.Partner.findAll({
-                    attributes: ['id', 'name', 'surname'],
+                    attributes: ['id', 'cpfCnpj', 'name', 'surname'],
                     where: [{
-                        '$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
+                        [Sequelize.Op.or]: [
+                            {'$CpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}},
+                            {'$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}
+                        ],
                         ISDestinatario: 1
                     }],
                     order: [
@@ -157,9 +165,12 @@ export class SearchController {
                 const db = new AppContext(options)
 
                 const partners = await db.Partner.findAll({
-                    attributes: ['id', 'name', 'surname'],
+                    attributes: ['id', 'cpfCnpj', 'name', 'surname'],
                     where: [{
-                        '$surname$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%")}%`}
+                        [Sequelize.Op.or]: [
+                            {'$CpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}},
+                            {'$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}
+                        ],
                     }],
                     order: [
                         ['surname', 'asc']
@@ -344,5 +355,52 @@ export class SearchController {
         });
     }
     */
+
+    async cfop(req, res) {
+        //Authorization.verify(req, res).then(async ({company}) => {
+            try {
+
+                const db = new AppContext()
+
+                const cfop = await db.Cfop.findAll({
+                    attributes: ['id', 'code', 'description'],
+                    where: [{
+                        [Sequelize.Op.or]: [
+                            {'$CFOP$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}},
+                            {'$Descricao$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}
+                        ]
+                    }],
+                    order: [
+                        ['code', 'asc']
+                    ],
+                    limit: 20
+                })
+
+                res.status(200).json(cfop)
+
+            } catch (error) {
+                this.error(res, error)
+            }
+        //}).catch((error) => {
+        //    //Exception.unauthorized(res, error);
+        //});
+    }
+
+    error = (res, error) => {
+
+        const erros = []
+
+        // Verifica se há erros dentro de `original.errors`
+        if (error.original?.errors && Array.isArray(error.original.errors)) {
+            error.original.errors.forEach((err) => {
+                erros.push(err.message)
+            })
+        } else {
+            erros.push(error.message)
+        }
+
+        res.status(500).json({erros})
+
+    }
           
 }

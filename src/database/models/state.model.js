@@ -3,14 +3,14 @@ import Sequelize from 'sequelize';
 export class State {
 
   id = {
-    field: 'id',
+    field: 'codigo_uf',
     primaryKey: true,
     autoIncrement: true,
-    type: Sequelize.UUID,
+    type: Sequelize.NUMBER,
   };
 
-  name = {
-    field: 'name',
+  acronym = {
+    field: 'sigla_uf',
     type: Sequelize.STRING(30)
   };
 
