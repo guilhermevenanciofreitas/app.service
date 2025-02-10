@@ -6,16 +6,16 @@ export class CompanyRole {
     field: 'id',
     primaryKey: true,
     type: Sequelize.UUID
-  };
+  }
 
   companyId = {
     field: 'companyId',
     type: Sequelize.UUID
-  };
+  }
 
   roleId = {
     field: 'roleId',
     type: Sequelize.UUID
-  };
+  }
 
 }
