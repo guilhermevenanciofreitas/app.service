@@ -2,13 +2,16 @@ import { Sequelize } from "sequelize"
 
 import { AppContext } from "../../database/index.js"
 
+import crypto from 'crypto';
+
 import dayjs from 'dayjs'
+import { Exception } from "../../utils/exception.js"
+
 import _ from 'lodash'
 
 export class LoginController {
 
-  async signIn(req, res) {
-
+  signIn = async (req, res) => {
     try {
 
       const { email, password, companyId } = req.body
@@ -28,12 +31,12 @@ export class LoginController {
       await db.transaction(async (transaction) => {
 
         const user = await db.User.findOne({
-          attributes: ['id', 'name', 'email', 'password', 'status'],
-          include: [
+          attributes: ['id', 'email', 'password', 'passwordSalt'],
+          /*include: [
             {model: db.CompanyUser, as: 'companyUsers', attributes: ['id'], include: [
               {model: db.Company, as: 'company', attributes: ['id', 'name']}
             ]}
-          ],
+          ],*/
           where: [{email}], transaction});
 
         if (_.isEmpty(user)) {
@@ -41,12 +44,14 @@ export class LoginController {
           return
         }
   
+        const r = await this.compare(password, 'tv4oO/Nj4s9a04xG5WPvKA==')
+
+        console.log(r)
+
         if (!_.isEqual(user.password, password)) {
           res.status(201).json({message: 'Senha incorreta!'})
           return
         }
-
-        console.log(user)
 
         if (user.status == 'inactived') {
           res.status(201).json({message: 'Usuário inativado!'})
@@ -86,12 +91,11 @@ export class LoginController {
 
     }
     catch (error) {
-      res.status(500).json({message: error.message});
+      Exception.error(res, error)
     }
-
   }
 
-  async signOut(req, res) {
+  signOut = async (req, res) => {
     try {
 
       if (!req.headers.authorization) {
@@ -113,8 +117,23 @@ export class LoginController {
       })
   
     } catch (error) {
-      res.status(500).json({message: error.message})
+      Exception.error(res, error)
     }
+  }
+
+  compare = async (password, salt) => {
+
+    const iterations = 10000;
+    const keyLength = 256 / 8; // 256 bits
+    const digest = 'sha1'; // HMACSHA1
+
+    // Converte o salt de base64 para buffer
+    const saltBuffer = Buffer.from(salt, 'utf8');
+    const passwordBuffer = Buffer.from(password, 'utf8');
+    
+    const senhaCriptografada = crypto.pbkdf2Sync(passwordBuffer, saltBuffer, iterations, keyLength, digest);
+    return senhaCriptografada.toString('base64');
+    
   }
 
 }

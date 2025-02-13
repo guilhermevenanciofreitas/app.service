@@ -105,7 +105,7 @@ export class AppContext extends Sequelize {
 
   TaskHistory = this.define('taskHistory', new TaskHistory(), { tableName: 'taskHistory' })
 
-  User = this.define('user', new User(), { tableName: 'aspnet_Users' })
+  User = this.define('user', new User(), { tableName: 'aspnet_Membership' })
   
   constructor() {
 

@@ -8,16 +8,22 @@ export class User {
     type: Sequelize.UUID
   }
 
-  login = {
-    field: 'UserName',
+  email = {
+    field: 'Email',
     type: Sequelize.STRING
   }
 
   password = {
-    field: 'password',
+    field: 'Password',
     type: Sequelize.STRING
   }
 
+  passwordSalt = {
+    field: 'PasswordSalt',
+    type: Sequelize.STRING
+  }
+
+  /*
   inactivatedAt = {
     field: 'inactivatedAt',
     type: Sequelize.DATE
@@ -32,5 +38,6 @@ export class User {
     field: 'status',
     type: Sequelize.STRING
   }
+  */
 
 }
