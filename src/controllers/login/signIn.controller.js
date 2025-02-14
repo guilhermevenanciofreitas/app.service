@@ -2,7 +2,7 @@ import { Sequelize } from "sequelize"
 
 import { AppContext } from "../../database/index.js"
 
-import crypto from 'crypto';
+import bcrypt from 'bcrypt';
 
 import dayjs from 'dayjs'
 import { Exception } from "../../utils/exception.js"
@@ -14,7 +14,7 @@ export class LoginController {
   signIn = async (req, res) => {
     try {
 
-      const { email, password, companyId } = req.body
+      const { email, password, companyBusinessId, companyId } = req.body
 
       if (_.isEmpty(email)) {
         res.status(201).json({message: 'Informe o e-mail!'})
@@ -31,7 +31,7 @@ export class LoginController {
       await db.transaction(async (transaction) => {
 
         const user = await db.User.findOne({
-          attributes: ['id', 'email', 'password', 'passwordSalt'],
+          attributes: ['id', 'email', 'passwordHash'],
           /*include: [
             {model: db.CompanyUser, as: 'companyUsers', attributes: ['id'], include: [
               {model: db.Company, as: 'company', attributes: ['id', 'name']}
@@ -44,44 +44,62 @@ export class LoginController {
           return
         }
   
-        const r = await this.compare(password, 'tv4oO/Nj4s9a04xG5WPvKA==')
-
-        console.log(r)
-
-        if (!_.isEqual(user.password, password)) {
+        if (!(await this.comparePassword(password, user.passwordHash))) {
           res.status(201).json({message: 'Senha incorreta!'})
           return
         }
 
-        if (user.status == 'inactived') {
-          res.status(201).json({message: 'Usuário inativado!'})
+        //if (user.status == 'inactived') {
+        //  res.status(201).json({message: 'Usuário inativado!'})
+        //  return
+        //}
+
+        const where = []
+
+        where.push({'$companies.companyUsers.userId$': user.id})
+
+        if (companyBusinessId) {
+          where.push({'$companyBusiness.codigo_empresa$': companyBusinessId})
+        }
+
+        if (companyId) {
+          where.push({'$companies.codigo_empresa_filial$': companyId})
+        }
+
+        const companyBusiness = await db.CompanyBusiness.findAll({
+          attributes: ['id', 'description'],
+          include: [
+            {model: db.Company, as: 'companies', attributes: ['id', 'name', 'surname'],
+              include: [
+                {model: db.CompanyUser, as: 'companyUsers', attributes: ['userId']}
+              ]
+            },
+          ],
+          where,
+          order: [['description', 'asc']]
+        })
+
+        if (_.size(companyBusiness) > 1) {
+          res.status(202).json(companyBusiness)
           return
         }
 
-        let companies = _.map(user.companyUsers, (c) => c.company)
-
-        if (!_.isEmpty(companyId)) {
-          companies = _.filter(companies, (c) => c.id == companyId)
-        }
-
-        if (_.size(companies) > 1) {
-          res.status(202).json(companies)
+        if (_.size(companyBusiness[0].companies) > 1) {
+          res.status(203).json(companyBusiness[0].companies)
           return
         }
-
-        const company = companies[0]
 
         const lastAcess = dayjs()
         const expireIn = 120
 
-        await db.Session.destroy({where: [{userId: user.id, [Sequelize.and]: Sequelize.literal(`"lastAcess" + ("expireIn" ||' minutes')::interval <= '${dayjs().format('YYYY-MM-DD HH:mm:ss')}'`)}], transaction})
+        await db.Session.destroy({where: { userId: user.id, [Sequelize.and]: Sequelize.literal(`DATEADD(MINUTE, expireIn, lastAcess) <= '${dayjs().format('YYYY-MM-DD HH:mm:ss')}'`)}, transaction})
 
-        const session = await db.Session.create({companyId: company.id, userId: user.id, lastAcess: lastAcess.format('YYYY-MM-DD HH:mm:ss'), expireIn}, {transaction})
+        const session = await db.Session.create({companyId: companyBusiness[0].companies[0].id, userId: user.id, lastAcess: lastAcess.format('YYYY-MM-DD HH:mm:ss'), expireIn}, {transaction})
 
         res.status(200).json({
           message: 'Autorizado com sucesso!',
           token: session.id,
-          company: _.pick(company, ['id', 'name', 'surname']),
+          company: _.pick(companyBusiness[0].companies[0], ['id', 'name', 'surname']),
           user: _.pick(user, ['id', 'name']),
           lastAcess: lastAcess.format('YYYY-MM-DDTHH:mm:ss'),
           expireIn
@@ -121,19 +139,14 @@ export class LoginController {
     }
   }
 
-  compare = async (password, salt) => {
+  hashPassword = async (password) => {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    return hashedPassword;
+  }
 
-    const iterations = 10000;
-    const keyLength = 256 / 8; // 256 bits
-    const digest = 'sha1'; // HMACSHA1
-
-    // Converte o salt de base64 para buffer
-    const saltBuffer = Buffer.from(salt, 'utf8');
-    const passwordBuffer = Buffer.from(password, 'utf8');
-    
-    const senhaCriptografada = crypto.pbkdf2Sync(passwordBuffer, saltBuffer, iterations, keyLength, digest);
-    return senhaCriptografada.toString('base64');
-    
+  comparePassword = async (password, hashedPassword) => {
+    return await bcrypt.compare(password, hashedPassword);
   }
 
 }

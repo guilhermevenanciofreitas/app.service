@@ -16,12 +16,12 @@ export class Session {
 
   companyId = {
     field: 'companyId',
-    type: Sequelize.UUID
+    type: Sequelize.NUMBER
   };
 
   lastAcess = {
     field: 'lastAcess',
-    type: Sequelize.DATE
+    type: Sequelize.STRING
   };
 
   expireIn = {

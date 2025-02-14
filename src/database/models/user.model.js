@@ -13,13 +13,8 @@ export class User {
     type: Sequelize.STRING
   }
 
-  password = {
-    field: 'Password',
-    type: Sequelize.STRING
-  }
-
-  passwordSalt = {
-    field: 'PasswordSalt',
+  passwordHash = {
+    field: 'PasswordHash',
     type: Sequelize.STRING
   }
 

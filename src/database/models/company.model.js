@@ -3,9 +3,9 @@ import Sequelize from 'sequelize';
 export class Company {
 
   id = {
-    field: 'id',
+    field: 'codigo_empresa_filial',
     primaryKey: true,
-    type: Sequelize.UUID
+    type: Sequelize.NUMBER
   }
 
   cnpj = {
@@ -14,13 +14,18 @@ export class Company {
   }
 
   name = {
-    field: 'name',
-    type: Sequelize.STRING(100)
+    field: 'nome_fantasia',
+    type: Sequelize.STRING
   }
 
   surname = {
-    field: 'surname',
-    type: Sequelize.STRING(80)
+    field: 'descricao',
+    type: Sequelize.STRING
+  }
+
+  companyBusinessId = {
+    field: 'codigo_empresa',
+    type: Sequelize.NUMBER
   }
 
 }

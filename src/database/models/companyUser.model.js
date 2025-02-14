@@ -5,12 +5,13 @@ export class CompanyUser {
   id = {
     field: 'id',
     primaryKey: true,
-    type: Sequelize.UUID
+    type: Sequelize.UUID,
+    defaultValue: Sequelize.UUIDV4,
   }
 
   companyId = {
     field: 'companyId',
-    type: Sequelize.UUID
+    type: Sequelize.NUMBER
   }
 
   userId = {

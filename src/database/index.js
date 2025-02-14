@@ -36,10 +36,13 @@ import { NFe } from './models/nfe.model.js'
 import { City } from './models/city.model.js'
 import { State } from './models/state.model.js'
 import { Cfop } from './models/cfop.model.js'
+import { CompanyBusiness } from './models/companyBusiness.model.js'
 
 export class AppContext extends Sequelize {
   
   Company = this.define('company', new Company(), { tableName: 'empresa_filial' })
+
+  CompanyBusiness = this.define('companyBusiness', new CompanyBusiness(), { tableName: 'empresa' })
 
   CompanyIntegration = this.define('companyIntegration', new CompanyIntegration(), { tableName: 'companyIntegration' })
 
@@ -109,9 +112,31 @@ export class AppContext extends Sequelize {
   
   constructor() {
 
-    super({host: process.env.DB_HOST, port: process.env.DB_PORT, database: process.env.DB_DATABASE, password: process.env.DB_PASSWORD, username: process.env.DB_USER, dialect: 'mssql', dialectModule: tedious, databaseVersion: '10.50.1600', timezone: "America/Sao_Paulo", dialectOptions: { options: { requestTimeout: 300000, encrypt: false }}, define: { timestamps: false }})
+    super({
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      database: process.env.DB_DATABASE,
+      password: process.env.DB_PASSWORD,
+      username: process.env.DB_USER,
+      dialect: 'mssql',
+      dialectModule: tedious,
+      databaseVersion: '10.50.1600',
+      timezone: "America/Sao_Paulo",
+      dialectOptions: { options: { requestTimeout: 300000, encrypt: false }}, define: { timestamps: false },
+      logging: (sql, queryObject) => {
+        console.log(sql)
+        if (queryObject && queryObject.bind) {
+          console.log(queryObject.bind)
+        }
+      }
+    })
 
     this.City.belongsTo(this.State, {as: 'state', foreignKey: 'stateId', targetKey: 'id'})
+
+    this.CompanyBusiness.hasMany(this.Company, {as: 'companies', foreignKey: 'companyBusinessId'})
+
+    
+    this.Company.hasMany(this.CompanyUser, {as: 'companyUsers', foreignKey: 'companyId'})
 
     this.CompanyIntegration.belongsTo(this.Integration, {as: 'integration', foreignKey: 'integrationId', targetKey: 'id'})
 
