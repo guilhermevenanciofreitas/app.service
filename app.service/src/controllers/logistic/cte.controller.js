@@ -44,7 +44,7 @@ export class LogisticCteController {
 
         }
         
-        where.push({cStat: 100})
+        //where.push({cStat: 100})
 
         where.push({IDCarga: {[Sequelize.Op.eq]: null}})
 
