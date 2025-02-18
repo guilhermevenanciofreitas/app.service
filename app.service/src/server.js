@@ -46,7 +46,7 @@ class App {
     
     this.express.use('/api/search', new SearchRoute().router)
 
-    this.express.get('/*', (req, res) => res.sendFile('../public/index.html'))
+    //this.express.get('/*', (req, res) => res.sendFile('../public/index.html'))
 
   }
 
