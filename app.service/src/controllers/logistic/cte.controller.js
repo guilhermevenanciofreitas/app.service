@@ -114,7 +114,7 @@ export class LogisticCteController {
         })
 
       } catch (error) {
-        res.status(500).json({message: error.message})
+        Exception.error(res, error)
       }
     //}).catch((error) => {
     //  res.status(400).json({message: error.message})
@@ -148,7 +148,7 @@ export class LogisticCteController {
         res.status(200).json(cte)
 
       } catch (error) {
-        res.status(500).json({message: error.message})
+        Exception.error(res, error)
       }
     //}).catch((error) => {
     //  res.status(400).json({message: error.message})
@@ -290,7 +290,7 @@ export class LogisticCteController {
         res.status(200).json({})
 
       } catch (error) {
-        res.status(500).json({message: error.message})
+        Exception.error(res, error)
       }
     //}).catch((error) => {
     //  res.status(400).json({message: error.message})
@@ -337,7 +337,7 @@ export class LogisticCteController {
 
 
       } catch (error) {
-        res.status(500).json({message: error.message})
+        Exception.error(res, error)
       }
     //}).catch((error) => {
     //  res.status(400).json({message: error.message})
@@ -359,7 +359,7 @@ export class LogisticCteController {
         res.status(200).json({})
 
       } catch (error) {
-        res.status(500).json({message: error.message})
+        Exception.error(res, error)
       }
     //}).catch((error) => {
     //  res.status(400).json({message: error.message})
