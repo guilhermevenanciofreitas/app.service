@@ -4,12 +4,14 @@ import _ from 'lodash'
 
 import dayjs from 'dayjs'
 
+import { Exception } from '../../../utils/exception'
+
 import { Badge, Breadcrumb, Button, HStack, Nav, Panel, Stack } from 'rsuite';
 
 import { Divider } from 'rsuite';
 import PageContent from '../../../components/PageContent';
 
-import { CustomBreadcrumb, CustomDateRangePicker, CustomFilter, CustomSearch, DataTable } from '../../../controls';
+import { CustomBreadcrumb, CustomDateRangePicker, CustomFilter, CustomPagination, CustomSearch, DataTable } from '../../../controls';
 import { MdAddCircleOutline, MdCheckCircleOutline } from 'react-icons/md';
 import { FaFileImport, FaTransgender, FaUpload } from 'react-icons/fa';
 import { Service } from '../../../service';
@@ -20,31 +22,6 @@ const fields = [
   { label: 'Número', value: 'code' },
   { label: 'Documento de transporte', value: 'documentTransport' },
 ]
-
-class Filter extends React.Component {
-
-  state = {
-    filter: {...this.props.filter}
-  }
-
-  data = [
-    { label: 'Ativo', value: 'active' },
-    { label: 'Inativo', value: 'inactive' },
-  ]
-
-  onApply = () => {
-    this.props.onClose(this.props.onApply(this.state.filter))
-  }
-
-  render = () => (
-    <CustomFilter>
-      <CustomFilter.Item label={'Situação'} data={this.data} filter={this.state.filter} field={'situation'} onChange={(filter) => this.setState({filter})} />
-        <hr />
-      <Button appearance={'primary'} color='green' onClick={this.onApply}><MdCheckCircleOutline />&nbsp;Aplicar</Button>
-    </CustomFilter>
-  )
-
-}
 
 class LogisticShippiments extends React.Component {
 
@@ -66,9 +43,14 @@ class LogisticShippiments extends React.Component {
   onSearch = () => {
     this.setState({loading: true}, async () => {
       try {
-        await new Service().Post('logistic/shippiment/shippiments', this.state.request).then((result) => this.setState({...result.data})).finally(() => this.setState({loading: false}))
+        
+        const result = await new Service().Post('logistic/shippiment/shippiments', this.state.request)
+        this.setState({...result.data})
+        
       } catch (error) {
-        toast.error(error.message)
+        Exception.error(error)
+      } finally {
+        this.setState({loading: false})
       }
     })
   }
@@ -136,7 +118,10 @@ class LogisticShippiments extends React.Component {
 
           <hr></hr>
 
-          <Button appearance='primary' color='blue' startIcon={<MdAddCircleOutline />} onClick={this.onNewShippiment}>&nbsp;Novo romaneio</Button>
+          <Stack direction='row' alignItems='flexStart' justifyContent='space-between'>
+            <Button appearance='primary' color='blue' startIcon={<MdAddCircleOutline />} onClick={this.onNewShippiment}>&nbsp;Novo romaneio</Button>
+            <CustomPagination isLoading={this.state?.loading} total={this.state?.response?.count} limit={this.state?.request?.limit} activePage={this.state?.request?.offset + 1} onChangePage={(offset) => this.setState({request: {...this.state.request, offset: offset - 1}}, () => this.onSearch())} onChangeLimit={(limit) => this.setState({request: {...this.state.request, limit}}, () => this.onSearch())} />
+          </Stack>
 
         </PageContent>
       </>

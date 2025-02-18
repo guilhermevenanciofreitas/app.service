@@ -147,9 +147,9 @@ export class AppContext extends Sequelize {
     this.CompanyUser.belongsTo(this.Role, {as: 'role', foreignKey: 'roleId', targetKey: 'id'})
 
     
-    this.Cte.belongsTo(this.Partner, {as: 'recipient', foreignKey: 'recipientId', targetKey: 'id'})
+    this.Cte.belongsTo(this.Partner, {as: 'recipient', foreignKey: 'IDCliente', targetKey: 'id'})
     this.Cte.belongsTo(this.Partner, {as: 'taker', foreignKey: 'takerId', targetKey: 'id'})
-    this.Cte.belongsTo(this.Shippiment, {as: 'shippiment', foreignKey: 'shippimentId', targetKey: 'id'})
+    this.Cte.belongsTo(this.Shippiment, {as: 'shippiment', foreignKey: 'IDCarga', targetKey: 'id'})
 
     
     this.Cte.belongsTo(this.City, {as: 'origin', foreignKey: 'originId', targetKey: 'id'})
@@ -188,7 +188,7 @@ export class AppContext extends Sequelize {
     this.Session.belongsTo(this.Company, {as: 'company', foreignKey: 'companyId', targetKey: 'id'})
     this.Session.belongsTo(this.User, {as: 'user', foreignKey: 'userId', targetKey: 'id'})
 
-    this.Shippiment.belongsTo(this.Partner, {as: 'sender', foreignKey: 'senderId', targetKey: 'id'})
+    this.Shippiment.belongsTo(this.Partner, {as: 'sender', foreignKey: 'codigo_cliente', targetKey: 'id'})
     this.Shippiment.hasMany(this.Cte, {as: 'ctes', foreignKey: 'shippimentId'})
 
     this.Statement.belongsTo(this.BankAccount, {as: 'bankAccount', foreignKey: 'bankAccountId', targetKey: 'id'})

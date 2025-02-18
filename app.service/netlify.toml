@@ -7,8 +7,3 @@
   from = "/*"
   to = "/index.html"
   status = 200
-
-  [[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/errors/502"
-  status = 502

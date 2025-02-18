@@ -141,13 +141,9 @@ export class LogisticCtes extends React.Component {
         <PageContent>
           
           <Stack spacing={'6px'} direction={'row'} alignItems={'flex-start'} justifyContent={'space-between'}>
-            
             <HStack>
-
               <CustomSearch loading={this.state?.loading} fields={fields} defaultPicker={'nCT'} value={this.state?.request?.search} onChange={(search) => this.setState({request: {search}}, () => this.onSearch())} />
-      
             </HStack>
-
           </Stack>
 
           <hr></hr>

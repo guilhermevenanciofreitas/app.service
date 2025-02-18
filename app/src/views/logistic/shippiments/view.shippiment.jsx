@@ -8,6 +8,7 @@ import { Loading } from "../../../App";
 
 import _ from "lodash";
 import { Search } from "../../../search";
+import { Exception } from "../../../utils/exception";
 
 class ViewShippiment extends React.Component {
 
@@ -26,8 +27,8 @@ class ViewShippiment extends React.Component {
     }
 
     submit = async () => {
-        this.setState({submting: true}, async () => {
-
+        try {
+            this.setState({submting: true})
             const receivement = _.pick(this.state, [
                 'id',
                 'documento_transporte',
@@ -35,11 +36,15 @@ class ViewShippiment extends React.Component {
                 'proPred',
             ])
 
-            await new Service().Post('logistic/shippiment/submit', receivement).then(async (result) => {
-                await toaster.push(<Message showIcon type='success'>Salvo com sucesso!</Message>, {placement: 'topEnd', duration: 5000 })
-                this.viewModal.current?.close(result.data)
-            }).finally(() => this.setState({submting: false}));
-        })
+            const result = await new Service().Post('logistic/shippiment/submit', receivement)
+            await toaster.push(<Message showIcon type='success'>Salvo com sucesso!</Message>, {placement: 'topEnd', duration: 5000 })
+            this.viewModal.current?.close(result.data)
+
+        } catch (error) {
+            Exception.error(error)
+        } finally {
+            this.setState({submting: false})
+        }
     }
 
     close(role) {

@@ -64,7 +64,6 @@ export class LogisticCteController {
           offset: offset * limit,
           order: [['dhEmi', 'desc']],
           where,
-          subQuery: false
         })
 
         res.status(200).json({

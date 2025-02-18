@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import { Authorization } from "../authorization.js"
 import _ from 'lodash'
 import { Sequelize } from "sequelize"
+import { Exception } from "../../utils/exception.js"
 
 export class LogisticShippimentController {
 
@@ -39,8 +40,7 @@ export class LogisticShippimentController {
           limit: limit,
           offset: offset * limit,
           order: [['id', 'desc']],
-          where,
-          subQuery: false
+          where
         })
 
         /*
@@ -63,7 +63,7 @@ export class LogisticShippimentController {
         })
 
       } catch (error) {
-        res.status(500).json({message: error.message})
+        Exception.error(res, error)
       }
     //}).catch((error) => {
     //  res.status(400).json({message: error.message})
