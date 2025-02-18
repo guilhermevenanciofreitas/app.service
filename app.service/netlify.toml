@@ -10,5 +10,5 @@
 
   [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/error/502"
+  to = "/.netlify/functions/errors/502"
   status = 502
