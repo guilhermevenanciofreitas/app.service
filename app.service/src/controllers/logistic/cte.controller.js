@@ -38,16 +38,18 @@ export class LogisticCteController {
             where.push({'$shippiment.sender.RazaoSocial$': {[Sequelize.Op.like]: `%${search.input.replace(' ', "%")}%`}})
           }
 
-          if (search?.picker == 'chaveCt') {
-            where.push({chaveCT: search.input.match(/\d+/g)})
+          if (search?.picker == 'chCTe') {
+            where.push({'$chaveCT$': search.input.match(/\d+/g)})
           }
 
         }
         
-        where.push({cStat: 100, IDCarga: {[Sequelize.Op.eq]: null}})
+        where.push({cStat: 100})
+
+        //where.push({IDCarga: {[Sequelize.Op.eq]: null}})
 
         const ctes = await db.Cte.findAndCountAll({
-          attributes: ['id', 'dhEmi', 'nCT', 'serieCT', 'chaveCT', 'cStat', 'baseCalculo'],
+          attributes: ['id', 'dhEmi', 'nCT', 'serie', 'chCTe', 'cStat', 'baseCalculo'],
           include: [
             {model: db.Partner, as:
                'recipient', attributes: ['id', 'surname']},

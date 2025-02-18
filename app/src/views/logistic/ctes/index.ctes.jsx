@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 import PageContent from '../../../components/PageContent'
 
 import { CustomBreadcrumb, CustomPagination, CustomSearch, DataTable } from '../../../controls'
-import { FaEllipsisV, FaFileDownload, FaPrint, FaUpload } from 'react-icons/fa'
+import { FaEllipsisV, FaFileCode, FaFileDownload, FaFilePdf, FaPrint, FaSearchLocation, FaUpload } from 'react-icons/fa'
 import { Service } from '../../../service'
 
 import ViewUpload from './view.upload'
@@ -20,10 +20,10 @@ import { Exception } from '../../../utils/exception'
 const fields = [
   { label: 'Número', value: 'nCT' },
   { label: 'Remetente', value: 'sender' },
-  { label: 'Chave de acesso', value: 'chaveCt' },
+  { label: 'Chave de acesso', value: 'chCTe' },
 ]
 
-class FinanceBankAccounts extends React.Component {
+export class LogisticCtes extends React.Component {
 
   viewCte = React.createRef()
   viewUpload = React.createRef()
@@ -32,14 +32,6 @@ class FinanceBankAccounts extends React.Component {
 
   componentDidMount = () => {
     this.onSearch()
-  }
-
-  onApplyDate = (date) => {
-    //this.setState({request: {date}})
-  }
-
-  onApplyFilter = (filter) => {
-    this.setState({request: {filter}}, () => this.onSearch())
   }
 
   onSearch = () => {
@@ -63,13 +55,12 @@ class FinanceBankAccounts extends React.Component {
     })
   }
 
-  onEditCTe = async (cte) => {
-    this.viewCte.current.editCTe(cte.id).then((cte) => {
-      if (cte) this.onSearch()
-    })
+  onEdit = async ({id}) => {
+    const cte = await this.viewCte.current.editCTe(id)
+    if (cte) this.onSearch()
   }
 
-  onNewCte = () => {
+  onNew = () => {
     this.viewCte.current.newCte().then((cte) => {
       if (cte) this.onSearch()
     })
@@ -80,29 +71,29 @@ class FinanceBankAccounts extends React.Component {
     this.onSearch()
   }
 
-  onDacte = async (id, chaveCT) => {
+  onDacte = async ({id, chCTe}) => {
 
-    await new Service().Post('logistic/cte/dacte', {id}).then((response) => {
+    const response = await new Service().Post('logistic/cte/dacte', {id})
+
+    if (response.data.pdf && typeof response.data.pdf === 'string') {
+      
+      const binaryString = atob(response.data.pdf); // Decodifica o Base64
+      const binaryData = new Uint8Array(
+        binaryString.split('').map((char) => char.charCodeAt(0))
+      );
+      const pdfBlob = new Blob([binaryData], { type: 'application/pdf' });
+
+      // Create download link
+      const downloadUrl = URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `${chCTe}.pdf`; // Nome do arquivo baixado
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+    }
   
-      if (response.data.pdf && typeof response.data.pdf === 'string') {
-        // Decode Base64 and create a Blob
-        const binaryString = atob(response.data.pdf); // Decodifica o Base64
-        const binaryData = new Uint8Array(
-          binaryString.split('').map((char) => char.charCodeAt(0))
-        );
-        const pdfBlob = new Blob([binaryData], { type: 'application/pdf' });
-  
-        // Create download link
-        const downloadUrl = URL.createObjectURL(pdfBlob);
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.download = `${chaveCT}.pdf`; // Nome do arquivo baixado
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-  
-    }).finally(() => this.setState({loading: false}))
   }
 
   columns = [
@@ -122,21 +113,22 @@ class FinanceBankAccounts extends React.Component {
       }}
     >
       <IconButton className='hover-blue' size='sm' circle icon={<FaEllipsisV />} appearance="default" />
-    </Whisper>, minWidth: '60px', maxWidth: '60px', left: true},
+    </Whisper>, minWidth: '30px', maxWidth: '30px', center: true, style: {padding: '0px'}},
     { selector: (row) => dayjs(row.dhEmi).format('DD/MM/YYYY HH:mm'), name: 'Emissão', minWidth: '140px', maxWidth: '140px'},
-    { selector: (row) => row.nCT, name: 'Número', minWidth: '100px', maxWidth: '100px'},
-    { selector: (row) => row.serieCT, name: 'Série', minWidth: '60px', maxWidth: '60px'},
-    { selector: (row) => row.chaveCT, name: 'Chave de acesso', minWidth: '350px', maxWidth: '350px'},
+    { selector: (row) => row.nCT, name: 'Número', minWidth: '80px', maxWidth: '80px'},
+    { selector: (row) => row.serie, name: 'Série', minWidth: '60px', maxWidth: '60px'},
+    { selector: (row) => row.chCTe, name: 'Chave de acesso', minWidth: '350px', maxWidth: '350px'},
     { selector: (row) => row.shippiment?.sender?.surname, name: 'Remetente'},
-    { selector: (row) => row.recipient?.surname, name: 'Destinatário', minWidth: '300px', maxWidth: '300px'},
+    { selector: (row) => row.recipient?.surname, name: 'Destinatário', minWidth: '250px', maxWidth: '250px'},
     { selector: (row) => new Intl.NumberFormat('pt-BR', {style: 'decimal', minimumFractionDigits: 2}).format(parseFloat(row.baseCalculo)), name: 'Valor', minWidth: '100px', maxWidth: '100px', right: true},
-    { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onViewNfe(row)} content={_.size(row.cteNfes)}></Badge>, name: '#', center: true, minWidth: '55px', maxWidth: '55px'},
+    { selector: (row) => <div className='hidden'><FaPrint size='16px' color='red' style={{padding: '3px'}} onClick={() => this.onDacte(row)} /><FaFileCode size='16px' color='blue' style={{padding: '3px'}} /></div>, center: true, minWidth: '50px', maxWidth: '50px', style: {padding: '0px'}},
+    { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onViewNfe(row)} content={_.size(row.cteNfes)}></Badge>, center: true, minWidth: '35px', maxWidth: '35px', style: {padding: '0px'}},
   ]
 
   render = () => {
 
     return (
-      <>
+      <Panel header={<CustomBreadcrumb menu={'Logística'} title={'Conhecimentos de Transporte'} />}>
 
         <ViewUpload ref={this.viewUpload} />
 
@@ -167,37 +159,17 @@ class FinanceBankAccounts extends React.Component {
             })}
           </Nav>
 
-          <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEditCTe} selectedRows={true} />
+          <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEdit} selectedRows={true} />
       
           <hr></hr>
           
           <Stack direction='row' alignItems='flexStart' justifyContent='space-between'>
-          
             <Button appearance='primary' color='blue' startIcon={<FaUpload />} onClick={this.onUpload}>&nbsp;Upload</Button>
-
-            <CustomPagination isLoading={this.state?.loading} total={this.state?.response?.count} limit={this.state?.request?.limit} activePage={this.state?.request?.offset + 1}
-              onChangePage={(offset) => this.setState({request: {...this.state.request, offset: offset - 1}}, () => this.onSearch())}
-              onChangeLimit={(limit) => this.setState({request: {...this.state.request, limit}}, () => this.onSearch())}
-            />
-
+            <CustomPagination isLoading={this.state?.loading} total={this.state?.response?.count} limit={this.state?.request?.limit} activePage={this.state?.request?.offset + 1} onChangePage={(offset) => this.setState({request: {...this.state.request, offset: offset - 1}}, () => this.onSearch())} onChangeLimit={(limit) => this.setState({request: {...this.state.request, limit}}, () => this.onSearch())} />
           </Stack>
           
         </PageContent>
-      </>
-    )
-  }
-}
-
-class Page extends React.Component {
-
-  render = () => {
-    return (
-      <Panel header={<CustomBreadcrumb menu={'Logística'} title={'Conhecimentos de Transporte'} />}>
-        <FinanceBankAccounts />
       </Panel>
     )
   }
-
 }
-
-export default Page;

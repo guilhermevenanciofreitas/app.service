@@ -36,7 +36,7 @@ import SettingContabilityCategories from './views/setting/index.setting.contabil
 import SettingPaymentMethods from './views/setting/index.setting.payment-methods';
 
 //Logistic
-import LogisticCtes from './views/logistic/ctes/index.ctes';
+import { LogisticCtes } from './views/logistic/ctes/index.ctes';
 import LogisticShippiments from './views/logistic/shippiments/index.shippiments'
 import LogisticTrips from './views/logistic/trips/index.trips'
 

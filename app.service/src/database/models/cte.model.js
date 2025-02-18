@@ -44,12 +44,12 @@ export class Cte {
     type: Sequelize.SMALLINT
   }
 
-  serieCT = {
+  serie = {
     field: 'serieCT',
     type: Sequelize.BIGINT
   }
 
-  chaveCT = {
+  chCTe = {
     field: 'ChaveCT',
     type: Sequelize.STRING(44)
   }
