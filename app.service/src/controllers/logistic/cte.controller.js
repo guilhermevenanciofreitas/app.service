@@ -46,7 +46,7 @@ export class LogisticCteController {
         
         where.push({cStat: 100})
 
-        //where.push({IDCarga: {[Sequelize.Op.eq]: null}})
+        where.push({IDCarga: {[Sequelize.Op.eq]: null}})
 
         const ctes = await db.Cte.findAndCountAll({
           attributes: ['id', 'dhEmi', 'nCT', 'serie', 'chCTe', 'cStat', 'baseCalculo'],
