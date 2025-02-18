@@ -9,7 +9,7 @@ export class NFe {
     type: Sequelize.BIGINT,
   }
 
-  chaveNf = {
+  chNFe = {
     field: 'chaveNf',
     type: Sequelize.STRING(44),
   }

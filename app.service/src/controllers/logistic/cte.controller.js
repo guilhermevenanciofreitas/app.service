@@ -55,7 +55,7 @@ export class LogisticCteController {
               {model: db.Partner, as: 'sender', attributes: ['id', 'surname']}
             ]},
             {model: db.CteNfe, as: 'cteNfes', attributes: ['id', 'nfeId'], include: [
-              {model: db.Nfe, as: 'nfe', attributes: ['id', 'chaveNf']},
+              {model: db.Nfe, as: 'nfe', attributes: ['id', 'chNFe']},
             ]},
           ],
           limit: limit,
