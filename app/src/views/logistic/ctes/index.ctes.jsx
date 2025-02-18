@@ -15,6 +15,7 @@ import ViewCte from './view.cte'
 import ViewDacte from './view.dacte'
 
 import _ from 'lodash'
+import { Exception } from '../../../utils/exception'
 
 const fields = [
   { label: 'Número', value: 'nCT' },
@@ -44,9 +45,14 @@ class FinanceBankAccounts extends React.Component {
   onSearch = () => {
     this.setState({loading: true}, async () => {
       try {
-        await new Service().Post('logistic/cte/ctes', this.state.request).then((result) => this.setState({...result.data})).finally(() => this.setState({loading: false}))
+        
+        const result = await new Service().Post('logistic/cte/ctes', this.state.request)
+        this.setState({...result.data})
+        
       } catch (error) {
-        console.error(error.message)
+        Exception.error(error)
+      } finally {
+        this.setState({loading: false})
       }
     })
   }
