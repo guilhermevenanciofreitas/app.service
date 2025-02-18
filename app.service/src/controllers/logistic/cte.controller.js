@@ -94,7 +94,7 @@ export class LogisticCteController {
         await db.transaction(async (transaction) => {
             
           const cte = await db.Cte.findOne({
-            attributes: ['id', 'nCT', 'serieCT', 'chaveCt'],
+            attributes: ['id', 'nCT', 'serie', 'chCTe'],
             include: [
               {model: db.Partner, as: 'taker', attributes: ['id', 'cpfCnpj', 'name', 'surname']},
               {model: db.Partner, as: 'recipient', attributes: ['id', 'cpfCnpj', 'name', 'surname']},
@@ -205,8 +205,8 @@ export class LogisticCteController {
 
               nCT: json.cteProc.CTe.infCte.ide.nCT,
               cCT: json.cteProc.CTe.infCte.ide.cCT,
-              serieCT: json.cteProc.CTe.infCte.ide.serie,
-              chaveCT: json.cteProc.protCTe.infProt.chCTe,
+              serie: json.cteProc.CTe.infCte.ide.serie,
+              chCTe: json.cteProc.protCTe.infProt.chCTe,
               tpCTe: json.cteProc.CTe.infCte.ide.tpCTe,
               dhEmi: dayjs(json.cteProc.CTe.infCte.ide.dhEmi).format('YYYY-MM-DD HH:mm:ss'),
               CFOP: json.cteProc.CTe.infCte.ide.CFOP,
