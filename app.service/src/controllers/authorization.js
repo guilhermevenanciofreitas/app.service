@@ -42,8 +42,8 @@ export class Authorization {
     })
 
     return {
-      company: session.company,
-      user: session.user
+      companyId: session?.company?.id,
+      userId: session?.user?.id
     }
 
   }

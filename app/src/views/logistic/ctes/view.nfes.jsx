@@ -11,7 +11,7 @@ import { FaPlus, FaTrash } from "react-icons/fa";
 import { MdCheckCircleOutline } from "react-icons/md";
 import { Exception } from "../../../utils/exception";
 
-class ViewNfes extends React.Component {
+export class ViewNfes extends React.Component {
 
     viewModal = React.createRef()
 
@@ -106,5 +106,3 @@ class ViewNfes extends React.Component {
     }
 
 }
-
-export default ViewNfes;

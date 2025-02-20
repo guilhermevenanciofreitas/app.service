@@ -8,7 +8,7 @@ import { Loader, Placeholder } from 'rsuite';
 //import './DataTable.css';
 
 
-const ControlDataTable = ({height, dense = true, loading, columns, rows, noDataComponent, style, selectedRows, onItem, OnSort, placeholder = 8}) => {
+const ControlDataTable = ({height, dense = true, loading, columns, rows, noDataComponent, style, selectedRows, onItem, OnSort, onSelected, placeholder = 8}) => {
 
   return (
     <div style={style || {cursor: 'pointer', width: '100%', marginTop: '15px', maxHeight: '100%', height: height || 'calc(100vh - 370px)', overflow: loading ? 'hidden' : 'auto'}}>
@@ -32,6 +32,7 @@ const ControlDataTable = ({height, dense = true, loading, columns, rows, noDataC
           onRowDoubleClicked={onItem}
           dense={dense}
           selectableRows={selectedRows}
+          onSelectedRowsChange={(args) => onSelected(args.selectedRows)}
           onSort={(column, direction) => {
             if (!column?.sort) return;
             OnSort({column: column.sort, direction})

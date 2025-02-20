@@ -8,7 +8,7 @@ import { Exception } from "../../utils/exception.js"
 export class LogisticShippimentController {
 
   async shippiments(req, res) {
-    //await Authorization.verify(req, res).then(async ({company}) => {
+    await Authorization.verify(req, res).then(async ({company}) => {
       try {
 
         const db = new AppContext()
@@ -66,12 +66,11 @@ export class LogisticShippimentController {
       } catch (error) {
         Exception.error(res, error)
       }
-    //}).catch((error) => {
-    //  res.status(400).json({message: error.message})
-    //})
+    }).catch((error) => {
+      Exception.unauthorized(res, error)
+    })
   }
 
-  
   async detail(req, res) {
     //await Authorization.verify(req, res).then(async () => {
       try {

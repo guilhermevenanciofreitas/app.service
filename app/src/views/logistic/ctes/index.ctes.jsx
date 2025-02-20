@@ -6,11 +6,11 @@ import dayjs from 'dayjs'
 import PageContent from '../../../components/PageContent'
 
 import { CustomBreadcrumb, CustomPagination, CustomSearch, DataTable } from '../../../controls'
-import { FaEllipsisV, FaFileCode, FaFileDownload, FaFilePdf, FaPrint, FaSearchLocation, FaUpload } from 'react-icons/fa'
+import { FaDownload, FaEllipsisV, FaFileCode, FaFileDownload, FaFilePdf, FaPrint, FaSearchLocation, FaUpload } from 'react-icons/fa'
 import { Service } from '../../../service'
 
-import ViewUpload from './view.upload'
-import ViewNfes from './view.nfes'
+import { ViewUpload } from './view.upload'
+import { ViewNfes } from './view.nfes'
 import ViewCte from './view.cte'
 import ViewDacte from './view.dacte'
 
@@ -147,18 +147,25 @@ export class LogisticCtes extends React.Component {
           <hr></hr>
           
           <Nav appearance="subtle">
-            <Nav.Item active={!this.state?.request?.bankAccount} onClick={() => this.setState({request: {...this.state.request, bankAccount: undefined}}, () => this.onSearch())}><center style={{width: 140}}>Todos<br></br>{this.state?.loading ? "-" : <>{this.state?.response?.count}</>}</center></Nav.Item>
+            <Nav.Item active={!this.state?.request?.bankAccount} onClick={() => this.setState({request: {...this.state.request, bankAccount: undefined}}, () => this.onSearch())}><center style={{width: 140}}>Todos<br></br>{this.state?.loading ? "-" : this.state?.response?.count ?? '-'}</center></Nav.Item>
             {_.map(this.state?.response?.bankAccounts, (bankAccount) => {
               return <Nav.Item eventKey="home" active={this.state?.request?.bankAccount?.id == bankAccount.id} onClick={() => this.setState({request: {...this.state.request, bankAccount: bankAccount}}, () => this.onSearch())}><center style={{width: 160}}>{<><img src={bankAccount?.bank?.image} style={{height: '16px'}} />&nbsp;&nbsp;{bankAccount.name || <>{bankAccount?.agency}-{bankAccount?.agencyDigit} / {bankAccount?.account}-{bankAccount?.accountDigit}</>}</>}<br></br>{this.state?.loading ? '-' : <>R$ {bankAccount.balance}</>}</center></Nav.Item>
             })}
           </Nav>
 
-          <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEdit} selectedRows={true} />
+          <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEdit} selectedRows={true} onSelected={(selecteds) => this.setState({selecteds})} />
       
           <hr></hr>
           
           <Stack direction='row' alignItems='flexStart' justifyContent='space-between'>
-            <Button appearance='primary' color='blue' startIcon={<FaUpload />} onClick={this.onUpload}>&nbsp;Upload</Button>
+            <Stack spacing={5}>
+              {_.size(this.state?.selecteds) == 0 && <Button appearance='primary' color='blue' startIcon={<FaUpload />} onClick={this.onUpload}>&nbsp;Upload</Button>}
+              {_.size(this.state?.selecteds) > 0 && <>
+                <Button appearance='primary' color='blue' startIcon={<FaPrint />} onClick={this.onUpload}>&nbsp;Imprimir</Button>
+                <Button appearance='primary' color='blue' startIcon={<FaDownload />} onClick={this.onUpload}>&nbsp;Arquivo XML</Button>
+                {_.size(this.state?.selecteds)} registro(s)
+              </>}
+            </Stack>
             <CustomPagination isLoading={this.state?.loading} total={this.state?.response?.count} limit={this.state?.request?.limit} activePage={this.state?.request?.offset + 1} onChangePage={(offset) => this.setState({request: {...this.state.request, offset: offset - 1}}, () => this.onSearch())} onChangeLimit={(limit) => this.setState({request: {...this.state.request, limit}}, () => this.onSearch())} />
           </Stack>
           

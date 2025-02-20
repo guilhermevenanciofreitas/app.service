@@ -17,7 +17,8 @@ import { Exception } from "../../utils/exception.js"
 export class LogisticCteController {
 
   ctes = async (req, res) => {
-    //await Authorization.verify(req, res).then(async ({company}) => {
+    //await Authorization.verify(req, res).then(async ({companyId, userId}) => {
+
       try {
 
         const db = new AppContext()
@@ -81,12 +82,12 @@ export class LogisticCteController {
         Exception.error(res, error)
       }
     //}).catch((error) => {
-    //  res.status(400).json({message: error.message})
+    //  Exception.unauthorized(res, error)
     //})
   }
 
   async detail(req, res) {
-    //await Authorization.verify(req, res).then(async () => {
+    await Authorization.verify(req, res).then(async ({companyId, userId}) => {
       try {
 
         const { id } = req.body
@@ -118,13 +119,13 @@ export class LogisticCteController {
       } catch (error) {
         Exception.error(res, error)
       }
-    //}).catch((error) => {
-    //  res.status(400).json({message: error.message})
-    //})
+    }).catch((error) => {
+      Exception.unauthorized(res, error)
+    })
   }
 
   submit = async (req, res) => {
-    //await Authorization.verify(req, res).then(async () => {
+    await Authorization.verify(req, res).then(async ({companyId, userId}) => {
       try {
 
         let cte = {
@@ -152,13 +153,13 @@ export class LogisticCteController {
       } catch (error) {
         Exception.error(res, error)
       }
-    //}).catch((error) => {
-    //  res.status(400).json({message: error.message})
-    //})
+    }).catch((error) => {
+      Exception.unauthorized(res, error)
+    })
   }
 
   upload = async (req, res) => {
-    //await Authorization.verify(req, res).then(async ({company}) => {
+    await Authorization.verify(req, res).then(async ({companyId, userId}) => {
       try {
 
         const db = new AppContext()
@@ -298,13 +299,13 @@ export class LogisticCteController {
       } catch (error) {
         Exception.error(res, error)
       }
-    //}).catch((error) => {
-    //  res.status(400).json({message: error.message})
-    //})
+    }).catch((error) => {
+      Exception.unauthorized(res, error)
+    })
   }
 
   async addNfe(req, res) {
-    //await Authorization.verify(req, res).then(async () => {
+    await Authorization.verify(req, res).then(async ({companyId, userId}) => {
       try {
 
         const db = new AppContext();
@@ -345,13 +346,13 @@ export class LogisticCteController {
       } catch (error) {
         Exception.error(res, error)
       }
-    //}).catch((error) => {
-    //  res.status(400).json({message: error.message})
-    //})
+    }).catch((error) => {
+      Exception.unauthorized(res, error)
+    })
   }
 
   async deleteNfe(req, res) {
-    //await Authorization.verify(req, res).then(async () => {
+    await Authorization.verify(req, res).then(async ({companyId, userId}) => {
       try {
 
         const db = new AppContext();
@@ -367,13 +368,13 @@ export class LogisticCteController {
       } catch (error) {
         Exception.error(res, error)
       }
-    //}).catch((error) => {
-    //  res.status(400).json({message: error.message})
-    //})
+    }).catch((error) => {
+      Exception.error(res, error)
+    })
   }
 
   async dacte(req, res) {
-    //await Authorization.verify(req, res).then(async () => {
+    await Authorization.verify(req, res).then(async ({companyId, userId}) => {
       try {
 
         const db = new AppContext()
@@ -418,11 +419,11 @@ export class LogisticCteController {
       
 
       } catch (error) {
-        res.status(500).json({message: error.message})
+        Exception.error(res, error)
       }
-    //}).catch((error) => {
-    //  res.status(400).json({message: error.message})
-    //})
+    }).catch((error) => {
+      Exception.unauthorized(res, error)
+    })
   }
 
 }

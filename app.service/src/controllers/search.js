@@ -2,6 +2,7 @@ import { Authorization } from "./authorization.js";
 import { AppContext } from '../database/index.js'
 import Sequelize from "sequelize"
 import _ from "lodash"
+import { Exception } from "../utils/exception.js";
 
 export class SearchController {
 
@@ -32,7 +33,7 @@ export class SearchController {
                 //Exception.error(res, error);
             }
         }).catch((error) => {
-            //Exception.unauthorized(res, error);
+            Exception.unauthorized(res, error);
         });
     }
 
@@ -62,12 +63,12 @@ export class SearchController {
                 //Exception.error(res, error);
             }
         }).catch((error) => {
-            //Exception.unauthorized(res, error);
+            Exception.unauthorized(res, error);
         });
     }
 
     async city(req, res) {
-        //Authorization.verify(req, res).then(async ({company}) => {
+        Authorization.verify(req, res).then(async ({company}) => {
             try {
 
                 const db = new AppContext()
@@ -91,13 +92,13 @@ export class SearchController {
             } catch (error) {
                 this.error(res, error)
             }
-        //}).catch((error) => {
-        //    //Exception.unauthorized(res, error);
-        //});
+        }).catch((error) => {
+            //Exception.unauthorized(res, error)
+        })
     }
 
     async sender(req, res) {
-        //Authorization.verify(req, res).then(async ({company}) => {
+        Authorization.verify(req, res).then(async ({company}) => {
             try {
 
                 const db = new AppContext()
@@ -122,13 +123,13 @@ export class SearchController {
             } catch (error) {
                 res.status(500).json({message: error.message});
             }
-        //}).catch((error) => {
-        //    //Exception.unauthorized(res, error);
-        //});
+        }).catch((error) => {
+            Exception.unauthorized(res, error);
+        });
     }
 
     async recipient(req, res) {
-        //Authorization.verify(req, res).then(async ({company}) => {
+        Authorization.verify(req, res).then(async ({company}) => {
             try {
 
                 const db = new AppContext()
@@ -153,9 +154,9 @@ export class SearchController {
             } catch (error) {
                 res.status(500).json({message: error.message});
             }
-        //}).catch((error) => {
-        //    //Exception.unauthorized(res, error);
-        //});
+        }).catch((error) => {
+            Exception.unauthorized(res, error);
+        });
     }
 
     async employee(req, res) {
@@ -184,7 +185,7 @@ export class SearchController {
                 //Exception.error(res, error);
             }
         }).catch((error) => {
-            //Exception.unauthorized(res, error);
+            Exception.unauthorized(res, error);
         });
     }
 
@@ -220,7 +221,7 @@ export class SearchController {
                 //Exception.error(res, error);
             }
         }).catch((error) => {
-            //Exception.unauthorized(res, error);
+            Exception.unauthorized(res, error);
         });
     }
 
@@ -247,7 +248,7 @@ export class SearchController {
                 //Exception.error(res, error);
             }
         }).catch((error) => {
-            //Exception.unauthorized(res, error);
+            Exception.unauthorized(res, error);
         });
     }
 
@@ -278,7 +279,7 @@ export class SearchController {
                 //Exception.error(res, error);
             }
         }).catch((error) => {
-            //Exception.unauthorized(res, error);
+            Exception.unauthorized(res, error);
         });
     }
 
@@ -302,7 +303,7 @@ export class SearchController {
                 //Exception.error(res, error);
             }
         }).catch((error) => {
-            //Exception.unauthorized(res, error);
+            Exception.unauthorized(res, error);
         });
     }
 
@@ -357,7 +358,7 @@ export class SearchController {
     */
 
     async cfop(req, res) {
-        //Authorization.verify(req, res).then(async ({company}) => {
+        Authorization.verify(req, res).then(async ({company}) => {
             try {
 
                 const db = new AppContext()
@@ -381,9 +382,9 @@ export class SearchController {
             } catch (error) {
                 this.error(res, error)
             }
-        //}).catch((error) => {
-        //    //Exception.unauthorized(res, error);
-        //});
+        }).catch((error) => {
+            Exception.unauthorized(res, error);
+        });
     }
 
     error = (res, error) => {

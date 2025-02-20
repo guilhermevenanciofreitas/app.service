@@ -56,7 +56,8 @@ export class Service {
                 const message = error.response.data.message
                 localStorage.removeItem('Authorization')
                 const to = window.location.hash.slice(1)
-                window.location.href = `/sign-in`
+                const redirect = window.location.pathname == '/' ? '' : `?redirect=${window.location.pathname}`
+                window.location.href = `/sign-in${redirect}`
                 throw new Error(message)
             }
 

@@ -47,6 +47,7 @@ const Frame = (props) => {
         width={expand ? 260 : 56}
         collapsible
       >
+        
         <Sidenav.Header>
           <Brand />
         </Sidenav.Header>

@@ -91,7 +91,7 @@ export class LoginController {
         }
 
         const lastAcess = dayjs()
-        const expireIn = 120
+        const expireIn = 1
 
         await db.Session.destroy({where: { userId: user.id, [Sequelize.and]: Sequelize.literal(`DATEADD(MINUTE, expireIn, lastAcess) <= '${dayjs().format('YYYY-MM-DD HH:mm:ss')}'`)}, transaction})
 
@@ -101,7 +101,7 @@ export class LoginController {
           message: 'Autorizado com sucesso!',
           token: session.id,
           companyBusiness: _.pick(companyBusiness[0], ['description']),
-          company: _.pick(companyBusiness[0].companies[0], ['id', 'name', 'surname']),
+          company: _.pick(companyBusiness[0].companies[0], ['id', 'surname']),
           user: {id: user.id, name: user.userMember.name},
           lastAcess: lastAcess.format('YYYY-MM-DDTHH:mm:ss'),
           expireIn

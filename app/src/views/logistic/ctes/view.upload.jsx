@@ -1,15 +1,12 @@
-import React from "react";
-import { Button, CheckTree, DatePicker, Form, Input, InputGroup, Loader, Message, Modal, toaster } from 'rsuite';
-import { Container, Row, Col } from 'react-grid-system';
-import { AutoComplete, PhotoPicker, ViewModal } from "../../../controls";
-import { MdCheckCircleOutline } from "react-icons/md";
-import { Service } from "../../../service";
-import { Loading } from "../../../App";
+import React from "react"
+import { Button, Form, Loader, Message, Modal, toaster } from 'rsuite'
+import { Container, Row, Col } from 'react-grid-system'
+import { ViewModal } from "../../../controls"
+import { MdCheckCircleOutline } from "react-icons/md"
+import { Service } from "../../../service"
+import _ from "lodash"
 
-import _ from "lodash";
-import { Search } from "../../../search";
-
-class ViewUpload extends React.Component {
+export class ViewUpload extends React.Component {
 
     viewModal = React.createRef()
 
@@ -46,7 +43,7 @@ class ViewUpload extends React.Component {
         
         return (
             <Form autoComplete='off' onSubmit={this.submit}>
-                <ViewModal ref={this.viewModal} size={820}>
+                <ViewModal ref={this.viewModal} size={600}>
                     <Modal.Header><Modal.Title><Container>Upload</Container></Modal.Title></Modal.Header>
                     <Modal.Body>
                         <Row gutterWidth={0}>
@@ -70,5 +67,3 @@ class ViewUpload extends React.Component {
     }
 
 }
-
-export default ViewUpload;

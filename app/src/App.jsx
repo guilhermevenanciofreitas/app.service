@@ -1,15 +1,14 @@
-import React from 'react';
-import { Routes, Route, useRoutes } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Routes, Route, useRoutes, Navigate } from 'react-router-dom';
 import { CustomProvider, Loader } from 'rsuite';
 import enGB from 'rsuite/locales/en_GB';
 import Frame from './components/Frame';
 import DashboardPage from './views/dashboard';
 import Error404Page from './views/errors/404';
 
-import SignInPage from './views/sign-in';
+import { SignIn } from './views/sign-in/signIn'
 
 import { appNavs } from './config';
-import { BrowserRouter } from 'react-router-dom';
 
 //Calendar
 import CalendarPage from './views/calendar';
@@ -68,6 +67,100 @@ export class Loading extends React.Component {
 
 }
 
+const PrivateRoute2 = ({ component }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
+
+  useEffect(() => {
+
+    let animationFrameId
+
+    const checkAuth = () => {
+
+      const { token, lastAcess } = JSON.parse(localStorage.getItem("Authorization"))
+
+      if (!token || !lastAcess || Date.now() - Number(lastAcess) >= 30 * 60 * 1000) {
+        setIsAuthenticated(false)
+      } else {
+        setIsAuthenticated(true)
+        animationFrameId = requestAnimationFrame(checkAuth)
+      }
+
+    }
+
+    if (isAuthenticated === null) {
+      return null
+    }
+
+    return () => cancelAnimationFrame(animationFrameId)
+
+  }, [])
+
+  return isAuthenticated ? component : <Navigate to="/sign-in" replace />
+
+}
+
+export const checkAuthorization = () => {
+
+  const authData = localStorage.getItem("Authorization")
+
+  if (!authData) {
+    return false
+  }
+
+  const { token, lastAcess, expireIn } = JSON.parse(authData);
+
+  if (!token || !lastAcess || !expireIn) {
+    return false
+  }
+
+  const expirationTime = Number(lastAcess) + Number(expireIn) * 60 * 1000
+
+  if (Date.now() >= expirationTime) {
+    return false
+  } else {
+    return true
+  }
+
+}
+
+const PrivateRoute = ({ component }) => {
+
+  return component
+
+  const [isAuthenticated, setIsAuthenticated] = useState(null)
+
+  useEffect(() => {
+
+    let animationFrameId
+
+    const checkAuth = () => {
+
+      const isAuth = checkAuthorization()
+
+      if (!isAuth) {
+        setIsAuthenticated(false)
+      } else {
+        setIsAuthenticated(true)
+        animationFrameId = requestAnimationFrame(checkAuth)
+      }
+    }
+
+    checkAuth()
+
+    return () => cancelAnimationFrame(animationFrameId)
+
+  }, [])
+
+  if (isAuthenticated === null) {
+    return null
+  }
+
+  const redirect = window.location.pathname == '/' ? '' : `?redirect=${window.location.pathname}`
+
+  return isAuthenticated ? component : <Navigate to={`/sign-in${redirect}`} replace />
+
+}
+
 const App = () => {
 
   return (
@@ -77,9 +170,9 @@ const App = () => {
         <CustomProvider locale={ptBR}>
           <Routes>
             
-            <Route path="sign-in" element={<SignInPage />} />
+            <Route path="sign-in" element={<SignIn />} />
 
-            <Route path="/" element={<Frame navs={appNavs} />}>
+            <Route path="/" element={<PrivateRoute component={<Frame navs={appNavs} />} />}>
 
               <Route index element={<DashboardPage />} />
 
