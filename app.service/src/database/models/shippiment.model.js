@@ -14,17 +14,12 @@ export class Shippiment {
     type: Sequelize.BIGINT
   }
 
-  documento_transporte = {
+  documentNumber = {
     field: 'documento_transporte',
     type: Sequelize.STRING
   }
 
-  peso = {
-    field: 'peso',
-    type: Sequelize.DECIMAL
-  }
-
-  valor_frete = {
+  shippingValue = {
     field: 'valor_frete',
     type: Sequelize.DECIMAL
   }
@@ -34,24 +29,25 @@ export class Shippiment {
     type: Sequelize.BIGINT
   }
 
-  proPred = {
+  predominant = {
     field: 'proPred',
-    type: Sequelize.TEXT
+    type: Sequelize.STRING
   }
 
-  quantidade_entrega = {
+  quantity = {
     field: 'quantidade_entrega',
     type: Sequelize.SMALLINT
   }
 
-  peso = {
+  weight = {
     field: 'peso',
     type: Sequelize.DECIMAL(18, 3)
   }
 
-  valor_frete = {
-    field: 'valor_frete',
-    type: Sequelize.DECIMAL(18, 2)
+  departureDate = {
+    field: 'data_saida',
+    type: Sequelize.STRING
   }
+
 
 }

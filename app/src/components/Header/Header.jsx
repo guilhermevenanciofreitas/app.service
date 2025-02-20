@@ -29,49 +29,18 @@ class RenderAdminSpeaker extends React.Component {
     this.props.onClose()
   };
 
-  signOut = async () => {
-    try{
-
-      //Loading.Show('Saindo...');
-
-      const r = await new Service().Post('login/sign-out');
-
-      if (r?.status == 200) {
-
-        //localStorage.removeItem("Authorization");
-
-        //const from = (location?.pathname || '/') + (location?.search);
-  
-        //navigate(`sign-in`);
-  
-        //toast.success(r.data.message, { position: 'top-center' });
-
-      }
-
-    } catch (error) {
-      //toast.error(error.message);
-    }
-    finally {
-      //Loading.Hide();
-    }
-  }
-
   render = () => {
 
     const Authorization = JSON.parse(localStorage.getItem("Authorization"))
 
     return (
       <>
-        <Popover ref={this.props.ref} className={this.props.className} style={{ left: this.props.left, top: this.props.top }} full>
+        <Popover ref={this.props.ref} className={this.props.className} style={{ width: '200px', left: this.props.left, top: this.props.top }}>
           <Dropdown.Menu onSelect={this.handleSelect}>
-            <Dropdown.Item panel style={{ padding: 10, width: 200 }}>
-              <strong>{Authorization?.user?.name}</strong>
-            </Dropdown.Item>
-            <Dropdown.Item divider />
             <Dropdown.Item onClick={this.props.onProfile}>Perfil</Dropdown.Item>
             <Dropdown.Item onClick={this.props.onPasswordChange}>Alterar senha</Dropdown.Item>
             <Dropdown.Item divider />
-            {/*<Dropdown.Item onClick={this.props.onLoggout}>Logout</Dropdown.Item>*/}
+            <Dropdown.Item onClick={this.props.onLoggout}>Sair</Dropdown.Item>
           </Dropdown.Menu>
         </Popover>
       </>
@@ -212,6 +181,9 @@ const Header = () => {
   const viewProfile = React.createRef()
   const viewPassword = React.createRef()
 
+  
+  const Authorization = JSON.parse(localStorage?.getItem("Authorization"))
+
   const trigger = useRef(null);
 
   const onLoggout = async (props) => {
@@ -243,13 +215,11 @@ const Header = () => {
 
   const onProfile = (props) => {
     props.onClose()
-    const Authorization = JSON.parse(localStorage.getItem("Authorization"))
     viewProfile.current.editUser(Authorization.user.id)
   }
 
   const onPasswordChange = (props) => {
     props.onClose()
-    const Authorization = JSON.parse(localStorage.getItem("Authorization"))
     viewPassword.current.change(Authorization.user.id)
   }
 
@@ -261,15 +231,11 @@ const Header = () => {
 
       <Stack className="header" spacing={8}>
 
-        {/*
-        <Whisper placement="bottomEnd" trigger="click" ref={trigger} speaker={renderNoticeSpeaker}>
-          <IconButton icon={<Badge content={5}><NoticeIcon style={{ fontSize: 20 }} /></Badge>} />
-        </Whisper>
-        */}
-
-        <Whisper placement="bottomEnd" trigger="click" ref={trigger} speaker={renderSettingSpeaker}>
-          <IconButton icon={<GearIcon style={{ fontSize: 20 }} />} />
-        </Whisper>
+        <Stack direction="column" alignItems="left">
+          <span style={{ fontWeight: 'bold', color: '#777' }}>
+            {Authorization?.user?.name} / {Authorization?.companyBusiness?.description} - {Authorization?.company?.surname}
+          </span>
+        </Stack>
 
         <Whisper placement="bottomEnd" trigger="click" ref={trigger} speaker={(props, ref) => 
           <RenderAdminSpeaker ref={ref} {...props}

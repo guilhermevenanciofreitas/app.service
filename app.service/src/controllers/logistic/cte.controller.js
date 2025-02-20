@@ -48,6 +48,7 @@ export class LogisticCteController {
 
         where.push({IDCarga: {[Sequelize.Op.eq]: null}})
 
+
         const ctes = await db.Cte.findAndCountAll({
           attributes: ['id', 'dhEmi', 'nCT', 'serie', 'chCTe', 'cStat', 'baseCalculo'],
           include: [
@@ -64,6 +65,7 @@ export class LogisticCteController {
           offset: offset * limit,
           order: [['dhEmi', 'desc']],
           where,
+          subQuery: false
         })
 
         res.status(200).json({
@@ -179,8 +181,6 @@ export class LogisticCteController {
               return
             }
 
-            console.log(json.cteProc.protCTe.infProt.chCTe)
-
             let cte = await db.Cte.findOne({attributes: ['id'], where: [{chaveCT: json.cteProc.protCTe.infProt.chCTe}]})
 
             const sender = await db.Partner.findOne({attributes: ['id', 'diasPrazoPagamento'], where: [{cpfCnpj: json.cteProc.CTe.infCte.rem.CNPJ || json.cteProc.CTe.infCte.rem.CPF}], transaction})
@@ -193,9 +193,15 @@ export class LogisticCteController {
 
             if (!recipient) {
 
-              const partner = {cpfCnpj: json.cteProc.CTe.infCte.dest.CNPJ || json.cteProc.CTe.infCte.dest.CPF, name: json.cteProc.CTe.infCte.dest.xNome, surname: json.cteProc.CTe.infCte.dest.xNome, ISDestinatario: 1, ativo: 1}
+              recipient = {
+                cpfCnpj: json.cteProc.CTe.infCte.dest.CNPJ || json.cteProc.CTe.infCte.dest.CPF,
+                name: json.cteProc.CTe.infCte.dest.xNome,
+                surname: json.cteProc.CTe.infCte.dest.xNome,
+                ISDestinatario: 1,
+                ativo: 1
+              }
 
-              recipient = await db.Partner.create(partner, {transaction})
+              recipient = await db.Partner.create(recipient, {transaction})
 
             }
 
@@ -305,7 +311,7 @@ export class LogisticCteController {
 
         await db.transaction(async (transaction) => {
 
-          const nfe = await db.Nfe.findOne({attributes: ['id'], where: [{chaveNf: req.body.chaveNf}], transaction})
+          const nfe = await db.Nfe.findOne({attributes: ['id'], where: [{chaveNf: req.body.chNFe}], transaction})
 
           let cteNfe
 

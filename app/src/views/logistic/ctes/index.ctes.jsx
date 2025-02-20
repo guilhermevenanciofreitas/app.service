@@ -49,10 +49,9 @@ export class LogisticCtes extends React.Component {
     })
   }
 
-  onUpload = () => {
-    this.viewUpload.current.upload().then((ctes) => {
-      if (ctes) this.onSearch()
-    })
+  onUpload = async () => {
+    const submited = await this.viewUpload.current.upload()
+    if (submited) this.onSearch()
   }
 
   onEdit = async ({id}) => {
@@ -60,15 +59,14 @@ export class LogisticCtes extends React.Component {
     if (cte) this.onSearch()
   }
 
-  onNew = () => {
-    this.viewCte.current.newCte().then((cte) => {
-      if (cte) this.onSearch()
-    })
+  onNew = async () => {
+    const cte = await this.viewCte.current.newCte()
+    if (cte) this.onSearch()
   }
 
-  onViewNfe = async (cteNfes) => {
-    await this.viewNfes.current.show(cteNfes)
-    this.onSearch()
+  onViewNfe = async (cte) => {
+    cte = await this.viewNfes.current.show(cte)
+    console.log(cte)
   }
 
   onDacte = async ({id, chCTe}) => {
@@ -121,7 +119,7 @@ export class LogisticCtes extends React.Component {
     { selector: (row) => row.shippiment?.sender?.surname, name: 'Remetente'},
     { selector: (row) => row.recipient?.surname, name: 'Destinatário', minWidth: '250px', maxWidth: '250px'},
     { selector: (row) => new Intl.NumberFormat('pt-BR', {style: 'decimal', minimumFractionDigits: 2}).format(parseFloat(row.baseCalculo)), name: 'Valor', minWidth: '100px', maxWidth: '100px', right: true},
-    { selector: (row) => <div className='hidden'><FaPrint size='16px' color='red' style={{padding: '3px'}} onClick={() => this.onDacte(row)} /><FaFileCode size='16px' color='blue' style={{padding: '3px'}} /></div>, center: true, minWidth: '50px', maxWidth: '50px', style: {padding: '0px'}},
+    { selector: (row) => <div className='hidden'><FaPrint size='16px' color='tomato' style={{padding: '3px'}} onClick={() => this.onDacte(row)} /><FaFileCode size='16px' color='steelblue' style={{padding: '3px'}} /></div>, center: true, minWidth: '50px', maxWidth: '50px', style: {padding: '0px'}},
     { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onViewNfe(row)} content={_.size(row.cteNfes)}></Badge>, center: true, minWidth: '35px', maxWidth: '35px', style: {padding: '0px'}},
   ]
 

@@ -32,15 +32,16 @@ export class LogisticShippimentController {
         }
 
         const shippiments = await db.Shippiment.findAndCountAll({
-          attributes: ['id', 'documento_transporte', 'peso', 'valor_frete'],
+          attributes: ['id', 'documentNumber'],
           include: [
             {model: db.Partner, as: 'sender', attributes: ['id', 'surname']},
-            {model: db.Cte, as: 'ctes', attributes: ['id', 'chaveCt']},
+            {model: db.Cte, as: 'ctes', attributes: ['id', 'chCTe']},
           ],
           limit: limit,
           offset: offset * limit,
-          order: [['id', 'desc']],
-          where
+          order: [['departureDate', 'desc']],
+          where,
+          subQuery: false
         })
 
         /*

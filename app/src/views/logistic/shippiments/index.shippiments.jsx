@@ -74,9 +74,9 @@ class LogisticShippiments extends React.Component {
 
   columns = [
     { selector: (row) => row.id, name: 'Id'},
-    { selector: (row) => row.documento_transporte, name: 'Documento transporte'},
+    { selector: (row) => row.documentNumber, name: 'Documento transporte'},
     { selector: (row) => row.sender?.surname, name: 'Remetente'},
-    { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onViewCtes(row)} content={_.size(row.ctes)}></Badge>, name: '#', minWidth: '80px', maxWidth: '80px'},
+    { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onViewCtes(row)} content={_.size(row.ctes)}></Badge>, center: true, minWidth: '35px', maxWidth: '35px', style: {padding: '0px'}},
   ]
 
   render = () => {

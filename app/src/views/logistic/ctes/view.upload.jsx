@@ -53,7 +53,7 @@ class ViewUpload extends React.Component {
                             <Col md={12}>
                                 <div className='form-control'>
                                     <label class="textfield-filled">
-                                        <input type='file' onChange={(event) => this.setState({files: event.target.files})} multiple />
+                                        <input type='file' onChange={(event) => this.setState({files: event.target.files})} accept=".xml" multiple />
                                         <span>Arquivo XML</span>
                                     </label>
                                 </div>

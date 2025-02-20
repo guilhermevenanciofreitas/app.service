@@ -31,13 +31,14 @@ export class LoginController {
       await db.transaction(async (transaction) => {
 
         const user = await db.User.findOne({
-          attributes: ['id', 'email', 'passwordHash'],
-          /*include: [
-            {model: db.CompanyUser, as: 'companyUsers', attributes: ['id'], include: [
-              {model: db.Company, as: 'company', attributes: ['id', 'name']}
-            ]}
-          ],*/
-          where: [{email}], transaction});
+          attributes: ['id', 'name', 'email', 'passwordHash'],
+          include: [
+            {model: db.UserMember, as: 'userMember', attributes: ['id', 'name']}
+          ],
+          where: Sequelize.literal(`"User"."email" = :email OR "userMember"."UserName" = :email`),
+          replacements: { email },
+          transaction
+        })
 
         if (_.isEmpty(user)) {
           res.status(201).json({message: 'Usuário não encontrado!'})
@@ -99,8 +100,9 @@ export class LoginController {
         res.status(200).json({
           message: 'Autorizado com sucesso!',
           token: session.id,
+          companyBusiness: _.pick(companyBusiness[0], ['description']),
           company: _.pick(companyBusiness[0].companies[0], ['id', 'name', 'surname']),
-          user: _.pick(user, ['id', 'name']),
+          user: {id: user.id, name: user.userMember.name},
           lastAcess: lastAcess.format('YYYY-MM-DDTHH:mm:ss'),
           expireIn
         })

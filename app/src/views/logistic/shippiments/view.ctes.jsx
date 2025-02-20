@@ -68,7 +68,7 @@ class ViewCtes extends React.Component {
 
     columns = [
         { selector: (row) => row.chaveCt, name: 'Chave de acesso'},
-        { selector: (row) => <IconButton color="red" size={'sm'} circle icon={<FaTrash />} appearance="ghost" onClick={() => this.onDeleteNfe(row)} />, name: '', minWidth: '80px', maxWidth: '80px'},
+        { selector: (row) => <div class="hidden"><FaTrash color="tomato" onClick={() => this.onDeleteNfe(row)} /></div>, name: '', minWidth: '80px', maxWidth: '80px'},
    ]
 
     render = () => {
