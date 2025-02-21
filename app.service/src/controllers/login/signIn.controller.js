@@ -91,7 +91,7 @@ export class LoginController {
         }
 
         const lastAcess = dayjs()
-        const expireIn = 1
+        const expireIn = 60
 
         await db.Session.destroy({where: { userId: user.id, [Sequelize.and]: Sequelize.literal(`DATEADD(MINUTE, expireIn, lastAcess) <= '${dayjs().format('YYYY-MM-DD HH:mm:ss')}'`)}, transaction})
 

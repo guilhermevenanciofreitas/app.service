@@ -5,7 +5,7 @@ export class User {
   id = {
     field: 'UserId',
     primaryKey: true,
-    type: Sequelize.UUID
+    type: Sequelize.UUIDV4
   }
 
   name = {

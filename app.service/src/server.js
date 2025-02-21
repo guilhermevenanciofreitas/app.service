@@ -9,6 +9,7 @@ import { IntegrationRoute } from './routes/integration/integration.route.js'
 import { CteRoute } from './routes/logistic/cte.route.js'
 import { LogisticShippimentRoute } from './routes/logistic/shippiment.route.js'
 import { SearchRoute } from './routes/search.js'
+import { CalledRoute } from './routes/called.route.js'
 
 class App {
 
@@ -34,6 +35,9 @@ class App {
   initializeRoutes = () => {
 
     this.express.use('/api/login', new LoginRoute().router)
+
+    //Called
+    this.express.use('/api/called', new CalledRoute().router)
 
     //Logistic
     this.express.use('/api/logistic/cte', new CteRoute().router)

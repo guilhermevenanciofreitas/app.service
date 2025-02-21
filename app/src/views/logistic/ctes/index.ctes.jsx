@@ -126,7 +126,7 @@ export class LogisticCtes extends React.Component {
   render = () => {
 
     return (
-      <Panel header={<CustomBreadcrumb menu={'Logística'} title={'Conhecimentos de Transporte'} />}>
+      <Panel header={<CustomBreadcrumb menu={'Logística'} title={'Conhecimentos'} />}>
 
         <ViewUpload ref={this.viewUpload} />
 

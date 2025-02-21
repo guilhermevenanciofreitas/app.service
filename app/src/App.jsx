@@ -14,7 +14,7 @@ import { appNavs } from './config';
 import CalendarPage from './views/calendar';
 
 //Calleds
-import Calleds from './views/calleds/index.calleds';
+import { Calleds } from './views/calleds/index.calleds';
 
 //Register
 import RegisterProducts from './views/register/products/index.products';
@@ -36,8 +36,8 @@ import SettingPaymentMethods from './views/setting/index.setting.payment-methods
 
 //Logistic
 import { LogisticCtes } from './views/logistic/ctes/index.ctes';
-import LogisticShippiments from './views/logistic/shippiments/index.shippiments'
-import LogisticTrips from './views/logistic/trips/index.trips'
+import { LogisticShippiments } from './views/logistic/shippiments/index.shippiments'
+import { LogisticTrips } from './views/logistic/trips/index.trips'
 
 //Integration
 import Tasks from './views/task/index.tasks'
@@ -67,38 +67,6 @@ export class Loading extends React.Component {
 
 }
 
-const PrivateRoute2 = ({ component }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
-
-  useEffect(() => {
-
-    let animationFrameId
-
-    const checkAuth = () => {
-
-      const { token, lastAcess } = JSON.parse(localStorage.getItem("Authorization"))
-
-      if (!token || !lastAcess || Date.now() - Number(lastAcess) >= 30 * 60 * 1000) {
-        setIsAuthenticated(false)
-      } else {
-        setIsAuthenticated(true)
-        animationFrameId = requestAnimationFrame(checkAuth)
-      }
-
-    }
-
-    if (isAuthenticated === null) {
-      return null
-    }
-
-    return () => cancelAnimationFrame(animationFrameId)
-
-  }, [])
-
-  return isAuthenticated ? component : <Navigate to="/sign-in" replace />
-
-}
-
 export const checkAuthorization = () => {
 
   const authData = localStorage.getItem("Authorization")
@@ -124,8 +92,6 @@ export const checkAuthorization = () => {
 }
 
 const PrivateRoute = ({ component }) => {
-
-  return component
 
   const [isAuthenticated, setIsAuthenticated] = useState(null)
 

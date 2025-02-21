@@ -1,10 +1,19 @@
 import _ from "lodash";
 import { Service } from "../service"
+import { Exception } from "../utils/exception";
 
 export const Search = {
 
     company: async (search) => {
         return (await new Service().Post("search/company", {search}))?.data
+    },
+
+    user: async (search) => {
+        try {
+            return (await new Service().Post("search/user", {search}))?.data
+        } catch (error) {
+            Exception.error(error)
+        }
     },
 
     city: async (search) => {

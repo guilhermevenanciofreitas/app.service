@@ -7,7 +7,7 @@ import { Exception } from "../utils/exception.js";
 export class SearchController {
 
     async company(req, res) {
-        Authorization.verify(req, res).then(async ({user}) => {
+        Authorization.verify(req, res).then(async ({companyId, userId}) => {
             try {
 
                 const db = new AppContext()
@@ -27,14 +27,44 @@ export class SearchController {
                     limit: 20
                 });
 
-                res.status(200).json(_.map(companies, (companyUser) => companyUser.company.dataValues));
+                res.status(200).json(_.map(companies, (companyUser) => companyUser.company.dataValues))
 
             } catch (error) {
-                //Exception.error(res, error);
+                Exception.error(res, error)
             }
         }).catch((error) => {
-            Exception.unauthorized(res, error);
-        });
+            Exception.unauthorized(res, error)
+        })
+    }
+
+    async user(req, res) {
+        Authorization.verify(req, res).then(async ({companyId, userId}) => {
+            try {
+
+                const db = new AppContext()
+
+                const users = await db.User.findAll({
+                    attributes: ['id', 'name'],
+                    include: [
+                        {model: db.UserMember, as: 'userMember', attributes: ['name']}
+                    ],
+                    where: [{
+                        '$userMember.UserName$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
+                    }],
+                    order: [
+                        [db.UserMember, 'name', 'asc']
+                    ],
+                    limit: 20
+                })
+
+                res.status(200).json(users)
+
+            } catch (error) {
+                Exception.error(res, error)
+            }
+        }).catch((error) => {
+            //Exception.unauthorized(res, error)
+        })
     }
 
     async partner(req, res) {
@@ -60,7 +90,7 @@ export class SearchController {
                 res.status(200).json(partners);
 
             } catch (error) {
-                //Exception.error(res, error);
+                Exception.error(res, error)
             }
         }).catch((error) => {
             Exception.unauthorized(res, error);
@@ -90,7 +120,7 @@ export class SearchController {
                 res.status(200).json(city)
 
             } catch (error) {
-                this.error(res, error)
+                Exception.error(res, error)
             }
         }).catch((error) => {
             //Exception.unauthorized(res, error)
@@ -121,7 +151,7 @@ export class SearchController {
                 res.status(200).json(sender);
 
             } catch (error) {
-                res.status(500).json({message: error.message});
+                Exception.error(res, error)
             }
         }).catch((error) => {
             Exception.unauthorized(res, error);
@@ -152,7 +182,7 @@ export class SearchController {
                 res.status(200).json(recipient);
 
             } catch (error) {
-                res.status(500).json({message: error.message});
+                Exception.error(res, error)
             }
         }).catch((error) => {
             Exception.unauthorized(res, error);
@@ -182,7 +212,7 @@ export class SearchController {
                 res.status(200).json(partners);
 
             } catch (error) {
-                //Exception.error(res, error);
+                Exception.error(res, error)
             }
         }).catch((error) => {
             Exception.unauthorized(res, error);
@@ -218,7 +248,7 @@ export class SearchController {
                 res.status(200).json(bankAccounts);
 
             } catch (error) {
-                //Exception.error(res, error);
+                Exception.error(res, error)
             }
         }).catch((error) => {
             Exception.unauthorized(res, error);
@@ -245,7 +275,7 @@ export class SearchController {
                 res.status(200).json(contabilityCategories);
 
             } catch (error) {
-                //Exception.error(res, error);
+                Exception.error(res, error)
             }
         }).catch((error) => {
             Exception.unauthorized(res, error);
@@ -276,7 +306,7 @@ export class SearchController {
                 res.status(200).json(_.map(receivementMethods, (receivementMethod) => Object.create(receivementMethod.currencyMethod)));
 
             } catch (error) {
-                //Exception.error(res, error);
+                Exception.error(res, error)
             }
         }).catch((error) => {
             Exception.unauthorized(res, error);
@@ -300,7 +330,7 @@ export class SearchController {
                 res.status(200).json(taskMethods);
 
             } catch (error) {
-                //Exception.error(res, error);
+                Exception.error(res, error)
             }
         }).catch((error) => {
             Exception.unauthorized(res, error);
@@ -380,28 +410,11 @@ export class SearchController {
                 res.status(200).json(cfop)
 
             } catch (error) {
-                this.error(res, error)
+                Exception.error(res, error)
             }
         }).catch((error) => {
             Exception.unauthorized(res, error);
         });
     }
-
-    error = (res, error) => {
-
-        const erros = []
-
-        // Verifica se há erros dentro de `original.errors`
-        if (error.original?.errors && Array.isArray(error.original.errors)) {
-            error.original.errors.forEach((err) => {
-                erros.push(err.message)
-            })
-        } else {
-            erros.push(error.message)
-        }
-
-        res.status(500).json({erros})
-
-    }
-          
+  
 }

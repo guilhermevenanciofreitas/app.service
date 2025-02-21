@@ -1,5 +1,5 @@
-import { AppContext } from "../../database/index.js"
-import { Authorization } from "../authorization.js"
+import { AppContext } from "../database/index.js"
+import { Authorization } from "./authorization.js"
 import { formidable } from 'formidable'
 import fs from 'fs'
 import path from 'path'
@@ -12,13 +12,12 @@ import Sequelize from "sequelize"
 
 import fetch from 'node-fetch';
 import { Buffer } from 'buffer';
-import { Exception } from "../../utils/exception.js"
+import { Exception } from "../utils/exception.js"
 
-export class LogisticCteController {
+export class CalledController {
 
-  ctes = async (req, res) => {
+  calleds = async (req, res) => {
     await Authorization.verify(req, res).then(async ({companyId, userId}) => {
-
       try {
 
         const db = new AppContext()
@@ -44,26 +43,16 @@ export class LogisticCteController {
           }
 
         }
-        
+
         //where.push({cStat: 100})
 
-        where.push({IDCarga: {[Sequelize.Op.eq]: null}})
+        //where.push({IDCarga: {[Sequelize.Op.eq]: null}})
 
-        const ctes = await db.Cte.findAndCountAll({
-          attributes: ['id', 'dhEmi', 'nCT', 'serie', 'chCTe', 'cStat', 'baseCalculo'],
-          include: [
-            {model: db.Partner, as:
-               'recipient', attributes: ['id', 'surname']},
-            {model: db.Shippiment, as: 'shippiment', attributes: ['id'], include: [
-              {model: db.Partner, as: 'sender', attributes: ['id', 'surname']}
-            ]},
-            {model: db.CteNfe, as: 'cteNfes', attributes: ['id', 'nfeId'], include: [
-              {model: db.Nfe, as: 'nfe', attributes: ['id', 'chNFe']},
-            ]},
-          ],
+        const calleds = await db.Called.findAndCountAll({
+          attributes: ['id'],
           limit: limit,
           offset: offset * limit,
-          order: [['dhEmi', 'desc']],
+          //order: [['dhEmi', 'desc']],
           where,
           subQuery: false
         })
@@ -73,7 +62,7 @@ export class LogisticCteController {
             limit, offset
           },
           response: {
-            rows: ctes.rows, count: ctes.count
+            rows: calleds.rows, count: calleds.count
           }
         })
 
@@ -127,27 +116,24 @@ export class LogisticCteController {
     await Authorization.verify(req, res).then(async ({companyId, userId}) => {
       try {
 
-        let cte = {
+        let called = {
           id: req.body.id,
-          takerId: req.body.taker?.id || null,
-          recipientId: req.body.recipient?.id || null,
-          originId: req.body.origin?.id || null,
-          destinyId: req.body.destiny?.id || null,
+          responsibleId: req.body.responsible?.id || null,
         }
 
         const db = new AppContext();
 
         await db.transaction(async (transaction) => {
 
-          if (_.isEmpty(cte.id)) {
-            cte = await db.Cte.create(cte, {transaction})
+          if (_.isEmpty(called.id)) {
+            called = await db.Called.create(called, {transaction})
           } else {
-            await db.Cte.update(cte, {where: [{ID: cte.id}], transaction})
+            await db.Called.update(called, {where: [{id: called.id}], transaction})
           }
 
         })
 
-        res.status(200).json(cte)
+        res.status(200).json(called)
 
       } catch (error) {
         Exception.error(res, error)
@@ -291,7 +277,6 @@ export class LogisticCteController {
           })
 
         }
-
 
         res.status(200).json({})
 

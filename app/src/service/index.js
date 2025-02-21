@@ -8,7 +8,7 @@ export class Service {
     Post = async (url, data, headers) => {
 
         const env = import.meta.env.VITE_API_URL
-        const api_url = path.join(env, url)
+        const api_url = env + url
 
         let config = {};
 
@@ -25,7 +25,7 @@ export class Service {
                 }
             }
 
-            var response = await axios.post(env + url, data || {}, config)
+            var response = await axios.post(api_url, data || {}, config)
 
             if (authorization) {
                 authorization.lastAcess = response.headers['last-acess']
@@ -58,6 +58,13 @@ export class Service {
                 const to = window.location.hash.slice(1)
                 const redirect = window.location.pathname == '/' ? '' : `?redirect=${window.location.pathname}`
                 window.location.href = `/sign-in${redirect}`
+                throw new Error(message)
+            }
+
+            //Em manutenção
+            if (error?.response?.status == 404) {
+                const message = `[404] - Route "${url}"!`
+                Swal.fire({showCloseButton: true, title: 'Ops...', icon: 'warning', text: message, confirmButtonColor: "#FFF", confirmButtonText: 'Aguarde um instante'})
                 throw new Error(message)
             }
 

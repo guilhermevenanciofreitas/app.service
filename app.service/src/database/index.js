@@ -38,9 +38,12 @@ import { State } from './models/state.model.js'
 import { Cfop } from './models/cfop.model.js'
 import { CompanyBusiness } from './models/companyBusiness.model.js'
 import { UserMember } from './models/userMember.model.js'
+import { Called } from './models/called.model.js'
 
 export class AppContext extends Sequelize {
   
+  Called = this.define('called', new Called(), { tableName: 'called' })
+
   Company = this.define('company', new Company(), { tableName: 'empresa_filial' })
 
   CompanyBusiness = this.define('companyBusiness', new CompanyBusiness(), { tableName: 'empresa' })
@@ -119,8 +122,8 @@ export class AppContext extends Sequelize {
       host: process.env.DB_HOST,
       port: process.env.DB_PORT,
       database: process.env.DB_DATABASE,
-      password: process.env.DB_PASSWORD,
       username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
       dialect: 'mssql',
       dialectModule: tedious,
       databaseVersion: '10.50.1600',

@@ -26,7 +26,7 @@ const Card = props => (
   </Panel>
 )
 
-class LogisticTrips extends React.Component {
+export class LogisticTrips extends React.Component {
 
   componentDidMount = () => {
     this.onSearch()
@@ -88,8 +88,7 @@ class LogisticTrips extends React.Component {
   render = () => {
 
     return (
-      <>
-
+      <Panel header={<CustomBreadcrumb menu={'Logística'} title={'Viagens'} />}>
         <PageContent>
               
           <Row style={{display: 'flex'}} >
@@ -100,21 +99,7 @@ class LogisticTrips extends React.Component {
           </Row>
             
         </PageContent>
-      </>
-    )
-  }
-}
-
-class Page extends React.Component {
-
-  render = () => {
-    return (
-      <Panel header={<CustomBreadcrumb menu={'Logística'} title={'Viagens'} />}>
-        <LogisticTrips />
       </Panel>
     )
   }
-
 }
-
-export default Page;

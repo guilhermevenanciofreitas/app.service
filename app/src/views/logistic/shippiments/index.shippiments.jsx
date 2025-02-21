@@ -23,7 +23,7 @@ const fields = [
   { label: 'Documento de transporte', value: 'documentTransport' },
 ]
 
-class LogisticShippiments extends React.Component {
+export class LogisticShippiments extends React.Component {
 
   viewShippiment = React.createRef()
   viewCtes = React.createRef()
@@ -82,7 +82,7 @@ class LogisticShippiments extends React.Component {
   render = () => {
 
     return (
-      <>
+      <Panel header={<CustomBreadcrumb menu={'Logística'} title={'Romaneios'} />}>
 
         <ViewShippiment ref={this.viewShippiment} />
         <ViewCtes ref={this.viewCtes} />
@@ -90,19 +90,9 @@ class LogisticShippiments extends React.Component {
         <PageContent>
           
           <Stack spacing={'6px'} direction={'row'} alignItems={'flex-start'} justifyContent={'space-between'}>
-            
             <HStack>
-
               <CustomSearch loading={this.state?.loading} fields={fields} defaultPicker={'documentTransport'} value={this.state?.request?.search} onChange={(search) => this.setState({request: {search}}, () => this.onSearch())} />
-      
-              {/*
-              <CustomFilter.Whisper badge={_.size(this.state?.request?.filter)}>
-                {(props) => <Filter filter={this.state?.request?.filter} onApply={this.onApplyFilter} {...props} />}
-              </CustomFilter.Whisper>
-              */}
-
             </HStack>
-
           </Stack>
 
           <hr></hr>
@@ -126,21 +116,7 @@ class LogisticShippiments extends React.Component {
           </Stack>
 
         </PageContent>
-      </>
+        </Panel>
     )
   }
 }
-
-class Page extends React.Component {
-
-  render = () => {
-    return (
-      <Panel header={<CustomBreadcrumb menu={'Logística'} title={'Romaneios'} />}>
-        <LogisticShippiments />
-      </Panel>
-    )
-  }
-
-}
-
-export default Page;
