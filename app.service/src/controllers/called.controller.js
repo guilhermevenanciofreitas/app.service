@@ -33,7 +33,7 @@ export class CalledController {
           if (search?.picker == 'nCT') {
             where.push({nCT: search.input.match(/\d+/g)})
           }
-  
+
           if (search?.picker == 'sender') {
             where.push({'$shippiment.sender.RazaoSocial$': {[Sequelize.Op.like]: `%${search.input.replace(' ', "%")}%`}})
           }
@@ -49,10 +49,18 @@ export class CalledController {
         //where.push({IDCarga: {[Sequelize.Op.eq]: null}})
 
         const calleds = await db.Called.findAndCountAll({
-          attributes: ['id'],
+          attributes: ['id', 'openedDate', 'subject'],
+          include: [
+            {model: db.User, as: 'responsible', attributes: ['id'], include: [
+              {model: db.UserMember, as: 'userMember', attributes: ['name']}
+            ]},
+            {model: db.Partner, as: 'requested', attributes: ['id', 'surname']},
+            {model: db.CalledReason, as: 'reason', attributes: ['id', 'description']},
+            {model: db.CalledOccurrence, as: 'occurrence', attributes: ['id', 'description']}
+          ],
           limit: limit,
           offset: offset * limit,
-          //order: [['dhEmi', 'desc']],
+          order: [['openedDate', 'desc']],
           where,
           subQuery: false
         })
@@ -74,7 +82,7 @@ export class CalledController {
     })
   }
 
-  async detail(req, res) {
+  detail = async (req, res) => {
     await Authorization.verify(req, res).then(async ({companyId, userId}) => {
       try {
 
@@ -83,25 +91,23 @@ export class CalledController {
         const db = new AppContext()
 
         await db.transaction(async (transaction) => {
-            
-          const cte = await db.Cte.findOne({
-            attributes: ['id', 'nCT', 'serie', 'chCTe'],
+
+          const called = await db.Called.findOne({
+            attributes: ['id', 'subject', 'detail'],
             include: [
-              {model: db.Partner, as: 'taker', attributes: ['id', 'cpfCnpj', 'name', 'surname']},
-              {model: db.Partner, as: 'recipient', attributes: ['id', 'cpfCnpj', 'name', 'surname']},
-              {model: db.City, as: 'origin', attributes: ['id', 'name'],
-                include: [{model: db.State, as: 'state', attributes: ['id', 'acronym']}]
-              },
-              {model: db.City, as: 'destiny', attributes: ['id', 'name'],
-                include: [{model: db.State, as: 'state', attributes: ['id', 'acronym']}]
-              },
+              {model: db.User, as: 'responsible', attributes: ['id'], include: [
+                {model: db.UserMember, as: 'userMember', attributes: ['name']}
+              ]},
+              {model: db.Partner, as: 'requested', attributes: ['id', 'surname']},
+              {model: db.CalledReason, as: 'reason', attributes: ['id', 'description']},
+              {model: db.CalledOccurrence, as: 'occurrence', attributes: ['id', 'description']}
             ],
             where: [{id: id}],
             transaction
           })
 
-          res.status(200).json(cte)
-          
+          res.status(200).json(called)
+
         })
 
       } catch (error) {
@@ -119,9 +125,13 @@ export class CalledController {
         let called = {
           id: req.body.id,
           responsibleId: req.body.responsible?.id || null,
+          reasonId: req.body.reason?.id || null,
+          occurrenceId: req.body.occurrence?.id || null,
+          subject: req.body.subject,
+          detail: req.body.detail
         }
 
-        const db = new AppContext();
+        const db = new AppContext()
 
         await db.transaction(async (transaction) => {
 
@@ -242,7 +252,7 @@ export class CalledController {
             }
 
             if (cte.id) {
-              
+ 
               await db.Cte.update(cte, {where: [{id: cte.id}], transaction})
 
             } else {
@@ -258,7 +268,7 @@ export class CalledController {
                 categorieId: 1766,
                 createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
               }, {transaction})
-  
+
               await db.ReceivementInstallment.create({
                 receivementId: receivement.id,
                 description: receivement.description,
@@ -267,13 +277,13 @@ export class CalledController {
                 amount: cte.valorAReceber,
                 createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
               }, {transaction})
-  
+
               cte.receivementId = receivement.id
 
               await db.Cte.create(cte, {transaction})
-              
+
             }
-            
+
           })
 
         }
@@ -288,7 +298,7 @@ export class CalledController {
     })
   }
 
-  async addNfe(req, res) {
+  addNfe = async (req, res) => {
     await Authorization.verify(req, res).then(async ({companyId, userId}) => {
       try {
 
@@ -321,11 +331,10 @@ export class CalledController {
           }
 
           cteNfe = await db.CteNfe.create({cteId: req.body.cteId, nfeId: nfe.id})
-          
+
           res.status(200).json({cteNfe})
 
         })
-
 
       } catch (error) {
         Exception.error(res, error)
@@ -335,7 +344,7 @@ export class CalledController {
     })
   }
 
-  async deleteNfe(req, res) {
+  deleteNfe = async (req, res) => {
     await Authorization.verify(req, res).then(async ({companyId, userId}) => {
       try {
 
@@ -357,7 +366,7 @@ export class CalledController {
     })
   }
 
-  async dacte(req, res) {
+  dacte = async (req, res) => {
     await Authorization.verify(req, res).then(async ({companyId, userId}) => {
       try {
 
@@ -368,17 +377,12 @@ export class CalledController {
         const url = `http://vps53636.publiccloud.com.br/sped-da/dacte.php`;
         const headers = {
           'Content-Type': 'application/json'
-        };
-
-        console.log(cte.xml)
+        }
 
         const postData = {
           logo: "TCL Transporte e Logistica.jpeg",
           xml: Buffer.from(cte.xml.toString(), 'utf8').toString('base64')
-        };
-
-
-        console.log(1)
+        }
 
         try {
           const response = await fetch(url, {
@@ -393,14 +397,13 @@ export class CalledController {
 
           const pdfBuffer = await response.arrayBuffer();
           const pdfBase64 = Buffer.from(pdfBuffer).toString('base64');
-          
+
           res.status(200).json({pdf: pdfBase64})
 
         } catch (error) {
           console.error('Erro na solicitação:', error);
           throw error;
         }
-      
 
       } catch (error) {
         Exception.error(res, error)
@@ -409,5 +412,4 @@ export class CalledController {
       Exception.unauthorized(res, error)
     })
   }
-
 }

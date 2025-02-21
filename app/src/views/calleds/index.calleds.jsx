@@ -68,15 +68,14 @@ export class Calleds extends React.Component {
     >
       <IconButton className='hover-blue' size='sm' circle icon={<FaEllipsisV />} appearance="default" />
     </Whisper>, minWidth: '30px', maxWidth: '30px', center: true, style: {padding: '0px'}},
-    { selector: (row) => dayjs(row.dhEmi).format('DD/MM/YYYY HH:mm'), name: 'Emissão', minWidth: '140px', maxWidth: '140px'},
-    { selector: (row) => row.nCT, name: 'Número', minWidth: '80px', maxWidth: '80px'},
-    { selector: (row) => row.serie, name: 'Série', minWidth: '60px', maxWidth: '60px'},
-    { selector: (row) => row.chCTe, name: 'Chave de acesso', minWidth: '350px', maxWidth: '350px'},
-    { selector: (row) => row.shippiment?.sender?.surname, name: 'Remetente'},
-    { selector: (row) => row.recipient?.surname, name: 'Destinatário', minWidth: '250px', maxWidth: '250px'},
-    { selector: (row) => new Intl.NumberFormat('pt-BR', {style: 'decimal', minimumFractionDigits: 2}).format(parseFloat(row.baseCalculo)), name: 'Valor', minWidth: '100px', maxWidth: '100px', right: true},
-    { selector: (row) => <div className='hidden'><FaPrint size='16px' color='tomato' style={{padding: '3px'}} onClick={() => this.onDacte(row)} /><FaFileCode size='16px' color='steelblue' style={{padding: '3px'}} /></div>, center: true, minWidth: '50px', maxWidth: '50px', style: {padding: '0px'}},
-    { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onViewNfe(row)} content={_.size(row.cteNfes)}></Badge>, center: true, minWidth: '35px', maxWidth: '35px', style: {padding: '0px'}},
+    { selector: (row) => dayjs(row.openedDate).format('DD/MM/YYYY HH:mm'), name: 'Abertura', minWidth: '140px', maxWidth: '140px'},
+    { selector: (row) => row.number, name: 'Número', minWidth: '90px', maxWidth: '90px'},
+    { selector: (row) => row.responsible?.userMember?.name, name: 'Responsável', minWidth: '160px', maxWidth: '160px'},
+    { selector: (row) => row.requested?.surname, name: 'Solicitante', minWidth: '230px', maxWidth: '230px'},
+    { selector: (row) => row.reason?.description, name: 'Motivo', minWidth: '140px', maxWidth: '140px'},
+    { selector: (row) => row.occurrence?.description, name: 'Ocorrência', minWidth: '170px', maxWidth: '170px'},
+    { selector: (row) => row.subject, name: 'Assunto'},
+    { selector: (row) => dayjs(row.openedDate).format('DD/MM/YYYY HH:mm'), name: 'Fechamento', minWidth: '140px', maxWidth: '140px'},
   ]
 
   render = () => {

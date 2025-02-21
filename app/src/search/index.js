@@ -8,6 +8,22 @@ export const Search = {
         return (await new Service().Post("search/company", {search}))?.data
     },
 
+    calledReason: async (search) => {
+        try {
+            return (await new Service().Post("search/called-reason", {search}))?.data
+        } catch (error) {
+            Exception.error(error)
+        }
+    },
+
+    calledOccurrence: async (search) => {
+        try {
+            return (await new Service().Post("search/called-occurrence", {search}))?.data
+        } catch (error) {
+            Exception.error(error)
+        }
+    },
+
     user: async (search) => {
         try {
             return (await new Service().Post("search/user", {search}))?.data

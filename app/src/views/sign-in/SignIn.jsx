@@ -93,8 +93,8 @@ export class SignIn extends React.Component {
 
   render = () => {
 
-    if (this.state.redirect) {
-      return <Navigate to={this.state.redirect} replace />
+    if (this.state?.redirect) {
+      return <Navigate to={this.state?.redirect} replace />
     }
 
     return (
@@ -106,7 +106,7 @@ export class SignIn extends React.Component {
                 <Col md={12}>
                   <div className='form-control'>
                     <label className="textfield-filled">
-                      <input type='text' value={this.state.email} onChange={(event) => this.setState({ email: event.target.value })} autoFocus />
+                      <input type='text' value={this.state?.email} onChange={(event) => this.setState({ email: event.target.value })} autoFocus />
                       <span>E-mail</span>
                     </label>
                   </div>
@@ -114,7 +114,7 @@ export class SignIn extends React.Component {
                 <Col md={12}>
                   <div className='form-control'>
                     <label className="textfield-filled">
-                      <input type='password' value={this.state.password} onChange={(event) => this.setState({ password: event.target.value })} />
+                      <input type='password' value={this.state?.password} onChange={(event) => this.setState({ password: event.target.value })} />
                       <span>Senha</span>
                     </label>
                   </div>
@@ -124,8 +124,8 @@ export class SignIn extends React.Component {
 
               <Form.Group>
                 <Stack spacing={6} divider={<Divider vertical />}>
-                  <Button appearance="primary" type='submit' disabled={this.state.loading}>
-                    {this.state.loading ? <><Loader />&nbsp;&nbsp; Entrando...</> : <><FaSignInAlt />&nbsp;&nbsp; Entrar</>}
+                  <Button appearance="primary" type='submit' disabled={this.state?.loading}>
+                    {this.state?.loading ? <><Loader />&nbsp;&nbsp; Entrando...</> : <><FaSignInAlt />&nbsp;&nbsp; Entrar</>}
                   </Button>
                 </Stack>
               </Form.Group>
@@ -147,8 +147,8 @@ export class SignIn extends React.Component {
               <Form.Group>
                 <Form.ControlLabel><span>Empresa</span></Form.ControlLabel>
                 <SelectPicker
-                  data={this.state.companyBusiness}
-                  value={this.state.companyBusinessId}
+                  data={this.state?.companyBusiness}
+                  value={this.state?.companyBusinessId}
                   onChange={this.companyBusinessChange}
                   searchable={false}
                   style={{ width: '100%' }}
@@ -160,8 +160,8 @@ export class SignIn extends React.Component {
                 <Form.Group>
                   <Form.ControlLabel><span>Filial</span></Form.ControlLabel>
                   <SelectPicker
-                    data={this.state.company}
-                    value={this.state.companyId}
+                    data={this.state?.company}
+                    value={this.state?.companyId}
                     onChange={this.companyChange}
                     searchable={false}
                     style={{ width: '100%' }}

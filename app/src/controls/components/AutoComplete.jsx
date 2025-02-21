@@ -118,6 +118,8 @@ const AutoComplete = ({label, text, value = null, onSearch, onChange, children})
                     </div>
                 </div>
             )}
+            
+            {/*_.size(data) == 0 && <div className='autocomplete'><div className="autocomplete-items"><div>Nenhum resultado!</div></div></div>*/}
 
         </div>
     )

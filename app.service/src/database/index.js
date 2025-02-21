@@ -39,10 +39,16 @@ import { Cfop } from './models/cfop.model.js'
 import { CompanyBusiness } from './models/companyBusiness.model.js'
 import { UserMember } from './models/userMember.model.js'
 import { Called } from './models/called.model.js'
+import { CalledReason } from './models/calledReason.model.js'
+import { CalledOccurrence } from './models/calledOccurrence.model.js'
 
 export class AppContext extends Sequelize {
   
   Called = this.define('called', new Called(), { tableName: 'called' })
+  
+  CalledOccurrence = this.define('calledOccurrence', new CalledOccurrence(), { tableName: 'calledOccurrence' })
+
+  CalledReason = this.define('calledReason', new CalledReason(), { tableName: 'calledReason' })
 
   Company = this.define('company', new Company(), { tableName: 'empresa_filial' })
 
@@ -136,6 +142,11 @@ export class AppContext extends Sequelize {
         console.log(query)
       },
     })
+
+    this.Called.belongsTo(this.User, {as: 'responsible', foreignKey: 'responsibleId', targetKey: 'id'})
+    this.Called.belongsTo(this.Partner, {as: 'requested', foreignKey: 'requestedId', targetKey: 'id'})
+    this.Called.belongsTo(this.CalledReason, {as: 'reason', foreignKey: 'reasonId', targetKey: 'id'})
+    this.Called.belongsTo(this.CalledOccurrence, {as: 'occurrence', foreignKey: 'occurrenceId', targetKey: 'id'})
 
     this.City.belongsTo(this.State, {as: 'state', foreignKey: 'stateId', targetKey: 'id'})
 

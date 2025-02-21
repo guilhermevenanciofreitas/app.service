@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { CalledController } from '../controllers/called.controller.js'
-  
+
 export class CalledRoute {
 
     router = Router()
@@ -13,6 +13,7 @@ export class CalledRoute {
     intializeRoutes() {
         this.router.post('/calleds', async (req, res) => await this.controller.calleds(req, res))
         this.router.post('/submit', async (req, res) => await this.controller.submit(req, res))
+        this.router.post('/detail', async (req, res) => await this.controller.detail(req, res))
     }
 
 }

@@ -37,6 +37,60 @@ export class SearchController {
         })
     }
 
+    calledReason = (req, res) => {
+        Authorization.verify(req, res).then(async ({companyId, userId}) => {
+            try {
+
+                const db = new AppContext()
+
+                const reasons = await db.CalledReason.findAll({
+                    attributes: ['id', 'description'],
+                    where: [{
+                        '$description$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}
+                    }],
+                    order: [
+                        ['description', 'asc']
+                    ],
+                    limit: 20
+                })
+
+                res.status(200).json(reasons)
+
+            } catch (error) {
+                Exception.error(res, error)
+            }
+        }).catch((error) => {
+            Exception.unauthorized(res, error)
+        })
+    }
+
+    calledOccurrence = (req, res) => {
+        Authorization.verify(req, res).then(async ({companyId, userId}) => {
+            try {
+
+                const db = new AppContext()
+
+                const occurrences = await db.CalledOccurrence.findAll({
+                    attributes: ['id', 'description'],
+                    where: [{
+                        '$description$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}
+                    }],
+                    order: [
+                        ['description', 'asc']
+                    ],
+                    limit: 20
+                })
+
+                res.status(200).json(occurrences)
+
+            } catch (error) {
+                Exception.error(res, error)
+            }
+        }).catch((error) => {
+            Exception.unauthorized(res, error)
+        })
+    }
+
     async user(req, res) {
         Authorization.verify(req, res).then(async ({companyId, userId}) => {
             try {
