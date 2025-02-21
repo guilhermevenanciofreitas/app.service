@@ -9,16 +9,7 @@ import { checkAuthorization } from '../../App'
 import { Navigate } from 'react-router-dom'
 
 export class SignIn extends React.Component {
-  state = {
-    companyBusiness: [],
-    company: [],
-    email: 'guilherme.venancio',
-    password: '@Rped94ft',
-    companyBusinessId: '',
-    companyId: '',
-    redirect: null,
-  }
-
+ 
   componentDidMount = () => {
 
     const isAuth = checkAuthorization()
