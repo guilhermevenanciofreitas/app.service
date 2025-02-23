@@ -76,15 +76,20 @@ export class SignIn extends React.Component {
     }
 
     if (signIn?.status == 201) {
-      await toaster.push(<Message showIcon type='warning'>{signIn.data.message} 🤨</Message>, { placement: 'topCenter', duration: 5000 })
+      await toaster.push(<Message type='warning'>{signIn.data.message}</Message>, { placement: 'topCenter', duration: 5000 })
     }
 
     if (signIn?.status == 202) {
+      await toaster.push(<Message type='warning'>{signIn.data.message}</Message>, { placement: 'topCenter', duration: 5000 })
+      this.setState({password: ''})
+    }
+
+    if (signIn?.status == 210) {
       const companyBusiness = _.map(signIn.data, (item) => ({ label: item.description, value: item.id }))
       this.setState({ companyBusiness })
     }
 
-    if (signIn?.status == 203) {
+    if (signIn?.status == 211) {
       const company = _.map(signIn.data, (item) => ({ label: item.surname, value: item.id }))
       this.setState({ company })
     }

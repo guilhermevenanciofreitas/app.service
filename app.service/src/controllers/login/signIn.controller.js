@@ -44,21 +44,29 @@ export class LoginController {
         })
 
         if (_.isEmpty(user)) {
-          res.status(201).json({message: 'Usuário não encontrado!'})
+          res.status(201).json({message: '🤨 Usuário não encontrado!'})
           return
         }
 
-        let data = JSON.stringify({
+        const data = JSON.stringify({
           username: user.userMember.userName,
           password: password
-        });
+        })
+      
+        const config = {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: data
+        }
+      
+        const response = await fetch('http://170.254.135.108:7077/Pesquisas/wsPesquisa.asmx/ValidateUser', config)
 
-        let config = {method: 'post', url: 'http://170.254.135.108:7077/Pesquisas/wsPesquisa.asmx/ValidateUser', headers: {'Content-Type': 'application/json'}, data: data}
+        const result = await response.json()
 
-        const response = await axios.request(config)
-
-        if (!response.data.d) {
-          res.status(201).json({message: 'Senha incorreta!'})
+        if (!result.d) {
+          res.status(202).json({message: '🤨 Senha incorreta!'})
           return
         }
 
@@ -93,12 +101,12 @@ export class LoginController {
         })
 
         if (_.size(companyBusiness) > 1) {
-          res.status(202).json(companyBusiness)
+          res.status(210).json(companyBusiness)
           return
         }
 
         if (_.size(companyBusiness[0].companies) > 1) {
-          res.status(203).json(companyBusiness[0].companies)
+          res.status(211).json(companyBusiness[0].companies)
           return
         }
 
