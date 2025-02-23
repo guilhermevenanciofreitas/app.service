@@ -84,12 +84,16 @@ export class SignIn extends React.Component {
       this.setState({password: ''})
     }
 
-    if (signIn?.status == 210) {
+    if (signIn?.status == 211) {
+      await toaster.push(<Message type='warning'>{signIn.data.message}</Message>, { placement: 'topCenter', duration: 5000 })
+    }
+
+    if (signIn?.status == 212) {
       const companyBusiness = _.map(signIn.data, (item) => ({ label: item.description, value: item.id }))
       this.setState({ companyBusiness })
     }
 
-    if (signIn?.status == 211) {
+    if (signIn?.status == 213) {
       const company = _.map(signIn.data, (item) => ({ label: item.surname, value: item.id }))
       this.setState({ company })
     }

@@ -98,13 +98,18 @@ export class LoginController {
           order: [['description', 'asc']]
         })
 
-        if (_.size(companyBusiness) > 1) {
-          res.status(210).json(companyBusiness)
+        if (_.size(companyBusiness) == 0 || _.size(companyBusiness[0]?.companies) == 0) {
+          res.status(211).json({message: '🤨 Sem permissão!'})
           return
         }
 
-        if (_.size(companyBusiness[0].companies) > 1) {
-          res.status(211).json(companyBusiness[0].companies)
+        if (_.size(companyBusiness) > 1) {
+          res.status(212).json(companyBusiness)
+          return
+        }
+
+        if (_.size(companyBusiness[0]?.companies) > 1) {
+          res.status(213).json(companyBusiness[0]?.companies)
           return
         }
 
