@@ -9,8 +9,6 @@ import { Exception } from "../../utils/exception.js"
 
 import _ from 'lodash'
 
-import axios from 'axios'
-
 export class LoginController {
 
   signIn = async (req, res) => {
