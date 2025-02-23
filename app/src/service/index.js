@@ -64,7 +64,7 @@ export class Service {
             //Em manutenção
             if (error?.response?.status == 404) {
                 const message = `[404] - Route "${url}"!`
-                Swal.fire({showCloseButton: true, title: 'Ops...', icon: 'warning', text: message, confirmButtonColor: "#FFF", confirmButtonText: 'Aguarde um instante'})
+                Swal.fire({showCloseButton: true, title: 'Ops...', icon: 'warning', text: message, confirmButtonColor: "#FFF", confirmButtonText: '<span style="color: rgba(88, 86, 214)">OK</span>'})
                 throw new Error(message)
             }
 

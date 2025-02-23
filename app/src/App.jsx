@@ -29,7 +29,7 @@ import FinanceStatements from './views/finance/statements/index.statements';
 //Settings
 import Setting from './views/setting/index.setting';
 import SettingUsers from './views/setting/index.setting.users';
-import SettingRoles from './views/setting/index.setting.roles';
+import { SettingRoles } from './views/setting/index.setting.roles';
 import SettingBankAccounts from './views/setting/index.setting.bank-accounts';
 import SettingContabilityCategories from './views/setting/index.setting.contability-categories';
 import SettingPaymentMethods from './views/setting/index.setting.payment-methods';

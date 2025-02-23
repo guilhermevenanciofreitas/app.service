@@ -11,6 +11,7 @@ import { CteRoute } from './src/routes/logistic/cte.route.js'
 import { LogisticShippimentRoute } from './src/routes/logistic/shippiment.route.js'
 import { SearchRoute } from './src/routes/search.js'
 import { CalledRoute } from './src/routes/called.route.js'
+import { SettingRoleRoute } from './src/routes/setting/role.route.js'
 
 export class App {
 
@@ -48,6 +49,9 @@ export class App {
 
     this.express.use('/api/task', new TaskRoute().router)
     this.express.use('/api/integration', new IntegrationRoute().router)
+
+    //Setting
+    this.express.use('/api/setting/role', new SettingRoleRoute().router)
 
     
     this.express.use('/api/search', new SearchRoute().router)

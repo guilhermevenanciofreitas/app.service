@@ -385,15 +385,10 @@ export class LogisticCteController {
           'Content-Type': 'application/json'
         };
 
-        console.log(cte.xml)
-
         const postData = {
           logo: "TCL Transporte e Logistica.jpeg",
           xml: Buffer.from(cte.xml.toString(), 'utf8').toString('base64')
         };
-
-
-        console.log(1)
 
         try {
           const response = await fetch(url, {

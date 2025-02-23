@@ -1,5 +1,8 @@
 import React from "react";
-import { Button, CheckTree, Col, Form, Grid, Input, Loader, Message, Modal, Row, toaster } from 'rsuite';
+import { Button, CheckTree, Divider, Form, Grid, Input, Loader, Message, Modal, toaster } from 'rsuite';
+import { Container, Row, Col } from 'react-grid-system';
+
+
 import { PhotoPicker, ViewModal } from "../../controls";
 import { MdCheckCircleOutline } from "react-icons/md";
 import { Service } from "../../service";
@@ -187,29 +190,34 @@ class ViewRole extends React.Component {
     render = () => {
         
         return (
-            <ViewModal ref={this.viewModal} size={450}>
-                <Modal.Header><Modal.Title>{'Cargo'}</Modal.Title></Modal.Header>
-                <Modal.Body>
-                    <Grid fluid>
-                        <Row>
-                            <Col md={24}>
-                                <label>Nome</label>
-                                <Input type='text' appearance='' value={this.state?.name} onChange={(name) => this.setState({name})} />
+            <Form autoComplete='off' onSubmit={this.submit}>
+                <ViewModal ref={this.viewModal} size={450}>
+                    <Modal.Header><Modal.Title><Container>Cargo</Container></Modal.Title></Modal.Header>
+                    <Modal.Body>
+                        <Row gutterWidth={0}>
+                            <Col md={12}>
+                                <div className='form-control'>
+                                    <label class="textfield-filled">
+                                        <input type='text' value={this.state?.name} onChange={(event) => this.setState({nnameCT: event.target.value.toUpperCase()})} />
+                                        <span>Nome</span>
+                                    </label>
+                                </div>
                             </Col>
                             <br></br>
-                            <hr></hr>
+                            <Divider />
                             <br></br>
-                            <Col md={24}>
+                            <Col md={12}>
                                 <label>Permissões</label>
                                 <CheckTree data={data} value={_.map(this.state?.roleRules, (rule) => rule.ruleId)} onChange={this.onChangeRules} />
                             </Col>
                         </Row>
-                    </Grid>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button appearance="primary" color='green' onClick={this.submit} disabled={this.state?.submting}>{this.state?.submting ? <><Loader /> &nbsp; Confirmando...</> : <><MdCheckCircleOutline /> &nbsp; Confirmar</>}</Button>
-                </Modal.Footer>
-            </ViewModal>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button appearance="primary" color='green' onClick={this.submit} disabled={this.state?.submting}>{this.state?.submting ? <><Loader /> &nbsp; Confirmando...</> : <><MdCheckCircleOutline /> &nbsp; Confirmar</>}</Button>
+                    </Modal.Footer>
+                </ViewModal>
+            </Form>
+            
         )
 
     }

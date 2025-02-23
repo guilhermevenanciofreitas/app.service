@@ -1,7 +1,5 @@
-import { Exception } from "../../utils/exception.js"
 import { AppContext } from "../../database/index.js"
-import { Sequelize, Op } from "sequelize"
-import dayjs from 'dayjs'
+import { Exception } from "../../utils/exception.js"
 import { Authorization } from "../authorization.js"
 import _ from 'lodash'
 
@@ -44,10 +42,10 @@ export class SettingRoleController {
         })
 
       } catch (error) {
-        res.status(500).json({message: error.message})
+        Exception.error(res, error)
       }
     }).catch((error) => {
-      res.status(400).json({message: error.message})
+      Exception.unauthorized(res, error)
     })
   }
 
@@ -70,10 +68,10 @@ export class SettingRoleController {
         res.status(200).json(role)
 
       } catch (error) {
-        res.status(500).json({message: error.message})
+        Exception.error(res, error)
       }
     }).catch((error) => {
-      res.status(400).json({message: error.message})
+      Exception.unauthorized(res, error)
     })
   }
 
@@ -105,10 +103,10 @@ export class SettingRoleController {
         res.status(200).json(role)
 
       } catch (error) {
-        res.status(500).json({message: error.message})
+        Exception.error(res, error)
       }
     }).catch((error) => {
-      res.status(400).json({message: error.message})
+      Exception.unauthorized(res, error)
     })
   }
 

@@ -32,7 +32,7 @@ export class LoginController {
 
         
         const user = await db.User.findOne({
-          attributes: ['id', 'name', 'email', 'passwordHash'],
+          attributes: ['id', 'name', 'email'],
           include: [
             {model: db.UserMember, as: 'userMember', attributes: ['id', 'userName']}
           ],
