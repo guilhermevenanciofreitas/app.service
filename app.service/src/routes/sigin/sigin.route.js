@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { LoginController } from '../../controllers/login/signIn.controller.js'
+import { LoginController } from '../../controllers/sigin/signIn.controller.js'
   
 export class LoginRoute {
 

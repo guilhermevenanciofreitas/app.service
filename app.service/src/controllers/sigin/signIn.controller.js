@@ -58,7 +58,7 @@ export class LoginController {
           },
           body: data
         }
-      
+
         const response = await fetch('http://170.254.135.108:7077/Pesquisas/wsPesquisa.asmx/ValidateUser', config)
 
         const result = await response.json()
