@@ -233,7 +233,7 @@ const Header = () => {
 
         <Stack direction="column" alignItems="left">
           <span style={{ fontWeight: 'bold', color: '#777' }}>
-            {Authorization?.user?.name} / {Authorization?.companyBusiness?.description} - {Authorization?.company?.surname}
+            {Authorization?.user?.userName} / {Authorization?.companyBusiness?.description} - {Authorization?.company?.surname}
           </span>
         </Stack>
 

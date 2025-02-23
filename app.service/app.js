@@ -1,23 +1,25 @@
 import express, { Router } from 'express'
 import cors from 'cors'
-import serverless from 'serverless-http'
+import path from 'path'
+import { fileURLToPath } from "url"
 
-import { LoginRoute } from './routes/login/login.route.js'
+import { LoginRoute } from './src/routes/login/login.route.js'
 
-import { TaskRoute } from './routes/task/task.route.js'
-import { IntegrationRoute } from './routes/integration/integration.route.js'
-import { CteRoute } from './routes/logistic/cte.route.js'
-import { LogisticShippimentRoute } from './routes/logistic/shippiment.route.js'
-import { SearchRoute } from './routes/search.js'
-import { CalledRoute } from './routes/called.route.js'
+import { TaskRoute } from './src/routes/task/task.route.js'
+import { IntegrationRoute } from './src/routes/integration/integration.route.js'
+import { CteRoute } from './src/routes/logistic/cte.route.js'
+import { LogisticShippimentRoute } from './src/routes/logistic/shippiment.route.js'
+import { SearchRoute } from './src/routes/search.js'
+import { CalledRoute } from './src/routes/called.route.js'
 
-class App {
+export class App {
 
   express = express()
 
   constructor() {
     this.initializeMiddlewares()
     this.initializeRoutes()
+    this.initializePublic()
   }
 
   initializeMiddlewares = () => {
@@ -34,6 +36,7 @@ class App {
 
   initializeRoutes = () => {
 
+    //Login
     this.express.use('/api/login', new LoginRoute().router)
 
     //Called
@@ -43,14 +46,23 @@ class App {
     this.express.use('/api/logistic/cte', new CteRoute().router)
     this.express.use('/api/logistic/shippiment', new LogisticShippimentRoute().router)
 
-
     this.express.use('/api/task', new TaskRoute().router)
     this.express.use('/api/integration', new IntegrationRoute().router)
 
     
     this.express.use('/api/search', new SearchRoute().router)
 
-    //this.express.get('/*', (req, res) => res.sendFile('../public/index.html'))
+  }
+
+  initializePublic = () => {
+
+    const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+    this.express.use(express.static(path.join(__dirname, "public")))
+
+    this.express.get("*", (req, res) => {
+      res.sendFile(path.join(__dirname, "public", "index.html"))
+    })
 
   }
 
@@ -65,7 +77,3 @@ class App {
 //tasks()
 
 //taskEmitter.on('taskUpdated', tasks)
-
-export const app = new App()
-
-export const handler = serverless(app.express)

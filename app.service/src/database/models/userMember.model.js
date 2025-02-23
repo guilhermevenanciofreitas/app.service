@@ -8,7 +8,7 @@ export class UserMember {
     type: Sequelize.UUIDV4
   }
 
-  name = {
+  userName = {
     field: 'UserName',
     type: Sequelize.STRING
   }

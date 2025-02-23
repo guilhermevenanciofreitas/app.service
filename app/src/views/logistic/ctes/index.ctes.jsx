@@ -16,6 +16,8 @@ import ViewDacte from './view.dacte'
 
 import _ from 'lodash'
 import { Exception } from '../../../utils/exception'
+import { ReportViewer } from '../../../controls/components/ReportViewer'
+import { Loading } from '../../../App'
 
 const fields = [
   { label: 'Número', value: 'nCT' },
@@ -28,7 +30,7 @@ export class LogisticCtes extends React.Component {
   viewCte = React.createRef()
   viewUpload = React.createRef()
   viewNfes = React.createRef()
-  viewDacte = React.createRef()
+  reportViewer = React.createRef()
 
   componentDidMount = () => {
     this.onSearch()
@@ -69,29 +71,18 @@ export class LogisticCtes extends React.Component {
     console.log(cte)
   }
 
-  onDacte = async ({id, chCTe}) => {
+  onDacte = async ({id}) => {
+    try {
 
-    const response = await new Service().Post('logistic/cte/dacte', {id})
+      Loading.Show()
+      const response = await new Service().Post('logistic/cte/dacte', {id})
+      this.reportViewer.current.visualize(response.data.pdf)
 
-    if (response.data.pdf && typeof response.data.pdf === 'string') {
-      
-      const binaryString = atob(response.data.pdf); // Decodifica o Base64
-      const binaryData = new Uint8Array(
-        binaryString.split('').map((char) => char.charCodeAt(0))
-      );
-      const pdfBlob = new Blob([binaryData], { type: 'application/pdf' });
-
-      // Create download link
-      const downloadUrl = URL.createObjectURL(pdfBlob);
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.download = `${chCTe}.pdf`; // Nome do arquivo baixado
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
+    } catch (error) {
+      Exception.error(error)
+    } finally {
+      Loading.Hide()
     }
-  
   }
 
   columns = [
@@ -134,7 +125,7 @@ export class LogisticCtes extends React.Component {
 
         <ViewCte ref={this.viewCte} />
 
-        <ViewDacte ref={this.viewDacte} />
+        <ReportViewer ref={this.reportViewer} />
 
         <PageContent>
           

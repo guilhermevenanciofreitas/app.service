@@ -107,7 +107,7 @@ export class SignIn extends React.Component {
                   <div className='form-control'>
                     <label className="textfield-filled">
                       <input type='text' value={this.state?.email} onChange={(event) => this.setState({ email: event.target.value })} autoFocus />
-                      <span>E-mail</span>
+                      <span>Usuário ou e-mail</span>
                     </label>
                   </div>
                 </Col>
@@ -134,7 +134,7 @@ export class SignIn extends React.Component {
         )}
 
         {_.size(this.state?.companyBusiness) >= 1 && (
-          <Panel bordered style={{ background: '#fff', width: 400 }}>
+          <Panel bordered style={{ background: '#fff', width: '400px', height: '260px' }}>
             <Form>
               <Steps current={1}>
                 <Steps.Item title="Entrar" />

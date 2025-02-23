@@ -9,6 +9,8 @@ import { Exception } from "../../utils/exception.js"
 
 import _ from 'lodash'
 
+import axios from 'axios'
+
 export class LoginController {
 
   signIn = async (req, res) => {
@@ -30,10 +32,11 @@ export class LoginController {
 
       await db.transaction(async (transaction) => {
 
+        
         const user = await db.User.findOne({
           attributes: ['id', 'name', 'email', 'passwordHash'],
           include: [
-            {model: db.UserMember, as: 'userMember', attributes: ['id', 'name']}
+            {model: db.UserMember, as: 'userMember', attributes: ['id', 'userName']}
           ],
           where: Sequelize.literal(`"User"."email" = :email OR "userMember"."UserName" = :email`),
           replacements: { email },
@@ -44,8 +47,17 @@ export class LoginController {
           res.status(201).json({message: 'Usuário não encontrado!'})
           return
         }
-  
-        if (!(await this.comparePassword(password, user.passwordHash))) {
+
+        let data = JSON.stringify({
+          username: user.userMember.userName,
+          password: password
+        });
+
+        let config = {method: 'post', url: 'http://170.254.135.108:7077/Pesquisas/wsPesquisa.asmx/ValidateUser', headers: {'Content-Type': 'application/json'}, data: data}
+
+        const response = await axios.request(config)
+
+        if (!response.data.d) {
           res.status(201).json({message: 'Senha incorreta!'})
           return
         }
@@ -102,7 +114,7 @@ export class LoginController {
           token: session.id,
           companyBusiness: _.pick(companyBusiness[0], ['description']),
           company: _.pick(companyBusiness[0].companies[0], ['id', 'surname']),
-          user: {id: user.id, name: user.userMember.name},
+          user: {id: user.id, userName: user.userMember.userName},
           lastAcess: lastAcess.format('YYYY-MM-DDTHH:mm:ss'),
           expireIn
         })

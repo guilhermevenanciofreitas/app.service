@@ -8,12 +8,10 @@ export class TaskMethod {
 
         const db = new AppContext()
 
-        let taskHistory
-
         await db.transaction(async (transaction) => {
             try {
 
-                taskHistory = await db.TaskHistory.create({entryAt: dayjs().format('YYYY-MM-DD HH:mm:ss'), taskId: task.id, finishedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')}, {transaction})
+                let taskHistory = await db.TaskHistory.create({entryAt: dayjs().format('YYYY-MM-DD HH:mm:ss'), taskId: task.id, finishedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')}, {transaction})
 
                 console.log(`${dayjs().format('DD/MM/YYYY HH:mm:ss')} Task: executing - id: ${task.id} methodId: ${task.methodId} schedule: ${task.schedule} arguments: ${JSON.stringify(task.arguments)}`)
 
