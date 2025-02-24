@@ -9,27 +9,15 @@ export const Search = {
     },
 
     calledReason: async (search) => {
-        try {
-            return (await new Service().Post("search/called-reason", {search}))?.data
-        } catch (error) {
-            Exception.error(error)
-        }
+        return (await new Service().Post("search/called-reason", {search}))?.data
     },
 
     calledOccurrence: async (search) => {
-        try {
-            return (await new Service().Post("search/called-occurrence", {search}))?.data
-        } catch (error) {
-            Exception.error(error)
-        }
+        return (await new Service().Post("search/called-occurrence", {search}))?.data
     },
 
     user: async (search) => {
-        try {
-            return (await new Service().Post("search/user", {search}))?.data
-        } catch (error) {
-            Exception.error(error)
-        }
+        return (await new Service().Post("search/user", {search}))?.data
     },
 
     city: async (search) => {

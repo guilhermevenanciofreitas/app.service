@@ -98,15 +98,15 @@ export class SearchController {
                 const db = new AppContext()
 
                 const users = await db.User.findAll({
-                    attributes: ['id', 'name'],
+                    attributes: ['id'],
                     include: [
-                        {model: db.UserMember, as: 'userMember', attributes: ['name']}
+                        {model: db.UserMember, as: 'userMember', attributes: ['userName']}
                     ],
                     where: [{
                         '$userMember.UserName$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
                     }],
                     order: [
-                        [db.UserMember, 'name', 'asc']
+                        [db.UserMember, 'userName', 'asc']
                     ],
                     limit: 20
                 })

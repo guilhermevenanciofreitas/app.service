@@ -73,9 +73,9 @@ export class ViewCalled extends React.Component {
                             </Col>
                             <Col md={3}>
                                 <div className='form-control'>
-                                    <AutoComplete label='Responsável' value={this.state?.responsible} text={(item) => `${item.userMember.name}`} onChange={(responsible) => this.setState({responsible})} onSearch={async (search) => await Search.user(search)}>
+                                    <AutoComplete label='Responsável' value={this.state?.responsible} text={(item) => `${item.userMember.userName}`} onChange={(responsible) => this.setState({responsible})} onSearch={async (search) => await Search.user(search)}>
                                         <AutoComplete.Result>
-                                            {(item) => <span>{item.userMember.name}</span>}
+                                            {(item) => <span>{item.userMember.userName}</span>}
                                         </AutoComplete.Result>
                                     </AutoComplete>
                                 </div>
