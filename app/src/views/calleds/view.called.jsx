@@ -9,6 +9,7 @@ import { Loading } from "../../App";
 import _ from "lodash";
 import { Search } from "../../search";
 import { Exception } from "../../utils/exception";
+import AutoComplete2 from "../../controls/components/AutoComplete2"
 
 export class ViewCalled extends React.Component {
 
@@ -73,6 +74,15 @@ export class ViewCalled extends React.Component {
                             </Col>
                             <Col md={3}>
                                 <div className='form-control'>
+                                    <AutoComplete2 label='Responsável' value={this.state?.responsible} text={(item) => `${item.userMember.userName}`} onChange={(responsible) => this.setState({responsible})} onSearch={async (search) => await Search.user(search)}>
+                                        <AutoComplete2.Result>
+                                            {(item) => <span>{item.userMember.userName}</span>}
+                                        </AutoComplete2.Result>
+                                    </AutoComplete2>
+                                </div>
+                            </Col>
+                            <Col md={3}>
+                                <div className='form-control'>
                                     <AutoComplete label='Responsável' value={this.state?.responsible} text={(item) => `${item.userMember.userName}`} onChange={(responsible) => this.setState({responsible})} onSearch={async (search) => await Search.user(search)}>
                                         <AutoComplete.Result>
                                             {(item) => <span>{item.userMember.userName}</span>}
@@ -112,6 +122,15 @@ export class ViewCalled extends React.Component {
                                         <textarea rows="3" value={this.state?.detail} onChange={(event) => this.setState({ detail: event.target.value })} />
                                         <span>Detalhe</span>
                                     </label>
+                                </div>
+                            </Col>
+                            <Col md={5}>
+                                <div className='form-control'>
+                                    <AutoComplete2 label='Responsável' value={this.state?.responsible} text={(item) => `${item.userMember.userName}`} onChange={(responsible) => this.setState({responsible})} onSearch={async (search) => await Search.user(search)}>
+                                        <AutoComplete2.Result>
+                                            {(item) => <span>{item?.userMember?.userName}</span>}
+                                        </AutoComplete2.Result>
+                                    </AutoComplete2>  
                                 </div>
                             </Col>
                         </Row>

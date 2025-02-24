@@ -1,0 +1,40 @@
+.autocomplete-container {
+    position: relative;
+    width: 300px;
+    margin-bottom: 10px; /* Adicionando um espaçamento entre os campos */
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 8px 30px 8px 8px;
+    box-sizing: border-box;
+}
+
+.autocomplete-suggestions {
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 150px;
+    overflow-y: auto;
+    position: absolute;
+    width: 100%;
+    background-color: white;
+    z-index: 1000;
+}
+
+.autocomplete-suggestion {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.autocomplete-suggestion:hover,
+.autocomplete-suggestion.selected {
+    background-color: #ddd;
+}
+
+.search-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
