@@ -7,7 +7,7 @@ import './AutoComplete.css'
 
 const Result = React.createContext()
 
-const AutoComplete = ({label, text, value = null, onSearch, onChange, children}) => {
+const AutoComplete = ({label, text, value = undefined, onSearch, onChange, children}) => {
 
     const [loading, setLoading] = useState(false)
 
@@ -32,20 +32,21 @@ const AutoComplete = ({label, text, value = null, onSearch, onChange, children})
     }, [])
 
     const onInuptChange = async (value) => {
+        try {
 
-        setSearch(value?.toUpperCase())
+            setSearch(value?.toUpperCase())
 
-        //if (_.isEmpty(value)) {
-        //    setData([])
-        //    return
-        //}
+            setLoading(true)
+    
+            const data = await onSearch(value)
 
-        setLoading(true)
+            setData(data)
+    
+        } catch (error) {
 
-        onSearch(value)
-            .then((data) => setData(data))
-            .finally(() => setLoading(false))
-
+        } finally {
+            setLoading(false)
+        }
     }
 
     const onInputKeyDown = (event) => {
@@ -82,22 +83,23 @@ const AutoComplete = ({label, text, value = null, onSearch, onChange, children})
     }
 
     const onSelected = (item) => {
-        onClear()
+        setData([])
         onChange(item)
     }
 
     const onClear = () => {
         setSearch('')
-        setData([])
+        onChange(undefined)
+        inputRef.current?.focus()
     }
-    
+
     return (
         <div style={{position: 'relative'}}>
 
             <div className="textfield-filled right-inner-addon">
                 <span className="left"></span>
                 <span className="right">
-                    {loading ? <FaSyncAlt className='animated rotate' color='#696969' /> : value ? <div style={{cursor: 'pointer'}} onClick={() => onChange(undefined)}>&#x2715;</div> : <FaSearch style={{cursor: 'pointer'}} onClick={() => onInuptChange('')} /> }
+                    {loading ? <FaSyncAlt className='animated rotate' color='#696969' /> : value ? <div style={{cursor: 'pointer'}} onClick={onClear}>&#x2715;</div> : <FaSearch style={{cursor: 'pointer'}} onClick={() => onInuptChange('')} /> }
                 </span>
                 <input type="text" className='input-search' ref={inputRef} placeholder={!value ? '' : text(value)} value={search} onChange={(event) => onInuptChange(event.target.value)} onKeyDown={onInputKeyDown} />
                 <span>{label}</span>
