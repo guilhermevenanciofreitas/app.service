@@ -133,7 +133,7 @@ const data = [
     }
 ]
 
-class ViewRole extends React.Component {
+export class ViewRole extends React.Component {
 
     viewModal = React.createRef();
 
@@ -223,5 +223,3 @@ class ViewRole extends React.Component {
     }
 
 }
-
-export default ViewRole;

@@ -27,7 +27,7 @@ import FinanceReceivements from './views/finance/receivements/index.receivements
 import FinanceStatements from './views/finance/statements/index.statements';
 
 //Settings
-import Setting from './views/setting/index.setting';
+import { Setting } from './views/setting/index.setting';
 import SettingUsers from './views/setting/index.setting.users';
 import { SettingRoles } from './views/setting/index.setting.roles';
 import SettingBankAccounts from './views/setting/index.setting.bank-accounts';
