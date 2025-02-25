@@ -1,5 +1,5 @@
-import React from "react";
-import { Drawer } from "rsuite";
+import React from "react"
+import { Drawer } from "rsuite"
 
 export class ViewDrawer extends React.Component {
 
@@ -11,8 +11,8 @@ export class ViewDrawer extends React.Component {
             this.close = (value) => {
                 this.setState({open: false});
                 return resolve(value);
-            };
-        });
+            }
+        })
 
     }
 

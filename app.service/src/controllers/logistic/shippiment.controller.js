@@ -72,7 +72,7 @@ export class LogisticShippimentController {
   }
 
   async detail(req, res) {
-    //await Authorization.verify(req, res).then(async () => {
+    await Authorization.verify(req, res).then(async () => {
       try {
 
         const { id } = req.body
@@ -95,15 +95,15 @@ export class LogisticShippimentController {
         })
 
       } catch (error) {
-        res.status(500).json({message: error.message})
+        Exception.error(res, error)
       }
-    //}).catch((error) => {
-    //  res.status(400).json({message: error.message})
-    //})
+    }).catch((error) => {
+      Exception.unauthorized(res, error)
+    })
   }
 
   async addCte(req, res) {
-    //await Authorization.verify(req, res).then(async () => {
+    await Authorization.verify(req, res).then(async () => {
       try {
 
         const db = new AppContext();
@@ -133,26 +133,27 @@ export class LogisticShippimentController {
 
 
       } catch (error) {
-        res.status(500).json({message: error.message})
+        Exception.error(res, error)
       }
-    //}).catch((error) => {
-    //  res.status(400).json({message: error.message})
-    //})
+    }).catch((error) => {
+      Exception.unauthorized(res, error)
+    })
   }
 
   async submit(req, res) {
-    //await Authorization.verify(req, res).then(async () => {
+    await Authorization.verify(req, res).then(async () => {
       try {
 
         let shippiment = {
           id: req.body.id,
           tripId: 1,
-          documento_transporte: req.body.documento_transporte,
+          documentNumber: req.body.documento_transporte,
           senderId: req.body.sender?.id,
           proPred: req.body.proPred,
-          quantidade_entrega: 0,
-          peso: 0,
-          valor_frete: 0
+          quantity: 0,
+          weight: 0,
+          shippingValue: 0,
+          departureDate: dayjs().format('YYYY-MM-DD HH:mm')
         }
 
         const db = new AppContext();
@@ -170,11 +171,11 @@ export class LogisticShippimentController {
         res.status(200).json(shippiment)
 
       } catch (error) {
-        res.status(500).json({message: error.message})
+        Exception.error(res, error)
       }
-    //}).catch((error) => {
-    //  res.status(400).json({message: error.message})
-    //})
+    }).catch((error) => {
+      Exception.unauthorized(res, error)
+    })
   }
 
 }

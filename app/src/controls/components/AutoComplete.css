@@ -25,7 +25,7 @@
 .right-inner-addon span {
     position: absolute;
     right: 0px;
-    padding: 24px 12px;
+    padding: 20px 10px;
 }
 
 .left-and-right-inner-addon {
@@ -37,12 +37,12 @@
 }
 .left-and-right-inner-addon span.left {
     position: absolute;
-    padding: 12px 12px;
+    padding: 6px 6px;
 }
 .left-and-right-inner-addon span.right {
     position: absolute;
     right: 0px;
-    padding: 12px 12px;
+    padding: 6px 6px;
 }
 
 .right-inner-addon-b {

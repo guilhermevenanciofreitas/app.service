@@ -13,6 +13,7 @@ import _ from 'lodash'
 import { Exception } from '../../utils/exception'
 import { ViewCalled } from './view.called'
 import { Search } from '../../search'
+import { ViewCalledResolution } from './view.called-resolution'
 
 const fields = [
   { label: 'Número', value: 'nCT' },
@@ -21,38 +22,48 @@ const fields = [
 export class Calleds extends React.Component {
 
   viewCalled = React.createRef()
+  viewCalledResolution = React.createRef()
 
   componentDidMount = () => {
     this.onSearch()
   }
 
-  onSearch = () => {
-    this.setState({loading: true}, async () => {
-      try {
-        
-        const result = await new Service().Post('called/calleds', this.state.request)
-        this.setState({...result.data})
-        
-      } catch (error) {
-        Exception.error(error)
-      } finally {
-        this.setState({loading: false})
-      }
-    })
+  onSearch = async () => {
+    try {
+      this.setState({loading: true})
+      const result = await new Service().Post('called/calleds', this.state?.request)
+      this.setState({...result.data})
+    } catch (error) {
+      Exception.error(error)
+    } finally {
+      this.setState({loading: false})
+    }
   }
 
   onNew = async () => {
-    const cte = await this.viewCalled.current.new()
-    if (cte) this.onSearch()
+    try {
+      const called = await this.viewCalled.current.new()
+      if (called) this.onSearch()
+    } catch (error) {
+      Exception.error(error)
+    }
   }
 
   onEdit = async ({id}) => {
-    const cte = await this.viewCalled.current.edit(id)
-    if (cte) this.onSearch()
+    try {
+      const called = await this.viewCalled.current.edit(id)
+      if (called) this.onSearch()
+    } catch (error) {
+      Exception.error(error)
+    }
+  }
+
+  onResolution = () => {
+    this.viewCalledResolution.current.new()
   }
 
   columns = [
-    //
+ 
     { selector: (row) => <Whisper
       trigger="click"
       placement={'bottomStart'}
@@ -71,12 +82,13 @@ export class Calleds extends React.Component {
     </Whisper>, minWidth: '30px', maxWidth: '30px', center: true, style: {padding: '0px'}},
     { selector: (row) => dayjs(row.openedDate).format('DD/MM/YYYY HH:mm'), name: 'Abertura', minWidth: '140px', maxWidth: '140px'},
     { selector: (row) => row.number, name: 'Número', minWidth: '90px', maxWidth: '90px'},
-    { selector: (row) => row.responsible?.userMember?.name, name: 'Responsável', minWidth: '160px', maxWidth: '160px'},
+    { selector: (row) => row.responsible?.userMember?.userName, name: 'Responsável', minWidth: '160px', maxWidth: '160px'},
     { selector: (row) => row.requested?.surname, name: 'Solicitante', minWidth: '230px', maxWidth: '230px'},
     { selector: (row) => row.reason?.description, name: 'Motivo', minWidth: '140px', maxWidth: '140px'},
     { selector: (row) => row.occurrence?.description, name: 'Ocorrência', minWidth: '170px', maxWidth: '170px'},
     { selector: (row) => row.subject, name: 'Assunto'},
     { selector: (row) => dayjs(row.openedDate).format('DD/MM/YYYY HH:mm'), name: 'Fechamento', minWidth: '140px', maxWidth: '140px'},
+    { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onResolution(row)} content={_.size(row.ctes)}></Badge>, center: true, minWidth: '35px', maxWidth: '35px', style: {padding: '0px'}},
   ]
 
   render = () => {
@@ -85,6 +97,8 @@ export class Calleds extends React.Component {
       <Panel header={<CustomBreadcrumb title={'Chamados'} />}>
 
         <ViewCalled ref={this.viewCalled} />
+
+        <ViewCalledResolution ref={this.viewCalledResolution} />
 
         <PageContent>
           

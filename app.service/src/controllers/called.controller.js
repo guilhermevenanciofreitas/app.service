@@ -52,7 +52,7 @@ export class CalledController {
           attributes: ['id', 'openedDate', 'subject'],
           include: [
             {model: db.User, as: 'responsible', attributes: ['id'], include: [
-              {model: db.UserMember, as: 'userMember', attributes: ['name']}
+              {model: db.UserMember, as: 'userMember', attributes: ['userName']}
             ]},
             {model: db.Partner, as: 'requested', attributes: ['id', 'surname']},
             {model: db.CalledReason, as: 'reason', attributes: ['id', 'description']},
@@ -96,7 +96,7 @@ export class CalledController {
             attributes: ['id', 'subject', 'detail'],
             include: [
               {model: db.User, as: 'responsible', attributes: ['id'], include: [
-                {model: db.UserMember, as: 'userMember', attributes: ['name']}
+                {model: db.UserMember, as: 'userMember', attributes: ['userName']}
               ]},
               {model: db.Partner, as: 'requested', attributes: ['id', 'surname']},
               {model: db.CalledReason, as: 'reason', attributes: ['id', 'description']},

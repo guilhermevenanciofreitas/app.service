@@ -82,15 +82,6 @@ export class ViewCalled extends React.Component {
                             </Col>
                             <Col md={3}>
                                 <div className='form-control'>
-                                    <AutoComplete label='Responsável' value={this.state?.responsible} text={(item) => `${item.userMember.userName}`} onChange={(responsible) => this.setState({responsible})} onSearch={async (search) => await Search.user(search)}>
-                                        <AutoComplete.Result>
-                                            {(item) => <span>{item.userMember.userName}</span>}
-                                        </AutoComplete.Result>
-                                    </AutoComplete>
-                                </div>
-                            </Col>
-                            <Col md={4}>
-                                <div className='form-control'>
                                     <AutoComplete label='Motivo' value={this.state?.reason} text={(item) => `${item.description}`} onChange={(reason) => this.setState({reason})} onSearch={async (search) => await Search.calledReason(search)}>
                                         <AutoComplete.Result>
                                             {(item) => <span>{item.description}</span>}
@@ -100,26 +91,19 @@ export class ViewCalled extends React.Component {
                             </Col>
                             <Col md={4}>
                                 <div className='form-control'>
-                                    <AutoComplete label='Motivo' value={this.state?.occurrence} text={(item) => `${item.description}`} onChange={(occurrence) => this.setState({occurrence})} onSearch={async (search) => await Search.calledOccurrence(search)}>
+                                    <AutoComplete label='Ocorrência' value={this.state?.occurrence} text={(item) => `${item.description}`} onChange={(occurrence) => this.setState({occurrence})} onSearch={async (search) => await Search.calledOccurrence(search)}>
                                         <AutoComplete.Result>
                                             {(item) => <span>{item.description}</span>}
                                         </AutoComplete.Result>
                                     </AutoComplete>
                                 </div>
                             </Col>
+                            
                             <Col md={12}>
                                 <div className='form-control'>
                                     <label className="textfield-filled">
                                         <input type='text' value={this.state?.subject} onChange={(event) => this.setState({subject: event.target.value})} />
                                         <span>Assunto</span>
-                                    </label>
-                                </div>
-                            </Col>
-                            <Col md={12}>
-                                <div className='form-control'>
-                                    <label className="textfield-filled">
-                                        <textarea rows="3" value={this.state?.detail} onChange={(event) => this.setState({ detail: event.target.value })} />
-                                        <span>Detalhe</span>
                                     </label>
                                 </div>
                             </Col>

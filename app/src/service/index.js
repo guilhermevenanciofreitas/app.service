@@ -5,7 +5,7 @@ import path from 'path-browserify'
 
 export class Service {
 
-    Post = async (url, data, headers) => {
+    Post = async (url, data, headers, isSwal = true) => {
 
         const env = import.meta.env.VITE_API_URL
         const api_url = env + url
@@ -64,18 +64,22 @@ export class Service {
             //Em manutenção
             if (error?.response?.status == 404) {
                 const message = `[404] - Route "${url}"!`
-                Swal.fire({showCloseButton: true, title: 'Ops...', icon: 'warning', text: message, confirmButtonColor: "#FFF", confirmButtonText: '<span style="color: rgba(88, 86, 214)">OK</span>'})
+                if (isSwal) {
+                    Swal.fire({showCloseButton: true, title: 'Ops...', icon: 'warning', text: message, confirmButtonColor: "#FFF", confirmButtonText: '<span style="color: rgba(88, 86, 214)">OK</span>'})
+                }
                 throw new Error(message)
             }
 
             //Erro desconhecido
             const message = '[500] - Ocorreu um erro inesperado!'
-            Swal.fire({showCloseButton: true, title: 'Ops...', icon: 'error', text: message, confirmButtonColor: "#FFF", confirmButtonText: '<span style="color: rgba(88, 86, 214)">Quero abrir um chamado!</span>',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire('', 'Chamado <b>#49812</b> aberto com sucesso!', 'success')
-                }
-            })
+            if (isSwal) {
+                Swal.fire({showCloseButton: true, title: 'Ops...', icon: 'error', text: message, confirmButtonColor: "#FFF", confirmButtonText: '<span style="color: rgba(88, 86, 214)">Quero abrir um chamado!</span>',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire('', 'Chamado <b>#49812</b> aberto com sucesso!', 'success')
+                    }
+                })
+            }
             throw new Error(JSON.stringify(error?.response?.data))
 
         }

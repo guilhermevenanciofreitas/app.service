@@ -3,6 +3,7 @@ import { FaSearch, FaSyncAlt } from 'react-icons/fa'
 import styled from 'styled-components'
 import _ from 'lodash'
 import './AutoComplete.css'
+import { Message, toaster } from 'rsuite'
 
 const AutocompleteContainer = styled.div`
   position: relative;
@@ -74,6 +75,7 @@ class AutoComplete extends Component {
 
   handleSearch = async () => {
     await this.handleInputChange()
+    this.inputRef.current.focus()
   }
 
   handleInputChange = async (e) => {
@@ -81,14 +83,15 @@ class AutoComplete extends Component {
 
         const query = e?.target?.value || ''
 
-        this.setState({ query, selectedIndex: -1, loading: true })
+        this.setState({ query, selectedIndex: 0, loading: true })
         
         const data = await this.props.onSearch(query)
 
         this.setState({ data })
 
     } catch (error) {
-        
+      const errors = JSON.parse(error.message).erros
+      toaster.push(<Message type='error'><b>Mensagem</b><ul style={{marginTop: '10px'}}>{_.map(errors || [], (message, key) => <li key={key}>{message}</li>)}</ul></Message>,{ placement: 'topEnd', duration: 5000 })
     } finally {
         this.setState({ loading: false })
     }
@@ -121,7 +124,7 @@ class AutoComplete extends Component {
   }
 
   handleBlur = () => {
-    this.setState({ query: '' })
+    setTimeout(() => this.setState({ query: '', data: [] }), 200)
   }
 
   handleClickOutside = (event) => {
@@ -140,7 +143,7 @@ class AutoComplete extends Component {
     this.setState({ query: '', data: [] })
   }
 
-  onClear = () => {
+  handleClear = () => {
     this.setState({ query: '' })
     this.props.onChange(undefined)
     this.inputRef.current?.focus()
@@ -148,7 +151,7 @@ class AutoComplete extends Component {
 
   render() {
 
-    const { label, text, value, children } = this.props
+    const { label, text, value, children, autoFocus } = this.props
     const { query, data, selectedIndex, boxStyle, loading } = this.state
 
     return (
@@ -158,7 +161,7 @@ class AutoComplete extends Component {
             {loading ? (
               <FaSyncAlt className='animated rotate' color='#696969' />
             ) : value ? (
-              <div style={{ cursor: 'pointer' }} onClick={this.onClear}>&#x2715;</div>
+              <div style={{ cursor: 'pointer' }} onClick={this.handleClear}>&#x2715;</div>
             ) : (
               <FaSearch style={{ cursor: 'pointer' }} onClick={this.handleSearch} />
             )}
@@ -171,11 +174,12 @@ class AutoComplete extends Component {
             onChange={this.handleInputChange}
             onKeyDown={this.handleKeyDown}
             onBlur={this.handleBlur}
+            autoFocus={autoFocus}
           />
           <span>{label}</span>
         </div>
         {_.size(data) > 0 && (
-          <SuggestionsBox ref={this.suggestionsBoxRef} style={{ width: `${boxStyle.width}px` }}>
+          <SuggestionsBox ref={this.suggestionsBoxRef} style={{ width: `${boxStyle.width}px` }} tabIndex={-1}>
             {_.map(data, (item, index) => (
               <Suggestion
                 key={index}
