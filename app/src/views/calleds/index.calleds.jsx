@@ -5,13 +5,14 @@ import dayjs from 'dayjs'
 
 import PageContent from '../../components/PageContent'
 
-import { CustomBreadcrumb, CustomPagination, CustomSearch, DataTable } from '../../controls'
+import { AutoComplete, CustomBreadcrumb, CustomPagination, CustomSearch, DataTable } from '../../controls'
 import { FaDownload, FaEllipsisV, FaFileCode, FaFileDownload, FaFilePdf, FaPlusCircle, FaPrint, FaSearchLocation, FaUpload } from 'react-icons/fa'
 import { Service } from '../../service'
 
 import _ from 'lodash'
 import { Exception } from '../../utils/exception'
 import { ViewCalled } from './view.called'
+import { Search } from '../../search'
 
 const fields = [
   { label: 'Número', value: 'nCT' },

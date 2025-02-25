@@ -13,7 +13,7 @@ import { MdAddCircleOutline, MdCheckCircleOutline } from 'react-icons/md';
 import Link from '../../components/NavLink'
 import { Service } from '../../service';
 import ViewUser from './view.user';
-import ViewRole from './view.role';
+import { ViewRole } from './view.role';
 
 const fields = [
   //{ label: 'Todos', value: undefined },
