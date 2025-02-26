@@ -15,6 +15,10 @@ export const Search = {
         return (await new Service().Post("search/called-occurrence", {search}, undefined, false))?.data
     },
 
+    calledStatus: async (search) => {
+        return (await new Service().Post("search/called-status", {search}, undefined, false))?.data
+    },
+
     user: async (search) => {
         return (await new Service().Post("search/user", {search}, undefined, false))?.data
     },

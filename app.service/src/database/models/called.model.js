@@ -9,9 +9,34 @@ export class Called {
     type: Sequelize.UUIDV4,
   }
 
-  openedDate = {
-    field: 'openedDate',
-    type: Sequelize.DATE,
+  number = {
+    field: 'number',
+    type: Sequelize.BIGINT,
+  }
+
+  createdAt = {
+    field: 'createdAt',
+    type: Sequelize.STRING,
+  }
+
+  userId = {
+    field: 'userId',
+    type: Sequelize.UUIDV4,
+  }
+
+  responsibleId = {
+    field: 'responsibleId',
+    type: Sequelize.UUIDV4,
+  }
+
+  subject = {
+    field: 'subject',
+    type: Sequelize.STRING,
+  }
+
+  requestedId = {
+    field: 'requestedId',
+    type: Sequelize.BIGINT,
   }
 
   reasonId = {
@@ -24,24 +49,9 @@ export class Called {
     type: Sequelize.UUIDV4,
   }
 
-  responsibleId = {
-    field: 'responsibleId',
+  statusId = {
+    field: 'statusId',
     type: Sequelize.UUIDV4,
-  }
-
-  requestedId = {
-    field: 'requestedId',
-    type: Sequelize.BIGINT,
-  }
-
-  subject = {
-    field: 'subject',
-    type: Sequelize.STRING,
-  }
-
-  detail = {
-    field: 'detail',
-    type: Sequelize.STRING,
   }
 
 }

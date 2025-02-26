@@ -31,6 +31,10 @@ const Suggestion = styled.div`
   }
 `
 
+const Nothing = styled.div`
+  padding: 6px;
+`
+
 const Result = React.createContext()
 
 class AutoComplete extends Component {
@@ -45,6 +49,7 @@ class AutoComplete extends Component {
 
     this.state = {
       loading: false,
+      nothing: false,
       data: [],
       query: '',
       selectedIndex: -1,
@@ -83,11 +88,11 @@ class AutoComplete extends Component {
 
         const query = e?.target?.value || ''
 
-        this.setState({ query, selectedIndex: 0, loading: true })
+        this.setState({ query, selectedIndex: 0, loading: true, nothing: false })
         
         const data = await this.props.onSearch(query)
 
-        this.setState({ data })
+        this.setState({ data, nothing: _.size(data) == 0 })
 
     } catch (error) {
       const errors = JSON.parse(error.message).erros
@@ -124,7 +129,7 @@ class AutoComplete extends Component {
   }
 
   handleBlur = () => {
-    setTimeout(() => this.setState({ query: '', data: [] }), 200)
+    setTimeout(() => this.setState({ query: '', data: [], nothing: false }), 200)
   }
 
   handleClickOutside = (event) => {
@@ -134,13 +139,13 @@ class AutoComplete extends Component {
       this.inputRef.current &&
       !this.inputRef.current.contains(event.target)
     ) {
-        this.setState({ query: '', data: [] })
+        this.setState({ query: '', data: [], nothing: false })
     }
   }
 
   handleSuggestionClick = (item) => {
     this.props.onChange(item)
-    this.setState({ query: '', data: [] })
+    this.setState({ query: '', data: [], nothing: false })
   }
 
   handleClear = () => {
@@ -178,8 +183,7 @@ class AutoComplete extends Component {
           />
           <span>{label}</span>
         </div>
-        {_.size(data) > 0 && (
-          <SuggestionsBox ref={this.suggestionsBoxRef} style={{ width: `${boxStyle.width}px` }} tabIndex={-1}>
+          <SuggestionsBox ref={this.suggestionsBoxRef} style={{ display: _.size(data) || this.state?.nothing ? 'block' : 'none', width: `${boxStyle.width}px` }} tabIndex={-1}>
             {_.map(data, (item, index) => (
               <Suggestion
                 key={index}
@@ -190,8 +194,11 @@ class AutoComplete extends Component {
                 <Result.Provider value={item}>{children}</Result.Provider>
               </Suggestion>
             ))}
+            {this.state?.nothing && (
+              <Nothing onClick={this.handleBlur}>Nenhum resultado encontrado!</Nothing>
+            )}
           </SuggestionsBox>
-        )}
+        
       </AutocompleteContainer>
     )
   }
