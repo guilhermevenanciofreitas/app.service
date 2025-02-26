@@ -15,11 +15,11 @@ export class SearchController {
                 const companies = await db.CompanyUser.findAll({
                     attributes: ['id'],
                     include: [
-                        {model: db.Company, as: 'company', attributes: ['id', 'name']}
+                        {model: db.Company, as: 'company', attributes: ['id', 'name', 'surname']}
                     ],
                     where: [{
                         '$userId$': userId,
-                        '$company.descricao$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}
+                        '$company.nome_fantasia$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}
                     }],
                     order: [
                         [{model: db.Company, as: 'company'}, 'name', 'asc']
