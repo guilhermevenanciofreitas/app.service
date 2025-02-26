@@ -6,7 +6,7 @@ import { Exception } from "../utils/exception.js";
 
 export class SearchController {
 
-    async company(req, res) {
+    company = async (req, res) => {
         Authorization.verify(req, res).then(async ({companyId, userId}) => {
             try {
 
@@ -15,14 +15,14 @@ export class SearchController {
                 const companies = await db.CompanyUser.findAll({
                     attributes: ['id'],
                     include: [
-                        {model: db.Company, as: 'company', attributes: ['id', 'name', 'surname']}
+                        {model: db.Company, as: 'company', attributes: ['id', 'name']}
                     ],
                     where: [{
-                        '$userId$': user.id,
-                        '$company.surname$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}
+                        '$userId$': userId,
+                        '$company.descricao$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}
                     }],
                     order: [
-                        ['company', 'surname', 'asc']
+                        [{model: db.Company, as: 'company'}, 'name', 'asc']
                     ],
                     limit: 20
                 });
@@ -37,7 +37,7 @@ export class SearchController {
         })
     }
 
-    calledReason = (req, res) => {
+    calledReason = async (req, res) => {
         Authorization.verify(req, res).then(async ({companyId, userId}) => {
             try {
 
@@ -64,7 +64,7 @@ export class SearchController {
         })
     }
 
-    calledOccurrence = (req, res) => {
+    calledOccurrence = async (req, res) => {
         Authorization.verify(req, res).then(async ({companyId, userId}) => {
             try {
 
@@ -91,7 +91,34 @@ export class SearchController {
         })
     }
 
-    async user(req, res) {
+    calledStatus = async (req, res) => {
+        Authorization.verify(req, res).then(async ({companyId, userId}) => {
+            try {
+
+                const db = new AppContext()
+
+                const status = await db.CalledStatus.findAll({
+                    attributes: ['id', 'description'],
+                    where: [{
+                        '$description$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}
+                    }],
+                    order: [
+                        ['description', 'asc']
+                    ],
+                    limit: 20
+                })
+
+                res.status(200).json(status)
+
+            } catch (error) {
+                Exception.error(res, error)
+            }
+        }).catch((error) => {
+            Exception.unauthorized(res, error)
+        })
+    }
+
+    user = async (req, res) => {
         Authorization.verify(req, res).then(async ({companyId, userId}) => {
             try {
 
@@ -121,8 +148,8 @@ export class SearchController {
         })
     }
 
-    async partner(req, res) {
-        Authorization.verify(req, res).then(async ({company}) => {
+    partner = async (req, res) => {
+        Authorization.verify(req, res).then(async ({companyId, userId}) => {
             try {
 
                 const db = new AppContext()
@@ -151,7 +178,7 @@ export class SearchController {
         });
     }
 
-    async city(req, res) {
+    city = async (req, res) => {
         Authorization.verify(req, res).then(async ({company}) => {
             try {
 
@@ -181,7 +208,7 @@ export class SearchController {
         })
     }
 
-    async sender(req, res) {
+    sender = async (req, res) => {
         Authorization.verify(req, res).then(async ({company}) => {
             try {
 
@@ -212,7 +239,7 @@ export class SearchController {
         });
     }
 
-    async recipient(req, res) {
+    recipient = async (req, res) => {
         Authorization.verify(req, res).then(async ({company}) => {
             try {
 
@@ -243,7 +270,7 @@ export class SearchController {
         });
     }
 
-    async employee(req, res) {
+    employee = async (req, res) => {
         Authorization.verify(req, res).then(async ({options}) => {
             try {
 
@@ -273,7 +300,7 @@ export class SearchController {
         });
     }
 
-    async bankAccount(req, res) {
+    bankAccount = async (req, res) => {
         Authorization.verify(req, res).then(async ({options}) => {
             try {
 
@@ -309,7 +336,7 @@ export class SearchController {
         });
     }
 
-    async contabilityCategorie(req, res) {
+    contabilityCategorie = async (req, res) => {
         Authorization.verify(req, res).then(async ({company}) => {
             try {
 
@@ -336,7 +363,7 @@ export class SearchController {
         });
     }
 
-    async receivementMethod(req, res) {
+    receivementMethod = async (req, res) => {
         Authorization.verify(req, res).then(async ({company}) => {
             try {
 
@@ -367,7 +394,7 @@ export class SearchController {
         });
     }
 
-    async taskMethod(req, res) {
+    taskMethod = async (req, res) => {
         Authorization.verify(req, res).then(async ({user}) => {
             try {
 
@@ -441,7 +468,7 @@ export class SearchController {
     }
     */
 
-    async cfop(req, res) {
+    cfop = async (req, res) => {
         Authorization.verify(req, res).then(async ({company}) => {
             try {
 

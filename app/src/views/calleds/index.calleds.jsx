@@ -1,5 +1,5 @@
 import React from 'react'
-import { Badge, Button, HStack, IconButton, List, Nav, Panel, Popover, Stack, Whisper } from 'rsuite'
+import { Badge, Button, HStack, IconButton, List, Message, Nav, Panel, Popover, Stack, toaster, Whisper } from 'rsuite'
 
 import dayjs from 'dayjs'
 
@@ -14,9 +14,10 @@ import { Exception } from '../../utils/exception'
 import { ViewCalled } from './view.called'
 import { Search } from '../../search'
 import { ViewCalledResolution } from './view.called-resolution'
+import FilterButton from './filter'
 
 const fields = [
-  { label: 'Número', value: 'nCT' },
+  { label: 'Número', value: 'number' },
 ]
 
 export class Calleds extends React.Component {
@@ -42,8 +43,15 @@ export class Calleds extends React.Component {
 
   onNew = async () => {
     try {
+      
       const called = await this.viewCalled.current.new()
-      if (called) this.onSearch()
+      
+      if (called) {
+        await this.viewCalledResolution.current.new({calledId: called.id, number: called.number, responsible: called.responsible})
+        await toaster.push(<Message showIcon type='success'>Salvo com sucesso!</Message>, {placement: 'topEnd', duration: 5000 })
+        await this.onSearch()
+      }
+
     } catch (error) {
       Exception.error(error)
     }
@@ -52,14 +60,18 @@ export class Calleds extends React.Component {
   onEdit = async ({id}) => {
     try {
       const called = await this.viewCalled.current.edit(id)
-      if (called) this.onSearch()
+      if (called) await this.onSearch()
     } catch (error) {
       Exception.error(error)
     }
   }
 
-  onResolution = () => {
-    this.viewCalledResolution.current.new()
+  onResolution = async (row) => {
+    const resolution = await this.viewCalledResolution.current.new({calledId: row.id, number: row.number, resolutions: row.resolutions})
+    if (resolution) {
+      await toaster.push(<Message showIcon type='success'>Salvo com sucesso!</Message>, {placement: 'topEnd', duration: 5000 })
+      await this.onSearch()
+    }
   }
 
   columns = [
@@ -80,7 +92,7 @@ export class Calleds extends React.Component {
     >
       <IconButton className='hover-blue' size='sm' circle icon={<FaEllipsisV />} appearance="default" />
     </Whisper>, minWidth: '30px', maxWidth: '30px', center: true, style: {padding: '0px'}},
-    { selector: (row) => dayjs(row.openedDate).format('DD/MM/YYYY HH:mm'), name: 'Abertura', minWidth: '140px', maxWidth: '140px'},
+    { selector: (row) => dayjs(row.createdAt).format('DD/MM/YYYY HH:mm'), name: 'Abertura', minWidth: '140px', maxWidth: '140px'},
     { selector: (row) => row.number, name: 'Número', minWidth: '90px', maxWidth: '90px'},
     { selector: (row) => row.responsible?.userMember?.userName, name: 'Responsável', minWidth: '160px', maxWidth: '160px'},
     { selector: (row) => row.requested?.surname, name: 'Solicitante', minWidth: '230px', maxWidth: '230px'},
@@ -88,7 +100,7 @@ export class Calleds extends React.Component {
     { selector: (row) => row.occurrence?.description, name: 'Ocorrência', minWidth: '170px', maxWidth: '170px'},
     { selector: (row) => row.subject, name: 'Assunto'},
     { selector: (row) => dayjs(row.openedDate).format('DD/MM/YYYY HH:mm'), name: 'Fechamento', minWidth: '140px', maxWidth: '140px'},
-    { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onResolution(row)} content={_.size(row.ctes)}></Badge>, center: true, minWidth: '35px', maxWidth: '35px', style: {padding: '0px'}},
+    { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onResolution(row)} content={_.size(row.resolutions)}></Badge>, center: true, minWidth: '35px', maxWidth: '35px', style: {padding: '0px'}},
   ]
 
   render = () => {
@@ -102,10 +114,20 @@ export class Calleds extends React.Component {
 
         <PageContent>
           
+          {/*
           <Stack spacing={'6px'} direction={'row'} alignItems={'flex-start'} justifyContent={'space-between'}>
             <HStack>
-              <CustomSearch loading={this.state?.loading} fields={fields} defaultPicker={'nCT'} value={this.state?.request?.search} onChange={(search) => this.setState({request: {search}}, () => this.onSearch())} />
+              <CustomSearch loading={this.state?.loading} fields={fields} defaultPicker={'number'} value={this.state?.request?.search} onChange={(search) => this.setState({request: {search}}, () => this.onSearch())} />
+                <FilterButton />
             </HStack>
+          </Stack>
+          */}
+
+          <Stack direction='row' alignItems='flexStart' justifyContent='space-between'>
+            <Stack spacing={5}>
+              <CustomSearch loading={this.state?.loading} fields={fields} defaultPicker={'number'} value={this.state?.request?.search} onChange={(search) => this.setState({request: {search}}, () => this.onSearch())} />
+            </Stack>
+            <FilterButton />
           </Stack>
 
           <hr></hr>

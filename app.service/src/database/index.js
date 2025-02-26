@@ -41,6 +41,8 @@ import { UserMember } from './models/userMember.model.js'
 import { Called } from './models/called.model.js'
 import { CalledReason } from './models/calledReason.model.js'
 import { CalledOccurrence } from './models/calledOccurrence.model.js'
+import { CalledStatus } from './models/calledStatus.model.js'
+import { CalledResolution } from './models/calledResolution.model.js'
 
 export class AppContext extends Sequelize {
   
@@ -49,6 +51,10 @@ export class AppContext extends Sequelize {
   CalledOccurrence = this.define('calledOccurrence', new CalledOccurrence(), { tableName: 'calledOccurrence' })
 
   CalledReason = this.define('calledReason', new CalledReason(), { tableName: 'calledReason' })
+
+  CalledStatus = this.define('calledStatus', new CalledStatus(), { tableName: 'calledStatus' })
+
+  CalledResolution = this.define('calledResolution', new CalledResolution(), { tableName: 'calledResolution' })
 
   Company = this.define('company', new Company(), { tableName: 'empresa_filial' })
 
@@ -145,8 +151,16 @@ export class AppContext extends Sequelize {
 
     this.Called.belongsTo(this.User, {as: 'responsible', foreignKey: 'responsibleId', targetKey: 'id'})
     this.Called.belongsTo(this.Partner, {as: 'requested', foreignKey: 'requestedId', targetKey: 'id'})
+    this.Called.belongsTo(this.CalledStatus, {as: 'status', foreignKey: 'statusId', targetKey: 'id'})
     this.Called.belongsTo(this.CalledReason, {as: 'reason', foreignKey: 'reasonId', targetKey: 'id'})
     this.Called.belongsTo(this.CalledOccurrence, {as: 'occurrence', foreignKey: 'occurrenceId', targetKey: 'id'})
+
+    this.Called.hasMany(this.CalledResolution, {as: 'resolutions', foreignKey: 'calledId'})
+    
+    this.CalledResolution.belongsTo(this.Called, {as: 'called', foreignKey: 'calledId', targetKey: 'id'})
+    this.CalledResolution.belongsTo(this.User, {as: 'user', foreignKey: 'userId', targetKey: 'id'})
+    this.CalledResolution.belongsTo(this.CalledStatus, {as: 'status', foreignKey: 'statusId', targetKey: 'id'})
+
 
     this.City.belongsTo(this.State, {as: 'state', foreignKey: 'stateId', targetKey: 'id'})
 

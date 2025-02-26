@@ -13,13 +13,12 @@ export const appNavs = [
     title: 'Dashboard',
     to: '/dashboard'
   },
-  /*
   {
     eventKey: 'calleds',
     icon: <Icon as={MdSupport} />,
     title: 'Chamados',
     to: '/calleds'
-  },*/
+  },
   /*
   {
     eventKey: 'calendar',

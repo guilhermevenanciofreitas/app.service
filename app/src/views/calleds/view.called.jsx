@@ -6,6 +6,8 @@ import { MdCheckCircleOutline } from "react-icons/md";
 import { Service } from "../../service";
 import { Loading } from "../../App";
 
+import dayjs from 'dayjs'
+
 import _ from "lodash";
 import { Search } from "../../search";
 import { Exception } from "../../utils/exception";
@@ -28,10 +30,12 @@ export class ViewCalled extends React.Component {
 
     submit = async () => {
         try {
+            
             this.setState({submting: true})
 
             let called = _.pick(this.state, [
                 'id',
+                'requested.id',
                 'responsible.id',
                 'reason.id',
                 'occurrence.id',
@@ -41,7 +45,6 @@ export class ViewCalled extends React.Component {
 
             const result = await new Service().Post('called/submit', called)
 
-            await toaster.push(<Message showIcon type='success'>Salvo com sucesso!</Message>, {placement: 'topEnd', duration: 5000 })
             this.viewModal.current?.close(result.data)
 
         } catch (error) {
@@ -66,8 +69,33 @@ export class ViewCalled extends React.Component {
                             <Col md={2}>
                                 <div className='form-control'>
                                     <label class="textfield-filled">
-                                        <input type='text' value={this.state?.nCT} onChange={(event) => this.setState({nCT: event.target.value})} readOnly />
+                                        <input type='text' value={this.state?.nCT} readOnly tabIndex={-1} />
                                         <span>Número</span>
+                                    </label>
+                                </div>
+                            </Col>
+                            <Col md={2}>
+                                <div className='form-control'>
+                                    <label class="textfield-filled">
+                                        <input type='text' value={dayjs(this.state?.createdAt).format('DD/MM/YYYY HH:mm')} readOnly tabIndex={-1} />
+                                        <span>Abertura</span>
+                                    </label>
+                                </div>
+                            </Col>
+                            <Col md={5}>
+                                <div className='form-control'>
+                                    <AutoComplete label='Solicitante' value={this.state?.requested} text={(item) => `${item.cpfCnpj} - ${item.surname}`} onChange={(requested) => this.setState({requested})} onSearch={async (search) => await Search.partner(search)} autoFocus>
+                                        <AutoComplete.Result>
+                                            {(item) => <span>{item.cpfCnpj} - {item.surname}</span>}
+                                        </AutoComplete.Result>
+                                    </AutoComplete>
+                                </div>
+                            </Col>
+                            <Col md={3}>
+                                <div className='form-control'>
+                                    <label class="textfield-filled">
+                                        <input type='text' value={this.state?.status?.description} readOnly tabIndex={-1} />
+                                        <span>Status</span>
                                     </label>
                                 </div>
                             </Col>
@@ -102,7 +130,7 @@ export class ViewCalled extends React.Component {
                             <Col md={12}>
                                 <div className='form-control'>
                                     <label className="textfield-filled">
-                                        <input type='text' value={this.state?.subject} onChange={(event) => this.setState({subject: event.target.value})} />
+                                        <input type='text' value={this.state?.subject} onChange={(event) => this.setState({subject: event.target.value.toUpperCase()})} />
                                         <span>Assunto</span>
                                     </label>
                                 </div>
