@@ -35,7 +35,6 @@ export class CalledController {
             where.push({number: search.input.match(/\d+/g)})
           }
 
-          /*
           if (search?.picker == 'sender') {
             where.push({'$shippiment.sender.RazaoSocial$': {[Sequelize.Op.like]: `%${search.input.replace(' ', "%")}%`}})
           }
@@ -43,7 +42,7 @@ export class CalledController {
           if (search?.picker == 'chCTe') {
             where.push({'$chaveCT$': search.input.match(/\d+/g)})
           }
-          */
+        
 
         }
 

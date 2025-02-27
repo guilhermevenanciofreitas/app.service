@@ -23,7 +23,7 @@ class Filter extends React.Component {
 
   state = {
     filter: {
-      company: this.props.filter.company,
+      //company: this.props.filter.company,
       responsible: this.props.filter.responsible
     }
   }
@@ -34,7 +34,7 @@ class Filter extends React.Component {
 
   render() {
 
-    const appliedFiltersCount = _.size(Object.values(this.props.filter).filter(Boolean))
+    const appliedFiltersCount = _.size(Object.values(this.props.filter || {}).filter(Boolean))
     
     return (
       <>
@@ -188,7 +188,7 @@ export class Calleds extends React.Component {
             <Stack spacing={5}>
               <CustomSearch loading={this.state?.loading} fields={fields} defaultPicker={'number'} value={this.state?.request?.search} onChange={(search) => this.setState({request: {filter: this.state.request.filter, search}}, () => this.onSearch())} />
             </Stack>
-            <Filter filter={this.state?.request?.filter} onChange={(filter) => this.setState({request: {...this.state.request, filter}}, () => this.onSearch())} />
+            <Filter filter={this.state?.request?.filter} onChange={(filter) => this.setState({request: {...this.state?.request, filter}}, () => this.onSearch())} />
           </Stack>
 
           <hr></hr>
