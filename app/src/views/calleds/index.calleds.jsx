@@ -48,14 +48,14 @@ class Filter extends React.Component {
           <Drawer.Body style={{padding: '30px'}}>
             <Row gutterWidth={0}>
               <div className="form-control">
-                <AutoComplete label="Responsável" value={this.state?.filter?.responsible} text={(item) => `${item.userMember.userName}`} onChange={(responsible) => this.setState({ filter: {...this.state.filter, responsible} })} onSearch={async (search) => await Search.user(search)}>
+                <AutoComplete label="Responsável" value={this.state?.filter?.responsible} text={(item) => `${item.userMember.userName}`} onChange={(responsible) => this.setState({ filter: {...this.state.filter, responsible} })} onSearch={async (search) => await Search.user(search)} autoFocus>
                   <AutoComplete.Result>
                     {(item) => <span>{item.userMember?.userName}</span>}
                   </AutoComplete.Result>
                 </AutoComplete>
               </div>
               <div className="form-control">
-                <AutoComplete label="Filial" value={this.state?.filter?.company} text={(item) => `${item.surname}`} onChange={(company) => this.setState({ filter: {...this.state.filter, company} })} onSearch={async (search) => await Search.company(search)} autoFocus>
+                <AutoComplete label="Filial" value={this.state?.filter?.company} text={(item) => `${item.surname}`} onChange={(company) => this.setState({ filter: {...this.state.filter, company} })} onSearch={async (search) => await Search.company(search)}>
                   <AutoComplete.Result>
                     {(item) => <span>{item.surname}</span>}
                   </AutoComplete.Result>

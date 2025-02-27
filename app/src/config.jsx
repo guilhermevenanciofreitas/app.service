@@ -1,7 +1,7 @@
 import React from 'react';
 import { Icon } from '@rsuite/icons';
 import { VscTable, VscCalendar } from 'react-icons/vsc';
-import { MdFingerprint, MdDashboard, MdModeEditOutline, Md10K, MdSupport } from 'react-icons/md';
+import { MdFingerprint, MdDashboard, MdModeEditOutline, Md10K, MdSupport, MdSettings } from 'react-icons/md';
 import CubesIcon from '@rsuite/icons/legacy/Cubes';
 import { Badge } from 'rsuite';
 import { FaArchive, FaCalendar, FaCalendarDay, FaCalendarTimes, FaCalendarWeek, FaCartPlus, FaDropbox, FaInfo, FaInfoCircle, FaLifeRing, FaMoneyBill, FaMoneyCheck, FaSupple, FaTasks, FaTruck, FaUserPlus, FaVirusSlash } from 'react-icons/fa';
@@ -261,4 +261,10 @@ export const appNavs = [
     to: '/integrations'
   },
   */
+  {
+    eventKey: 'settings',
+    icon: <Icon as={MdSettings} />,
+    title: 'Configurações',
+    to: '/settings'
+  },
 ];
