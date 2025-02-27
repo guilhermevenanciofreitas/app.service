@@ -24,12 +24,22 @@ export class ViewCalled extends React.Component {
     }
 
     edit = async (id) => {
-        Loading.Show();
-        await new Service().Post('called/detail', {id}).then((result) => this.setState({...result.data})).finally(() => Loading.Hide());
-        return this.viewModal.current.show()
+        try {
+
+            Loading.Show()
+            const result = await new Service().Post('called/detail', {id})
+            this.setState({...result.data})
+
+            return this.viewModal.current.show()
+
+        } catch (error) {
+            throw error
+        } finally {
+            Loading.Hide()
+        }
     }
 
-    submit = async () => {
+    onSubmit = async () => {
         try {
             
             this.setState({submting: true})
@@ -63,7 +73,7 @@ export class ViewCalled extends React.Component {
     render = () => {
         
         return (
-            <Form autoComplete='off' onSubmit={this.submit}>
+            <Form autoComplete='off' onSubmit={this.onSubmit}>
                 <ViewModal ref={this.viewModal} size={1000}>
                     <Modal.Header><Modal.Title><Container>Chamado</Container></Modal.Title></Modal.Header>
                     <Modal.Body>

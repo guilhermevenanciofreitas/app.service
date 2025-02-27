@@ -37,17 +37,16 @@ const Frame = (props) => {
   });
 
   const navBodyStyle = expand
-    ? { height: windowHeight - 112, overflow: 'auto' }
+    ? { height: 'calc(100vh - 112px)', overflow: 'auto' }
     : {};
 
   return (
-    <Container className="frame">
+    <Container className="frame" style={{ height: '100vh', overflow: 'hidden' }}>
       <Sidebar
-        style={{ display: 'flex', flexDirection: 'column' }}
+        style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}
         width={expand ? 260 : 56}
         collapsible
       >
-        
         <Sidenav.Header>
           <Brand />
         </Sidenav.Header>
@@ -65,7 +64,6 @@ const Frame = (props) => {
                     </Nav.Menu>
                   );
                 }
-
                 if (rest.target === '_blank') {
                   return (
                     <Nav.Item key={item.eventKey} {...rest}>
@@ -73,7 +71,6 @@ const Frame = (props) => {
                     </Nav.Item>
                   );
                 }
-
                 return <NavItem key={rest.eventKey} {...rest} />;
               })}
             </Nav>
@@ -82,9 +79,9 @@ const Frame = (props) => {
         <NavToggle expand={expand} onChange={() => setExpand(!expand)} />
       </Sidebar>
 
-      <Container className={containerClasses}>
+      <Container className={containerClasses} style={{ height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
         <Header />
-        <Content>
+        <Content style={{ flex: 1, overflow: 'auto' }}>
           <Outlet />
         </Content>
       </Container>

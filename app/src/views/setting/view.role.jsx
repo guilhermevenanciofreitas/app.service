@@ -137,16 +137,24 @@ export class ViewRole extends React.Component {
 
     viewModal = React.createRef();
 
-    newRole = async () => {
+    new = async () => {
         this.setState({id: undefined, name: '', roleRules: []});
         return this.viewModal.current.show()
     }
 
-    editRole = async (id) => {
-        Loading.Show();
-        this.setState();
-        await new Service().Post('setting/role/detail', {id}).then((result) => this.setState({...result.data})).finally(() => Loading.Hide());
-        return this.viewModal.current.show()
+    edit = async (id) => {
+        try {
+            
+            Loading.Show()
+            const result = await new Service().Post('setting/role/detail', {id})
+            this.setState({...result.data})
+            return this.viewModal.current.show()
+
+        } catch (error) {
+            throw error
+        } finally {
+            Loading.Hide()
+        }
     }
 
     submit = async () => {

@@ -166,12 +166,12 @@ const App = () => {
               <Route path="logistic/trips" element={<LogisticTrips />} />
 
               {/*Setting*/}
-              <Route path="setting" element={<Setting />} />
-              <Route path="setting/users" element={<SettingUsers />} />
-              <Route path="setting/roles" element={<SettingRoles />} />
-              <Route path="setting/bank-accounts" element={<SettingBankAccounts />} />
-              <Route path="setting/contability-categories" element={<SettingContabilityCategories />} />
-              <Route path="setting/payment-methods" element={<SettingPaymentMethods />} />
+              <Route path="settings" element={<Setting />} />
+              <Route path="settings/users" element={<SettingUsers />} />
+              <Route path="settings/roles" element={<SettingRoles />} />
+              <Route path="settings/bank-accounts" element={<SettingBankAccounts />} />
+              <Route path="settings/contability-categories" element={<SettingContabilityCategories />} />
+              <Route path="settings/payment-methods" element={<SettingPaymentMethods />} />
 
               {/*Task*/}
               <Route path="tasks" element={<Tasks />} />

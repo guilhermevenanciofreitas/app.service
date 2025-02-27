@@ -29,28 +29,25 @@ export class SettingRoles extends React.Component {
     this.onSearch()
   }
 
-  onSearch = () => {
-    this.setState({loading: true}, async () => {
-      try {
-        
-        const result = await new Service().Post('setting/role/roles', this.state.request)
-        this.setState({...result.data})
-        
-      } catch (error) {
-        Exception.error(error)
-      } finally {
-        this.setState({loading: false})
-      }
-    })
-  }
-
-  onNewRole = () => {
-    this.viewRole.current.newRole()
-  }
-
-  onEditRole = (role) => {
+  onSearch = async () => {
     try {
-      this.viewRole.current.editRole(role.id)
+      this.setState({loading: true})
+      const result = await new Service().Post('setting/role/roles', this.state?.request)
+      this.setState({...result.data})
+    } catch (error) {
+      Exception.error(error)
+    } finally {
+      this.setState({loading: false})
+    }
+  }
+
+  onNew = () => {
+    this.viewRole.current.new()
+  }
+
+  onEdit = async (role) => {
+    try {
+      await this.viewRole.current.edit(role.id)
     } catch (error) {
       Exception.error(error)
     }
@@ -85,13 +82,13 @@ export class SettingRoles extends React.Component {
             */}
           </Nav>
 
-          <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEditRole} />
+          <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEdit} />
 
           <hr></hr>
 
           <Stack direction='row' alignItems='flexStart' justifyContent='space-between'>
               <Stack spacing={5}>
-                <Button appearance='primary' color='blue' startIcon={<FaPlusCircle />} onClick={this.onNewRole}>Novo</Button>
+                <Button appearance='primary' color='blue' startIcon={<FaPlusCircle />} onClick={this.onNew}>Novo</Button>
               </Stack>
               <CustomPagination isLoading={this.state?.loading} total={this.state?.response?.count} limit={this.state?.request?.limit} activePage={this.state?.request?.offset + 1} onChangePage={(offset) => this.setState({request: {...this.state.request, offset: offset - 1}}, () => this.onSearch())} onChangeLimit={(limit) => this.setState({request: {...this.state.request, limit}}, () => this.onSearch())} />
           </Stack>

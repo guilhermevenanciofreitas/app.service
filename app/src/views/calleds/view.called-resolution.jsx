@@ -22,7 +22,7 @@ export class ViewCalledResolution extends React.Component {
         return this.viewDrawer.current.show()
     }
 
-    submit = async () => {
+    onSubmit = async () => {
         try {
             
             this.setState({submting: true})
@@ -52,7 +52,7 @@ export class ViewCalledResolution extends React.Component {
     render = () => {
         
         return (
-            <Form autoComplete='off' onSubmit={this.submit}>
+            <Form autoComplete='off' onSubmit={this.onSubmit}>
                 <ViewDrawer ref={this.viewDrawer}>
                     <Drawer.Header>
                         <Drawer.Title>Chamado #{this.state?.number}</Drawer.Title>
