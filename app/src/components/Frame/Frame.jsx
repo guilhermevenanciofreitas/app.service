@@ -20,7 +20,8 @@ const NavItem = props => {
 
 const Frame = (props) => {
   const { navs } = props;
-  const [expand, setExpand] = useState(true);
+  const [expand, setExpand] = useState(false);
+  const [hoverExpand, setHoverExpand] = useState(false);
   const [windowHeight, setWindowHeight] = useState(getHeight(window));
 
   useEffect(() => {
@@ -32,25 +33,44 @@ const Frame = (props) => {
     };
   }, []);
 
+  const handleMouseEnter = () => {
+    if (!expand) setHoverExpand(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (!expand) setHoverExpand(false);
+  };
+
   const containerClasses = classNames('page-container', {
     'container-full': !expand
   });
 
-  const navBodyStyle = expand
+  const navBodyStyle = expand || hoverExpand
     ? { height: 'calc(100vh - 112px)', overflow: 'auto' }
     : {};
 
   return (
-    <Container className="frame" style={{ height: '100vh', overflow: 'hidden' }}>
+    <Container className="frame" style={{ height: '100vh', overflow: 'hidden', display: 'flex' }}>
       <Sidebar
-        style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}
-        width={expand ? 260 : 56}
+        style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          height: '100vh', 
+          transition: 'width 0.3s', 
+          borderRight: hoverExpand ? '0.5px solid #ddd' : 'none', 
+          boxShadow: hoverExpand ? '1px 0 3px rgba(0, 0, 0, 0.08)' : 'none',
+          overflow: 'hidden',
+          zIndex: 9999
+        }}
+        width={expand || hoverExpand ? 260 : 56}
         collapsible
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         <Sidenav.Header>
           <Brand />
         </Sidenav.Header>
-        <Sidenav expanded={expand} appearance="subtle" defaultOpenKeys={['2', '3']}>
+        <Sidenav expanded={expand || hoverExpand} appearance="subtle" defaultOpenKeys={['2', '3']}>
           <Sidenav.Body style={navBodyStyle}>
             <Nav>
               {navs.map(item => {
@@ -79,7 +99,7 @@ const Frame = (props) => {
         <NavToggle expand={expand} onChange={() => setExpand(!expand)} />
       </Sidebar>
 
-      <Container className={containerClasses} style={{ height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      <Container className={containerClasses} style={{ height: '100vh', overflow: 'hidden', flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Header />
         <Content style={{ flex: 1, overflow: 'auto' }}>
           <Outlet />
