@@ -3,6 +3,7 @@ import { Authorization } from "../authorization.js"
 import { AppContext } from "../../database/index.js"
 import dayjs from 'dayjs'
 import _ from 'lodash'
+import { Exception } from "../../utils/exception.js"
 
 export class SettingUserController {
 
@@ -16,29 +17,30 @@ export class SettingUserController {
         const offset = req.body.offset || 0
         const filter = req.body.filter // || { situation: ['active'] }
 
-        const status = req.body.status
+        //const status = req.body.status
 
-        const where = [{companyId: company.id}]
+        //const where = [{companyId: company.id}]
 
-        if (status) {
-          where.push({'$user.status$': status})
-        }
+        //if (status) {
+        //  where.push({'$user.status$': status})
+        //}
 
         await db.transaction(async (transaction) => {
 
           const companyUsers = await db.CompanyUser.findAndCountAll({
             attributes: ['id'],
             include: [
-              {model: db.User, as: 'user', attributes: ['id', 'name', 'email', 'status']},
-              {model: db.Role, as: 'role', attributes: ['id', 'name']}
+              {model: db.User, as: 'user', attributes: ['id']},
+              //{model: db.Role, as: 'role', attributes: ['id', 'name']}
             ],
             limit: limit,
             offset: offset * limit,
-            where,
-            order: [['user', 'name', 'asc']],
+            //where,
+            //order: [['user', 'name', 'asc']],
             transaction
           })
 
+          /*
           const userStatus = await db.User.findAll({
             attributes: ['status', [Sequelize.literal(`COALESCE(COUNT("status"), 0)`), 'statusCount']],
             group: ['status'],
@@ -47,23 +49,24 @@ export class SettingUserController {
             ],
             raw: true
           })
+          */
 
           res.status(200).json({
             request: {
-              status, filter, limit, offset
+              filter, limit, offset
             },
             response: {
-              userStatus, rows: _.map(companyUsers.rows, (companyUser) => Object.assign({...companyUser.user.dataValues, role: companyUser.role})), count: companyUsers.count
+              rows: _.map(companyUsers.rows, (companyUser) => Object.assign({...companyUser.user.dataValues, role: companyUser.role})), count: companyUsers.count
             }
           })
   
         })
 
       } catch (error) {
-        res.status(500).json({message: error.message})
+        Exception.error(res, error)
       }
     }).catch((error) => {
-      res.status(400).json({message: error.message})
+      Exception.unauthorized(res, error)
     })
   }
 
@@ -102,10 +105,10 @@ export class SettingUserController {
         res.status(200).json(userDetail.dataValues)
 
       } catch (error) {
-        res.status(500).json({message: error.message})
+        Exception.error(res, error)
       }
     }).catch((error) => {
-      res.status(400).json({message: error.message})
+      Exception.unauthorized(res, error)
     })
   }
 
@@ -136,10 +139,10 @@ export class SettingUserController {
         res.status(200).json(user)
 
       } catch (error) {
-        res.status(500).json({message: error.message})
+        Exception.error(res, error)
       }
     }).catch((error) => {
-      res.status(400).json({message: error.message})
+      Exception.unauthorized(res, error)
     })
   }
 
@@ -172,10 +175,10 @@ export class SettingUserController {
         })
 
       } catch (error) {
-        res.status(500).json({message: error.message})
+        Exception.error(res, error)
       }
     }).catch((error) => {
-      res.status(400).json({message: error.message})
+      Exception.unauthorized(res, error)
     })
   }
 

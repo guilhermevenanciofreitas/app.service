@@ -12,77 +12,66 @@ import _ from "lodash";
 import { Exception } from "../../utils/exception";
 
 const permissions = [
-    { value: '3.1', children: [
-        {label: 'Visualizar', value: 'c99a9c76-bce0-4007-8fe8-27da5c7ba141'},
-        {label: 'Cadastrar', value: 'c947a01a-6d8b-4f47-9c54-92c9ce6fdfa7'},
-        {label: 'Editar', value: '8d5c0b06-0f09-42ae-9823-a261f1e98108'},
-        {label: 'Excluir', value: '0daae48e-bd1a-4c45-9644-5f90e3c4a451'},
+    { value: 'calendar', children: [
+        {label: 'Visualizar', value: 'C99A9C76-BCE0-4007-8FE8-27DA5C7BA142'},
+        {label: 'Cadastrar', value: 'C947A01A-6D8B-4F47-9C54-92C9CE6FDFA8'},
+        {label: 'Editar', value: '8D5C0B06-0F09-42AE-9823-A261F1E98109'},
+        {label: 'Excluir', value: '0DAAE48E-BD1A-4C45-9644-5F90E3C4A452'},
     ]},
-    { value: '3.2', children: [
-        {label: 'Visualizar', value: '90ce2715-a5df-4ea3-a658-0f2e076a5441'},
-        {label: 'Cadastrar', value: '9eb31bd7-eabb-46e8-b4b7-62053c561e56'},
-        {label: 'Editar', value: '956e095e-46c9-4dd0-828b-ea456ed3e803'},
-        {label: 'Excluir', value: 'a606b1cc-bbf7-4489-9948-2dd71d891cf2'},
+    { value: 'called', children: [
+        {label: 'Visualizar', value: 'C99A9C76-BCE0-4007-8FE8-27DA5C7BA143'},
+        {label: 'Cadastrar', value: 'C947A01A-6D8B-4F47-9C54-92C9CE6FDFA9'},
+        {label: 'Editar', value: '8D5C0B06-0F09-42AE-9823-A261F1E98100'},
+        {label: 'Criar resolução', value: '0DAAE48E-BD1A-4C45-9644-5F90E3C4A454'},
+        {label: 'Excluir', value: '0DAAE48E-BD1A-4C45-9644-5F90E3C4A453'},
     ]},
-    { value: '3.3', children: [
-        {label: 'Visualizar', value: 'ce879c5f-57d2-4a53-ac55-0f9e77cf20cb'},
-        {label: 'Cadastrar', value: 'b2627091-06de-49fa-a0b1-508489fff04e'},
-        {label: 'Editar', value: '650ea2f9-9365-4162-aacc-bb0b971cf4ba'},
-        {label: 'Excluir', value: 'ffc90b11-f308-4b32-bb14-4f1180d90b09'},
+    { value: 'customer', children: [
+        {label: 'Visualizar', value: 'C99A9C76-BCE0-4007-8FE8-27DA5C7BA141'},
+        {label: 'Cadastrar', value: 'C947A01A-6D8B-4F47-9C54-92C9CE6FDFA7'},
+        {label: 'Editar', value: '8D5C0B06-0F09-42AE-9823-A261F1E98108'},
+        {label: 'Excluir', value: '0DAAE48E-BD1A-4C45-9644-5F90E3C4A451'},
     ]},
-    { value: '9.1', children: [
-        {label: 'Visualizar', value: ''},
-        {label: 'Editar', value: ''},
+    { value: 'supplier', children: [
+        {label: 'Visualizar', value: '90CE2715-A5DF-4EA3-A658-0F2E076A5441'},
+        {label: 'Cadastrar', value: '9EB31BD7-EABB-46E8-B4B7-62053C561E56'},
+        {label: 'Editar', value: '956E095E-46C9-4DD0-828B-EA456ED3E803'},
+        {label: 'Excluir', value: 'A606B1CC-BBF7-4489-9948-2DD71D891CF2'},
     ]},
-    { value: '9.2', children: [
-        {label: 'Visualizar', value: ''},
-        {label: 'Cadastrar', value: ''},
-        {label: 'Editar', value: ''},
-        {label: 'Excluir', value: ''},
+    { value: 'product', children: [
+        {label: 'Visualizar', value: 'CE879C5F-57D2-4A53-AC55-0F9E77CF20CB'},
+        {label: 'Cadastrar', value: 'B2627091-06DE-49FA-A0B1-508489FFF04E'},
+        {label: 'Editar', value: '650EA2F9-9365-4162-AACC-BB0B971CF4BA'},
+        {label: 'Excluir', value: 'FFC90B11-F308-4B32-BB14-4F1180D90B09'},
     ]},
-    { value: '9.3', children: [
-        {label: 'Visualizar', value: ''},
-        {label: 'Cadastrar', value: ''},
-        {label: 'Editar', value: ''},
-        {label: 'Excluir', value: ''},
-    ]}
+    { value: 'service', children: [
+        {label: 'Visualizar', value: 'CE879C5F-57D2-4A53-AC55-0F9E77CF20CB'},
+        {label: 'Cadastrar', value: 'B2627091-06DE-49FA-A0B1-508489FFF04E'},
+        {label: 'Editar', value: '650EA2F9-9365-4162-AACC-BB0B971CF4BA'},
+        {label: 'Excluir', value: 'FFC90B11-F308-4B32-BB14-4F1180D90B09'},
+    ]},
+    
 ]
 
 const data = [
     {
-        label: 'Caledário', value: '1', children: [
-            {label: 'Visualizar', value: '1.1'},
-            {label: 'Cadastrar', value: '1.2'},
-            {label: 'Editar', value: '1.3'},
-            {label: 'Excluir', value: '1.4'},
-        ]
+        label: 'Caledário', value: 'calendar', children: _.filter(permissions, (c) => c.value == 'calendar')[0]?.children
     },
     {
-        label: 'Chamados', value: '2', children: [
-            {label: 'Visualizar', value: '2.1'},
-            {label: 'Cadastrar', value: '2.2'},
-            {label: 'Editar', value: '2.3'},
-            {label: 'Excluir', value: '2.4'},
-        ]
+        label: 'Chamados', value: 'called', children: _.filter(permissions, (c) => c.value == 'called')[0]?.children
     },
     {
-        label: 'Cadastros', value: '3', children: [
+        label: 'Cadastros', children: [
             {
-                label: 'Clientes', value: '3.1', children: _.filter(permissions, (c) => c.value == '3.1')[0]?.children
+                label: 'Clientes', value: 'customer', children: _.filter(permissions, (c) => c.value == 'customer')[0]?.children
             },
             {
-                label: 'Fornecedores', value: '3.2', children: _.filter(permissions, (c) => c.value == '3.2')[0]?.children
+                label: 'Fornecedores', value: 'supplier', children: _.filter(permissions, (c) => c.value == 'supplier')[0]?.children
             },
             {
-                label: 'Produtos', value: '3.3', children: _.filter(permissions, (c) => c.value == '3.3')[0]?.children
+                label: 'Produtos', value: 'product', children: _.filter(permissions, (c) => c.value == 'product')[0]?.children
             },
             {
-                label: 'Serviços', value: '3.4', children: [
-                    {label: 'Visualizar', value: '3.4.1'},
-                    {label: 'Cadastrar', value: '3.4.2'},
-                    {label: 'Editar', value: '3.4.3'},
-                    {label: 'Excluir', value: '3.4.4'},
-                ]
+                label: 'Serviços', value: 'service', children: _.filter(permissions, (c) => c.value == 'service')[0]?.children
             },
             {
                 label: 'Anúncios', value: '3.5', children: [
@@ -119,15 +108,15 @@ const data = [
     },
     
     {
-        label: 'Configurações', value: '9', children: [
+        label: 'Configurações', children: [
             {
-                label: 'Informações', value: '9.1', children: _.filter(permissions, (c) => c.value == '9.1')[0]?.children
+                label: 'Informações', value: 'company', children: _.filter(permissions, (c) => c.value == 'company')[0]?.children
             },
             {
-                label: 'Usuários', value: '9.2', children: _.filter(permissions, (c) => c.value == '9.2')[0]?.children
+                label: 'Usuários', value: 'user', children: _.filter(permissions, (c) => c.value == 'user')[0]?.children
             },
             {
-                label: 'Cargos', value: '9.3', children: _.filter(permissions, (c) => c.value == '9.3')[0]?.children
+                label: 'Cargos', value: 'role', children: _.filter(permissions, (c) => c.value == 'role')[0]?.children
             },
         ],
     }
@@ -180,7 +169,19 @@ export class ViewRole extends React.Component {
 
     onChangeRules = (roleRules) => {
 
-        const index = ['1', '2', '3.1', '3.2', '3.3']
+        const index = [
+            //Calendário
+            'calendar',
+            //Chamado
+            'called',
+            //Cadastros
+            'customer',
+            'supplier',
+            //Configuração
+            'company',
+            'user',
+            'role'
+        ]
 
         const rules = []
 

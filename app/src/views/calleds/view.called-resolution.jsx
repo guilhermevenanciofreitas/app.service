@@ -25,7 +25,7 @@ export class ViewCalledResolution extends React.Component {
     onSubmit = async () => {
         try {
             
-            this.setState({submting: true})
+            this.setState({submitting: true})
 
             let resolution = _.pick(this.state, [
                 'calledId',
@@ -41,7 +41,7 @@ export class ViewCalledResolution extends React.Component {
         } catch (error) {
             Exception.error(error)
         } finally {
-            this.setState({submting: false})
+            this.setState({submitting: false})
         }
     }
 
@@ -88,7 +88,7 @@ export class ViewCalledResolution extends React.Component {
                             </Col>
                             
                             <div className='form-control'>
-                                <Button appearance="primary" color='green' onClick={this.submit} disabled={this.state?.submting}>{this.state?.submting ? <><Loader /> &nbsp; Confirmando...</> : <><FaCheckCircle /> &nbsp; Confirmar</>}</Button>
+                                <Button appearance="primary" color='green' onClick={this.onSubmit} disabled={this.state?.submitting}>{this.state?.submitting ? <><Loader /> &nbsp; Confirmando...</> : <><FaCheckCircle /> &nbsp; Confirmar</>}</Button>
                             </div>
                         
                             {_.size(this.state?.resolutions) > 0 && (

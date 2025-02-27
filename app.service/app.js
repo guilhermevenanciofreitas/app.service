@@ -12,6 +12,7 @@ import { LogisticShippimentRoute } from './src/routes/logistic/shippiment.route.
 import { SearchRoute } from './src/routes/search.js'
 import { CalledRoute } from './src/routes/called.route.js'
 import { SettingRoleRoute } from './src/routes/setting/role.route.js'
+import { SettingUserRoute } from './src/routes/setting/user.route.js'
 
 export class App {
 
@@ -52,6 +53,7 @@ export class App {
 
     //Setting
     this.express.use('/api/setting/role', new SettingRoleRoute().router)
+    this.express.use('/api/setting/user', new SettingUserRoute().router)
 
     
     this.express.use('/api/search', new SearchRoute().router)

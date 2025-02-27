@@ -11,7 +11,7 @@ export class CompanyUser {
 
   companyId = {
     field: 'companyId',
-    type: Sequelize.NUMBER
+    type: Sequelize.TINYINT
   }
 
   userId = {

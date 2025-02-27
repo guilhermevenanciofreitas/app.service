@@ -13,37 +13,14 @@ import { MdAddCircleOutline, MdCheckCircleOutline } from 'react-icons/md';
 import Link from '../../components/NavLink'
 import { Service } from '../../service';
 import ViewUser from './view.user';
+import { Exception } from '../../utils/exception';
+import { FaPlusCircle } from 'react-icons/fa';
 
 const fields = [
   { label: 'Todos', value: undefined },
   { label: 'Nome', value: 'name' },
   { label: 'E-mail', value: 'email' },
 ]
-
-class Filter extends React.Component {
-
-  state = {
-    filter: {...this.props.filter}
-  }
-
-  data = [
-    { label: 'Ativo', value: 'active' },
-    { label: 'Inativo', value: 'inactive' },
-  ]
-
-  onApply = () => {
-    this.props.onClose(this.props.onApply(this.state.filter))
-  }
-
-  render = () => (
-    <CustomFilter>
-      <CustomFilter.Item label={'Situação'} data={this.data} filter={this.state.filter} field={'situation'} onChange={(filter) => this.setState({filter})} />
-        <hr />
-      <Button appearance={'primary'} color='green' onClick={this.onApply}><MdCheckCircleOutline />&nbsp;Aplicar</Button>
-    </CustomFilter>
-  )
-
-}
 
 class SettingUsers extends React.Component {
 
@@ -53,31 +30,25 @@ class SettingUsers extends React.Component {
     this.onSearch()
   }
 
-  onApplyDate = (date) => {
-    //this.setState({request: {date}})
+  onSearch = async () => {
+    try {
+      this.setState({loading: true})
+      const result = await new Service().Post('setting/user/users', this.state?.request)
+      this.setState({...result.data})
+    } catch (error) {
+      Exception.error(error)
+    } finally {
+      this.setState({loading: false})
+    }
   }
 
-  onApplyFilter = (filter) => {
-    this.setState({request: {filter}}, () => this.onSearch())
-  }
-
-  onSearch = () => {
-    this.setState({loading: true}, async() => {
-      try {
-        await new Service().Post('setting/user/users', this.state.request).then((result) => this.setState({...result.data})).finally(() => this.setState({loading: false}))
-      } catch (error) {
-        toast.error(error.message)
-      }
-    })
-  }
-
-  onEditUser = async (user) => {
+  onEdit = async (user) => {
     this.viewUser.current.editUser(user.id).then((user) => {
       if (user) this.onSearch()
     })
   }
 
-  onNewUser = () => {
+  onNew = () => {
     this.viewUser.current.newUser().then((user) => {
       if (user) this.onSearch()
     })
@@ -125,13 +96,13 @@ class SettingUsers extends React.Component {
             })}
           </Nav>
 
-          <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEditUser} />
+          <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEdit} />
 
           <hr></hr>
 
           <Stack direction='row' alignItems='flexStart' justifyContent='space-between'>
 
-            <Button appearance='primary' color='blue' startIcon={<MdAddCircleOutline />} onClick={this.onNewUser}>Novo usuário</Button>
+            <Button appearance='primary' color='blue' startIcon={<FaPlusCircle />} onClick={this.onNew}>Novo</Button>
 
             {/*
             <Pagination layout={['-', 'limit', '|', 'pager']} size={'md'} prev={true} next={true} first={true} last={true} ellipsis={false} boundaryLinks={false} total={200} limit={50} limitOptions={[30,50,100]} maxButtons={6} activePage={1}
