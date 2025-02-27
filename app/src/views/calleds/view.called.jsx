@@ -17,8 +17,9 @@ export class ViewCalled extends React.Component {
     viewModal = React.createRef()
 
     new = async (called) => {
+        const Authorization = JSON.parse(localStorage.getItem("Authorization"))
         if (this.state) for (const prop of Object.getOwnPropertyNames(this.state)) delete this.state[prop]
-        this.setState({...called})
+        this.setState({...called, company: Authorization.company})
         return this.viewModal.current.show()
     }
 
@@ -35,6 +36,7 @@ export class ViewCalled extends React.Component {
 
             let called = _.pick(this.state, [
                 'id',
+                'company.id',
                 'requested.id',
                 'responsible.id',
                 'reason.id',
@@ -69,9 +71,18 @@ export class ViewCalled extends React.Component {
                             <Col md={2}>
                                 <div className='form-control'>
                                     <label class="textfield-filled">
-                                        <input type='text' value={this.state?.nCT} readOnly tabIndex={-1} />
+                                        <input type='text' value={this.state?.number} readOnly tabIndex={-1} />
                                         <span>Número</span>
                                     </label>
+                                </div>
+                            </Col>
+                            <Col md={5}>
+                                <div className='form-control'>
+                                    <AutoComplete label='Filial' value={this.state?.company} text={(item) => `${item.surname}`} onChange={(company) => this.setState({company})} onSearch={async (search) => await Search.company(search)}>
+                                        <AutoComplete.Result>
+                                            {(item) => <span>{item.surname}</span>}
+                                        </AutoComplete.Result>
+                                    </AutoComplete>
                                 </div>
                             </Col>
                             <Col md={2}>
@@ -82,15 +93,6 @@ export class ViewCalled extends React.Component {
                                     </label>
                                 </div>
                             </Col>
-                            <Col md={5}>
-                                <div className='form-control'>
-                                    <AutoComplete label='Solicitante' value={this.state?.requested} text={(item) => `${item.cpfCnpj} - ${item.surname}`} onChange={(requested) => this.setState({requested})} onSearch={async (search) => await Search.partner(search)} autoFocus>
-                                        <AutoComplete.Result>
-                                            {(item) => <span>{item.cpfCnpj} - {item.surname}</span>}
-                                        </AutoComplete.Result>
-                                    </AutoComplete>
-                                </div>
-                            </Col>
                             <Col md={3}>
                                 <div className='form-control'>
                                     <label class="textfield-filled">
@@ -99,11 +101,11 @@ export class ViewCalled extends React.Component {
                                     </label>
                                 </div>
                             </Col>
-                            <Col md={3}>
+                            <Col md={4}>
                                 <div className='form-control'>
-                                    <AutoComplete label='Responsável' value={this.state?.responsible} text={(item) => `${item.userMember.userName}`} onChange={(responsible) => this.setState({responsible})} onSearch={async (search) => await Search.user(search)}>
+                                    <AutoComplete label='Solicitante' value={this.state?.requested} text={(item) => `${item.cpfCnpj} - ${item.surname}`} onChange={(requested) => this.setState({requested})} onSearch={async (search) => await Search.partner(search)} autoFocus>
                                         <AutoComplete.Result>
-                                            {(item) => <span>{item.userMember.userName}</span>}
+                                            {(item) => <span>{item.cpfCnpj} - {item.surname}</span>}
                                         </AutoComplete.Result>
                                     </AutoComplete>
                                 </div>
@@ -117,7 +119,7 @@ export class ViewCalled extends React.Component {
                                     </AutoComplete>
                                 </div>
                             </Col>
-                            <Col md={4}>
+                            <Col md={3}>
                                 <div className='form-control'>
                                     <AutoComplete label='Ocorrência' value={this.state?.occurrence} text={(item) => `${item.description}`} onChange={(occurrence) => this.setState({occurrence})} onSearch={async (search) => await Search.calledOccurrence(search)}>
                                         <AutoComplete.Result>
@@ -126,7 +128,23 @@ export class ViewCalled extends React.Component {
                                     </AutoComplete>
                                 </div>
                             </Col>
-                            
+                            <Col md={2}>
+                                <div className='form-control'>
+                                    <label class="textfield-filled">
+                                        <input type='text' value={dayjs(this.state?.prevision).format('DD/MM/YYYY HH:mm')} readOnly tabIndex={-1} />
+                                        <span>Previsão</span>
+                                    </label>
+                                </div>
+                            </Col>
+                            <Col md={3}>
+                                <div className='form-control'>
+                                    <AutoComplete label='Responsável' value={this.state?.responsible} text={(item) => `${item.userMember.userName}`} onChange={(responsible) => this.setState({responsible})} onSearch={async (search) => await Search.user(search)}>
+                                        <AutoComplete.Result>
+                                            {(item) => <span>{item.userMember.userName}</span>}
+                                        </AutoComplete.Result>
+                                    </AutoComplete>
+                                </div>
+                            </Col>
                             <Col md={12}>
                                 <div className='form-control'>
                                     <label className="textfield-filled">

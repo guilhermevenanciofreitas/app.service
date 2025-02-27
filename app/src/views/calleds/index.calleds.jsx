@@ -1,29 +1,98 @@
 import React from 'react'
-import { Badge, Button, HStack, IconButton, List, Message, Nav, Panel, Popover, Stack, toaster, Whisper } from 'rsuite'
-
-import dayjs from 'dayjs'
+import { Badge, Button, Divider, Drawer, IconButton, List, Message, Nav, Panel, Popover, Row, Stack, toaster, Whisper } from 'rsuite'
 
 import PageContent from '../../components/PageContent'
 
 import { AutoComplete, CustomBreadcrumb, CustomPagination, CustomSearch, DataTable } from '../../controls'
-import { FaDownload, FaEllipsisV, FaFileCode, FaFileDownload, FaFilePdf, FaPlusCircle, FaPrint, FaSearchLocation, FaUpload } from 'react-icons/fa'
+import { FaCheckCircle, FaEllipsisV, FaFileDownload, FaFilter, FaPlusCircle, FaPrint } from 'react-icons/fa'
 import { Service } from '../../service'
 
-import _ from 'lodash'
 import { Exception } from '../../utils/exception'
 import { ViewCalled } from './view.called'
 import { Search } from '../../search'
 import { ViewCalledResolution } from './view.called-resolution'
-import FilterButton from './filter'
+
+import dayjs from 'dayjs'
+import _ from 'lodash'
 
 const fields = [
   { label: 'Número', value: 'number' },
 ]
 
+class Filter extends React.Component {
+
+  state = {
+    filter: {
+      company: this.props.filter.company,
+      responsible: this.props.filter.responsible
+    }
+  }
+
+  onApply = () => {
+    this.setState({open: false}, () => this.props.onChange(this.state.filter))
+  }
+
+  render() {
+
+    const appliedFiltersCount = _.size(Object.values(this.props.filter).filter(Boolean))
+    
+    return (
+      <>
+
+        <Button appearance="subtle" onClick={() => this.setState({ open: true, filter: this.props.filter })}>
+          <FaFilter /> &nbsp; Filtro &nbsp; {appliedFiltersCount > 0 && <Badge content={appliedFiltersCount} />}
+        </Button>
+
+        <Drawer open={this.state?.open} onClose={() => this.setState({open: false})} size="xs">
+          <Drawer.Header><Drawer.Title>Filtro</Drawer.Title></Drawer.Header>
+          <Drawer.Body style={{padding: '30px'}}>
+            <Row gutterWidth={0}>
+              <div className="form-control">
+                <AutoComplete label="Filial" value={this.state?.filter?.company} text={(item) => `${item.surname}`} onChange={(company) => this.setState({ filter: {...this.state.filter, company} })} onSearch={async (search) => await Search.company(search)} autoFocus>
+                  <AutoComplete.Result>
+                    {(item) => <span>{item.surname}</span>}
+                  </AutoComplete.Result>
+                </AutoComplete>
+              </div>
+              <div className="form-control">
+                <AutoComplete label="Responsável" value={this.state?.filter?.responsible} text={(item) => `${item.userMember.userName}`} onChange={(responsible) => this.setState({ filter: {...this.state.filter, responsible} })} onSearch={async (search) => await Search.user(search)}>
+                  <AutoComplete.Result>
+                    {(item) => <span>{item.userMember?.userName}</span>}
+                  </AutoComplete.Result>
+                </AutoComplete>
+              </div>
+              <Divider />
+              <div className='form-control'>
+                  <Button appearance="primary" color='green' onClick={this.onApply}><FaCheckCircle /> &nbsp; Confirmar</Button>
+              </div>
+            </Row>
+          </Drawer.Body>
+        </Drawer>
+
+      </>
+    )
+  }
+}
+
 export class Calleds extends React.Component {
 
   viewCalled = React.createRef()
   viewCalledResolution = React.createRef()
+
+  constructor(props) {
+    super(props)
+
+    const Authorization = JSON.parse(localStorage.getItem("Authorization"))
+
+    this.state = {
+      request: {
+        filter: {
+          //company: Authorization.company,
+          responsible: Authorization.user
+        }
+      }
+    }
+  }
 
   componentDidMount = () => {
     this.onSearch()
@@ -93,6 +162,7 @@ export class Calleds extends React.Component {
       <IconButton className='hover-blue' size='sm' circle icon={<FaEllipsisV />} appearance="default" />
     </Whisper>, minWidth: '30px', maxWidth: '30px', center: true, style: {padding: '0px'}},
     { selector: (row) => dayjs(row.createdAt).format('DD/MM/YYYY HH:mm'), name: 'Abertura', minWidth: '140px', maxWidth: '140px'},
+    { selector: (row) => row.company?.surname, name: 'Filial', minWidth: '120px', maxWidth: '120px'},
     { selector: (row) => row.number, name: 'Número', minWidth: '90px', maxWidth: '90px'},
     { selector: (row) => row.responsible?.userMember?.userName, name: 'Responsável', minWidth: '160px', maxWidth: '160px'},
     { selector: (row) => row.requested?.surname, name: 'Solicitante', minWidth: '230px', maxWidth: '230px'},
@@ -114,20 +184,11 @@ export class Calleds extends React.Component {
 
         <PageContent>
           
-          {/*
-          <Stack spacing={'6px'} direction={'row'} alignItems={'flex-start'} justifyContent={'space-between'}>
-            <HStack>
-              <CustomSearch loading={this.state?.loading} fields={fields} defaultPicker={'number'} value={this.state?.request?.search} onChange={(search) => this.setState({request: {search}}, () => this.onSearch())} />
-                <FilterButton />
-            </HStack>
-          </Stack>
-          */}
-
           <Stack direction='row' alignItems='flexStart' justifyContent='space-between'>
             <Stack spacing={5}>
-              <CustomSearch loading={this.state?.loading} fields={fields} defaultPicker={'number'} value={this.state?.request?.search} onChange={(search) => this.setState({request: {search}}, () => this.onSearch())} />
+              <CustomSearch loading={this.state?.loading} fields={fields} defaultPicker={'number'} value={this.state?.request?.search} onChange={(search) => this.setState({request: {filter: this.state.request.filter, search}}, () => this.onSearch())} />
             </Stack>
-            <FilterButton />
+            <Filter filter={this.state?.request?.filter} onChange={(filter) => this.setState({request: {...this.state.request, filter}}, () => this.onSearch())} />
           </Stack>
 
           <hr></hr>
@@ -153,5 +214,7 @@ export class Calleds extends React.Component {
         </PageContent>
       </Panel>
     )
+
   }
+
 }

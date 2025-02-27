@@ -5,17 +5,17 @@ export class CompanyRole {
   id = {
     field: 'id',
     primaryKey: true,
-    type: Sequelize.UUID
+    type: Sequelize.UUIDV4
   }
 
   companyId = {
     field: 'companyId',
-    type: Sequelize.UUID
+    type: Sequelize.UUIDV4
   }
 
   roleId = {
     field: 'roleId',
-    type: Sequelize.UUID
+    type: Sequelize.UUIDV4
   }
 
 }

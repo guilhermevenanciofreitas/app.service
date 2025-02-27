@@ -149,6 +149,7 @@ export class AppContext extends Sequelize {
       },
     })
 
+    this.Called.belongsTo(this.Company, {as: 'company', foreignKey: 'companyId', targetKey: 'id'})
     this.Called.belongsTo(this.User, {as: 'responsible', foreignKey: 'responsibleId', targetKey: 'id'})
     this.Called.belongsTo(this.Partner, {as: 'requested', foreignKey: 'requestedId', targetKey: 'id'})
     this.Called.belongsTo(this.CalledStatus, {as: 'status', foreignKey: 'statusId', targetKey: 'id'})

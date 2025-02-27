@@ -18,11 +18,12 @@ export class SearchController {
                         {model: db.Company, as: 'company', attributes: ['id', 'name', 'surname']}
                     ],
                     where: [{
+                        '$company.codigo_empresa$': 1,
                         '$userId$': userId,
                         '$company.nome_fantasia$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}
                     }],
                     order: [
-                        [{model: db.Company, as: 'company'}, 'name', 'asc']
+                        [{model: db.Company, as: 'company'}, 'id', 'asc']
                     ],
                     limit: 20
                 });

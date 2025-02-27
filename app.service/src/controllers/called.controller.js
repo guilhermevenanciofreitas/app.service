@@ -22,9 +22,10 @@ export class CalledController {
 
         const db = new AppContext()
 
+        const search = req.body.search
+        const filter = req.body.filter
         const limit = req.body.limit || 50
         const offset = req.body.offset || 0
-        const search = req.body.search
 
         const where = []
 
@@ -46,13 +47,18 @@ export class CalledController {
 
         }
 
-        //where.push({cStat: 100})
+        if (filter?.company) {
+          where.push({'companyId': filter.company.id})
+        }
 
-        //where.push({IDCarga: {[Sequelize.Op.eq]: null}})
+        if (filter?.responsible) {
+          where.push({'responsibleId': filter.responsible.id})
+        }
 
         const calleds = await db.Called.findAndCountAll({
           attributes: ['id', 'number', 'createdAt', 'subject'],
           include: [
+            {model: db.Company, as: 'company', attributes: ['id', 'surname']},
             {model: db.User, as: 'responsible', attributes: ['id'], include: [
               {model: db.UserMember, as: 'userMember', attributes: ['userName']}
             ]},
@@ -75,7 +81,7 @@ export class CalledController {
 
         res.status(200).json({
           request: {
-            limit, offset
+            filter, limit, offset
           },
           response: {
             rows: calleds.rows, count: calleds.count
@@ -101,8 +107,9 @@ export class CalledController {
         await db.transaction(async (transaction) => {
 
           const called = await db.Called.findOne({
-            attributes: ['id', 'subject'],
+            attributes: ['id', 'number', 'subject'],
             include: [
+              {model: db.Company, as: 'company', attributes: ['id', 'surname']},
               {model: db.Partner, as: 'requested', attributes: ['id', 'surname']},
               {model: db.CalledStatus, as: 'status', attributes: ['id', 'description']},
               {model: db.User, as: 'responsible', attributes: ['id'], include: [
@@ -134,6 +141,7 @@ export class CalledController {
 
         let called = {
           id: req.body.id,
+          companyId: req.body.company?.id || null,
           requestedId: req.body.requested?.id || null,
           responsibleId: req.body.responsible?.id || null,
           reasonId: req.body.reason?.id || null,

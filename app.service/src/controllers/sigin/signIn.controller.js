@@ -95,7 +95,7 @@ export class LoginController {
             },
           ],
           where,
-          order: [['description', 'asc']]
+          order: [[{model: db.Company, as: 'companies'}, 'id', 'asc']]
         })
 
         if (_.size(companyBusiness) == 0 || _.size(companyBusiness[0]?.companies) == 0) {
@@ -125,7 +125,7 @@ export class LoginController {
           token: session.id,
           companyBusiness: _.pick(companyBusiness[0], ['description']),
           company: _.pick(companyBusiness[0].companies[0], ['id', 'surname']),
-          user: {id: user.id, userName: user.userMember.userName},
+          user: {id: user.id, userMember: {userName: user.userMember.userName}},
           lastAcess: lastAcess.format('YYYY-MM-DDTHH:mm:ss'),
           expireIn
         })

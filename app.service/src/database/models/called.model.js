@@ -9,6 +9,11 @@ export class Called {
     type: Sequelize.UUIDV4,
   }
 
+  companyId = {
+    field: 'companyId',
+    type: Sequelize.TINYINT
+  }
+
   number = {
     field: 'number',
     type: Sequelize.BIGINT,
