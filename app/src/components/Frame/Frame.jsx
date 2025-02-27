@@ -52,15 +52,15 @@ const Frame = (props) => {
   return (
     <Container className="frame" style={{ height: '100vh', overflow: 'hidden', display: 'flex' }}>
       <Sidebar
-        style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          height: '100vh', 
-          transition: 'width 0.3s', 
-          borderRight: hoverExpand ? '0.5px solid #ddd' : 'none', 
-          boxShadow: hoverExpand ? '1px 0 3px rgba(0, 0, 0, 0.08)' : 'none',
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100vh',
+          transition: 'width 0.3s',
+          borderRight: hoverExpand && !expand ? '0.1px solid #ddd' : 'none', 
+          //boxShadow: hoverExpand ? '1px 0 3px rgba(0, 0, 0, 0.08)' : 'none',
           overflow: 'hidden',
-          zIndex: 9999
+          zIndex: 1000
         }}
         width={expand || hoverExpand ? 260 : 56}
         collapsible

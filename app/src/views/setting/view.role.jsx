@@ -9,6 +9,7 @@ import { Service } from "../../service";
 import { Loading } from "../../App";
 
 import _ from "lodash";
+import { Exception } from "../../utils/exception";
 
 const permissions = [
     { value: '3.1', children: [
@@ -48,7 +49,6 @@ const permissions = [
 ]
 
 const data = [
-    /*
     {
         label: 'Caledário', value: '1', children: [
             {label: 'Visualizar', value: '1.1'},
@@ -117,7 +117,7 @@ const data = [
     {
         label: 'Fiscal', value: '8', children: [],
     },
-    */
+    
     {
         label: 'Configurações', value: '9', children: [
             {
@@ -157,14 +157,21 @@ export class ViewRole extends React.Component {
         }
     }
 
-    submit = async () => {
-        this.setState({submting: true}, async () => {
+    onSubmit = async () => {
+        try {
+            
+            this.setState({submting: true})
+
             const role = _.pick(this.state, ['id', 'name', 'roleRules'])
-            await new Service().Post('setting/role/submit', role).then(async (result) => {
-                await toaster.push(<Message showIcon type='success'>Salvo com sucesso!</Message>, {placement: 'topEnd', duration: 5000 })
-                this.viewModal.current?.close(result.data)
-            }).finally(() => this.setState({submting: false}));
-        })
+            const result = await new Service().Post('setting/role/submit', role)
+            await toaster.push(<Message showIcon type='success'>Salvo com sucesso!</Message>, {placement: 'topEnd', duration: 5000 })
+            this.viewModal.current?.close(result.data)
+
+        } catch (error) {
+            Exception.error(error)
+        } finally {
+            this.setState({submting: false})
+        }
     }
 
     close(role) {
@@ -198,7 +205,7 @@ export class ViewRole extends React.Component {
     render = () => {
         
         return (
-            <Form autoComplete='off' onSubmit={this.submit}>
+            <Form autoComplete='off' onSubmit={this.onSubmit}>
                 <ViewModal ref={this.viewModal} size={450}>
                     <Modal.Header><Modal.Title><Container>Cargo</Container></Modal.Title></Modal.Header>
                     <Modal.Body>
@@ -221,7 +228,7 @@ export class ViewRole extends React.Component {
                         </Row>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button appearance="primary" color='green' onClick={this.submit} disabled={this.state?.submting}>{this.state?.submting ? <><Loader /> &nbsp; Confirmando...</> : <><MdCheckCircleOutline /> &nbsp; Confirmar</>}</Button>
+                        <Button appearance="primary" color='green' onClick={this.onSubmit} disabled={this.state?.submting}>{this.state?.submting ? <><Loader /> &nbsp; Confirmando...</> : <><MdCheckCircleOutline /> &nbsp; Confirmar</>}</Button>
                     </Modal.Footer>
                 </ViewModal>
             </Form>

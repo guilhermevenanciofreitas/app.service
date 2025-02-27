@@ -108,7 +108,7 @@ export class LogisticCtes extends React.Component {
     { selector: (row) => row.serie, name: 'Série', minWidth: '60px', maxWidth: '60px'},
     { selector: (row) => row.chCTe, name: 'Chave de acesso', minWidth: '350px', maxWidth: '350px'},
     { selector: (row) => row.shippiment?.sender?.surname, name: 'Remetente'},
-    { selector: (row) => row.recipient?.surname, name: 'Destinatário', minWidth: '250px', maxWidth: '250px'},
+    { selector: (row) => row.recipient?.surname, name: 'Destinatário', minWidth: '350px', maxWidth: '350px'},
     { selector: (row) => new Intl.NumberFormat('pt-BR', {style: 'decimal', minimumFractionDigits: 2}).format(parseFloat(row.baseCalculo)), name: 'Valor', minWidth: '100px', maxWidth: '100px', right: true},
     { selector: (row) => <div className='hidden'><FaPrint size='16px' color='tomato' style={{padding: '3px'}} onClick={() => this.onDacte(row)} /><FaFileCode size='16px' color='steelblue' style={{padding: '3px'}} /></div>, center: true, minWidth: '50px', maxWidth: '50px', style: {padding: '0px'}},
     { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onViewNfe(row)} content={_.size(row.cteNfes)}></Badge>, center: true, minWidth: '35px', maxWidth: '35px', style: {padding: '0px'}},
