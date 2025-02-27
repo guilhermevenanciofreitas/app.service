@@ -8,7 +8,7 @@ import { Exception } from "../../utils/exception.js"
 export class SettingUserController {
 
   users = async (req, res) => {
-    Authorization.verify(req, res).then(async ({company}) => {
+    Authorization.verify(req, res).then(async ({companyId}) => {
       try {
 
         const db = new AppContext()
@@ -19,7 +19,7 @@ export class SettingUserController {
 
         //const status = req.body.status
 
-        //const where = [{companyId: company.id}]
+        const where = [{'$companyUsers.company.companyBusiness.codigo_empresa$': 1}]
 
         //if (status) {
         //  where.push({'$user.status$': status})
@@ -27,17 +27,27 @@ export class SettingUserController {
 
         await db.transaction(async (transaction) => {
 
-          const companyUsers = await db.CompanyUser.findAndCountAll({
+          const company = await db.Company.findOne({attributes: ['id'], where: [{codigo_empresa_filial: companyId}], transaction})
+
+          //company.companyBusinessId
+
+          const users = await db.User.findAndCountAll({
             attributes: ['id'],
             include: [
-              {model: db.User, as: 'user', attributes: ['id']},
+              {model: db.UserMember, as: 'userMember', attributes: ['userName']},
+              {model: db.CompanyUser, as: 'companyUsers', attributes: ['id'], include: [
+                {model: db.Company, as: 'company', attributes: ['id'], include: [
+                  {model: db.CompanyBusiness, as: 'companyBusiness', attributes: ['id']}
+                ]}
+              ]},
               //{model: db.Role, as: 'role', attributes: ['id', 'name']}
             ],
             limit: limit,
             offset: offset * limit,
-            //where,
+            where,
             //order: [['user', 'name', 'asc']],
-            transaction
+            transaction,
+            subQuery: false
           })
 
           /*
@@ -56,7 +66,7 @@ export class SettingUserController {
               filter, limit, offset
             },
             response: {
-              rows: _.map(companyUsers.rows, (companyUser) => Object.assign({...companyUser.user.dataValues, role: companyUser.role})), count: companyUsers.count
+              rows: users.rows, count: users.count
             }
           })
   

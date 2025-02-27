@@ -55,7 +55,7 @@ class SettingUsers extends React.Component {
   }
 
   columns = [
-    { selector: (row) => <DataTable.RowColor color={row.status == 'active' ? 'springgreen' : 'tomato'}>{row.name}</DataTable.RowColor>, name: 'Nome' },
+    { selector: (row) => <DataTable.RowColor color={row.status == 'active' ? 'springgreen' : 'tomato'}>{row.userMember?.userName}</DataTable.RowColor>, name: 'Nome' },
     { selector: (row) => row.email, name: 'E-mail' },
     { selector: (row) => row.role?.name, name: 'Cargo' },
   ]
