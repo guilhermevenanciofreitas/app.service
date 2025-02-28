@@ -63,14 +63,35 @@ const Role = ({role, onChange}) => {
 
 const CompanyUsers = (row) => {
 
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
-  const onChange = async ({companyUserId, roleId}) => {
+  const [companyUsers, setCompanyUsers] = useState(row.user.companyUsers || [])
 
-    const result = await new Service().Post('setting/user/change-company-role', {companyUserId, roleId})
+  const [company, setCompany] = useState(null)
+  const [role, setRole] = useState(null)
 
-    console.log(result)
+  const onChange = async ({ companyUserId, roleId }) => {
+    await new Service().Post('setting/user/change-company-role', { companyUserId, roleId })
+  };
 
+  const handleAddCompanyUser = async () => {
+    try {
+
+      if (!company || !role) return;
+    
+      let newEntry = { company, userId: row.user.id, role}
+  
+      const result = await new Service().Post('setting/user/add-company-role', newEntry)
+      
+      newEntry.id = result.data.id
+  
+      setCompanyUsers([...companyUsers, newEntry])
+      setCompany(null)
+      setRole(null)
+  
+    } catch (error) {
+      Exception.error(error)
+    }
   }
 
   return (
@@ -80,25 +101,41 @@ const CompanyUsers = (row) => {
       </IconButton>
 
       <Drawer open={open} onClose={() => setOpen(false)} size="sm">
-        <Drawer.Header><Drawer.Title>Filiais</Drawer.Title></Drawer.Header>
+        <Drawer.Header>
+          <Drawer.Title>Filiais</Drawer.Title>
+        </Drawer.Header>
         <Drawer.Body>
+          
           <List bordered hover>
-            {_.map(row.companyUsers, (companyUser, index) => (
-                <List.Item key={index} style={{cursor: 'pointer', display: 'flex', justifyContent: 'space-between'}}>
-                  <div className='form-control'>
-                      <label class="textfield-filled">
-                          <input type='text' value={companyUser.company?.surname} readOnly />
-                          <span>Empresa</span>
-                      </label>
-                  </div>
-                  <Role role={companyUser.role} onChange={(role) => onChange({companyUserId: companyUser.id, roleId: role?.id})} />
-                </List.Item>
-              ))}
+            {_.map(companyUsers, (companyUser, index) => (
+              <List.Item key={index} style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }}>
+                <div className="form-control">
+                  <label className="textfield-filled">
+                    <input type="text" value={companyUser.company?.surname} readOnly />
+                    <span>Empresa</span>
+                  </label>
+                </div>
+                <Role role={companyUser.role} onChange={(role) => onChange({ companyUserId: companyUser.id, roleId: role?.id })} />
+              </List.Item>
+            ))}
           </List>
+
+          <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+            <AutoComplete label='Empresa' value={company} text={(item) => `${item.surname}`} onChange={setCompany} onSearch={async (search) => await Search.company(search)}>
+              <AutoComplete.Result>
+                  {(item) => <span>{item.surname}</span>}
+              </AutoComplete.Result>
+            </AutoComplete>
+            <Role role={role} onChange={setRole} />
+            <IconButton icon={<FaPlusCircle />} appearance="primary" onClick={() => handleAddCompanyUser()}>
+              Adicionar
+            </IconButton>
+          </div>
         </Drawer.Body>
       </Drawer>
     </>
   )
+
 }
 
 export class SettingUsers extends React.Component {
@@ -130,22 +167,18 @@ export class SettingUsers extends React.Component {
   }
 
   onNew = async () => {
-    const user = await this.viewUser.current.new()
-    if (user) this.onSearch()
-  }
-
-  state = {
-    companies: [
-      { id: 1, name: 'Empresa A', role: 'CEO' },
-      { id: 2, name: 'Empresa B', role: 'Gerente' },
-      { id: 3, name: 'Empresa C', role: 'Desenvolvedor' }
-    ]
+    try {
+      const user = await this.viewUser.current.new()
+      if (user) this.onSearch()
+    } catch (error) {
+      Exception.error(error)
+    }
   }
 
   columns = [
     { selector: (row) => <DataTable.RowColor color={row.status == 'active' ? 'springgreen' : 'tomato'}>{row.userName}</DataTable.RowColor>, name: 'Nome' },
     { selector: (row) => row.userMember?.email, name: 'E-mail' },
-    { selector: (row) => <CompanyUsers companyUsers={row.companyUsers} />}
+    { selector: (row) => <CompanyUsers user={row} />}
   ]
 
   render = () => {
@@ -158,21 +191,9 @@ export class SettingUsers extends React.Component {
         <PageContent>
           
           <Stack spacing={'6px'} direction={'row'} alignItems={'flex-start'} justifyContent={'space-between'}>
-            
             <HStack>
-
               <CustomSearch loading={this.state?.loading} fields={fields} value={this.state?.request?.search} onChange={(search) => this.setState({request: {search}}, () => this.onSearch())} />
-              
-              {/*<CustomDateRangePicker value={this.state?.request?.date} onChange={this.onApplyDate} />*/}
-
-              {/*
-              <CustomFilter.Whisper badge={_.size(this.state?.request?.filter)}>
-                {(props) => <Filter filter={this.state?.request?.filter} onApply={this.onApplyFilter} {...props} />}
-              </CustomFilter.Whisper>
-              */}
-
             </HStack>
-
           </Stack>
 
           <hr></hr>
@@ -189,20 +210,13 @@ export class SettingUsers extends React.Component {
           <hr></hr>
 
           <Stack direction='row' alignItems='flexStart' justifyContent='space-between'>
-
             <Button appearance='primary' color='blue' startIcon={<FaPlusCircle />} onClick={this.onNew}>Novo</Button>
-
-            {/*
-            <Pagination layout={['-', 'limit', '|', 'pager']} size={'md'} prev={true} next={true} first={true} last={true} ellipsis={false} boundaryLinks={false} total={200} limit={50} limitOptions={[30,50,100]} maxButtons={6} activePage={1}
-              //onChangePage={setActivePage}
-              //onChangeLimit={setLimit}
-            />
-            */}
-
           </Stack>
+
         </PageContent>
       </Panel>
     )
+
   }
 
 }

@@ -211,4 +211,32 @@ export class SettingUserController {
     })
   }
 
+  addCompanyRole = async (req, res) => {
+    Authorization.verify(req, res).then(async({companyId}) => {
+      try {
+
+        const companyUser = {
+          companyId: req.body.company?.id || null,
+          userId: req.body.userId,
+          roleId: req.body.role?.id || null
+        }
+
+        const db = new AppContext()
+
+        await db.transaction(async (transaction) => {
+
+          const companyUser1 = await db.CompanyUser.create(companyUser, {transaction})
+
+          res.status(200).json(companyUser1)
+
+        })
+
+      } catch (error) {
+        Exception.error(res, error)
+      }
+    }).catch((error) => {
+      Exception.unauthorized(res, error)
+    })
+  }
+
 }
