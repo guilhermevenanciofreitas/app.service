@@ -23,6 +23,10 @@ export const Search = {
         return (await new Service().Post("search/user", {search}, undefined, false))?.data
     },
 
+    role: async (search) => {
+        return (await new Service().Post("search/role", {search}, undefined, false))?.data
+    },
+
     city: async (search) => {
         return (await new Service().Post("search/city", {search}, undefined, false))?.data
     },

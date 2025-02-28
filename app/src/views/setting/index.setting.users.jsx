@@ -2,19 +2,20 @@ import React, { useState } from 'react';
 
 import _ from 'lodash'
 
-import { Breadcrumb, Button, Drawer, HStack, IconButton, List, Nav, Pagination, Panel, Stack, useToaster } from 'rsuite';
+import { Breadcrumb, Button, Drawer, HStack, IconButton, List, Loader, Nav, Pagination, Panel, Stack, useToaster } from 'rsuite';
 
 import { Divider } from 'rsuite';
 import PageContent from '../../components/PageContent';
 
-import { CustomBreadcrumb, CustomDateRangePicker, CustomFilter, CustomSearch, DataTable } from '../../controls';
+import { AutoComplete, CustomBreadcrumb, CustomDateRangePicker, CustomFilter, CustomSearch, DataTable } from '../../controls';
 import { MdAddCircleOutline, MdCheckCircleOutline } from 'react-icons/md';
 
 import Link from '../../components/NavLink'
 import { Service } from '../../service';
 import { ViewUser } from './view.user';
 import { Exception } from '../../utils/exception';
-import { FaPlusCircle, FaTrash, FaUserMinus } from 'react-icons/fa';
+import { FaPlusCircle, FaSyncAlt, FaTrash, FaUserMinus } from 'react-icons/fa';
+import { Search } from '../../search';
 
 const fields = [
   { label: 'Todos', value: undefined },
@@ -22,32 +23,55 @@ const fields = [
   { label: 'E-mail', value: 'email' },
 ]
 
-const CompanyDrawer = ({ data, onChange }) => {
+const Role = ({role, onChange}) => {
 
-  const [companies, setCompanies] = useState(data);
-  const [selectedIndex, setSelectedIndex] = useState(null);
-  const [open, setOpen] = useState(false);
-  const toaster = useToaster();
+  const [subting, setSubmitting] = useState(false)
+  const [userRole, setUserRole] = useState(role)
 
-  const updateList = (newList) => {
-    setCompanies(newList);
-    if (onChange) onChange(newList); // Chama onChange com a lista atualizada
-  };
+  const onChangeRole = async (role) => {
+    try {
+      
+      setSubmitting(true)
 
-  const handleRemove = () => {
-    if (selectedIndex !== null) {
-      const updatedCompanies = companies.filter((_, index) => index !== selectedIndex);
-      updateList(updatedCompanies);
-      toaster.push(<Message type="error">Empresa removida!</Message>, { placement: 'topEnd' });
-      setSelectedIndex(null);
+      if (role) {
+        await onChange(role)
+      }
+      
+      setUserRole(role)
+
+    } catch (error) {
+
+    } finally {
+      setSubmitting(false)
     }
-  };
+  }
 
-  const handleAdd = () => {
-    const newCompany = { id: Date.now(), name: 'Nova Empresa', role: 'Novo Cargo' };
-    updateList([...companies, newCompany]);
-    toaster.push(<Message type="success">Empresa adicionada!</Message>, { placement: 'topEnd' });
-  };
+  return (
+    <div className='form-control'>
+      {subting && <FaSyncAlt className='animated rotate' color='#696969' />}
+      {!subting && (
+        <AutoComplete label='Cargo' value={userRole} text={(item) => `${item.name}`} onChange={onChangeRole} onSearch={async (search) => await Search.role(search)}>
+          <AutoComplete.Result>
+              {(item) => <span>{item.name}</span>}
+          </AutoComplete.Result>
+        </AutoComplete>
+      )}
+    </div>
+  )
+
+}
+
+const CompanyUsers = (row) => {
+
+  const [open, setOpen] = useState(false)
+
+  const onChange = async ({companyUserId, roleId}) => {
+
+    const result = await new Service().Post('setting/user/change-company-role', {companyUserId, roleId})
+
+    console.log(result)
+
+  }
 
   return (
     <>
@@ -56,26 +80,22 @@ const CompanyDrawer = ({ data, onChange }) => {
       </IconButton>
 
       <Drawer open={open} onClose={() => setOpen(false)} size="sm">
-        <Drawer.Header>
-          <Drawer.Title>Empresas e Cargos</Drawer.Title>
-        </Drawer.Header>
+        <Drawer.Header><Drawer.Title>Filiais</Drawer.Title></Drawer.Header>
         <Drawer.Body>
           <List bordered hover>
-            {companies.map((company, index) => (
-              <List.Item 
-                key={company.id} 
-                onClick={() => setSelectedIndex(index)}
-                style={{ background: selectedIndex === index ? '#e6f7ff' : 'white', cursor: 'pointer' }}
-              >
-                <b>{company.name}</b> - {company.role}
-              </List.Item>
-            ))}
+            {_.map(row.companyUsers, (companyUser, index) => (
+                <List.Item key={index} style={{cursor: 'pointer', display: 'flex', justifyContent: 'space-between'}}>
+                  <div className='form-control'>
+                      <label class="textfield-filled">
+                          <input type='text' value={companyUser.company?.surname} readOnly />
+                          <span>Empresa</span>
+                      </label>
+                  </div>
+                  <Role role={companyUser.role} onChange={(role) => onChange({companyUserId: companyUser.id, roleId: role?.id})} />
+                </List.Item>
+              ))}
           </List>
         </Drawer.Body>
-        <Drawer.Footer>
-          <Button onClick={handleAdd} appearance="primary" startIcon={<FaPlusCircle />}>Adicionar</Button>
-          <Button onClick={handleRemove} appearance="ghost" color="red" startIcon={<FaTrash />} disabled={selectedIndex === null} style={{ marginLeft: 10 }}>Remover</Button>
-        </Drawer.Footer>
       </Drawer>
     </>
   )
@@ -122,16 +142,10 @@ export class SettingUsers extends React.Component {
     ]
   }
 
-  handleListChange = (newList) => {
-    console.log('Lista atualizada:', newList);
-    setCompanyData(newList);
-  };
-
   columns = [
     { selector: (row) => <DataTable.RowColor color={row.status == 'active' ? 'springgreen' : 'tomato'}>{row.userName}</DataTable.RowColor>, name: 'Nome' },
     { selector: (row) => row.userMember?.email, name: 'E-mail' },
-    { selector: (row) => row.role?.name, name: 'Cargo' },
-    { selector: (row) => <CompanyDrawer data={this.state?.companies} onChange={this.handleListChange} />}
+    { selector: (row) => <CompanyUsers companyUsers={row.companyUsers} />}
   ]
 
   render = () => {

@@ -84,15 +84,6 @@ export class ViewUser extends React.Component {
                                         </label>
                                     </div>
                                 </Col>
-                                <Col md={12}>
-                                    <div className="form-control">
-                                        <label>Filiais</label>
-                                        <CompanyPicker
-                                            value={this.state?.companyUsers}
-                                            onChange={(companyUsers) => this.setState({ companyUsers })}
-                                        />
-                                    </div>
-                                </Col>
                                 <br />
                                 {!this.props.title && (
                                     <Col md={4}>
@@ -131,41 +122,3 @@ export class ViewUser extends React.Component {
         )
     }
 }
-
-const CompanyPicker = ({ value, onChange }) => {
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [loaded, setLoaded] = useState(false);
-
-    const fetchCompanies = async () => {
-        if (loaded) return; // Evita chamadas desnecessárias
-
-        setLoading(true);
-        try {
-            const result = await new Service().Post("setting/company/list");
-            setData(result.data.map((item) => ({ label: item.surname, value: item.id })));
-            setLoaded(true);
-        } catch (error) {
-            toaster.push(
-                <Message showIcon type="error">Erro ao carregar filiais!</Message>,
-                { placement: "topEnd", duration: 5000 }
-            );
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <CheckPicker
-            value={value}
-            data={data}
-            searchable={false}
-            onChange={onChange}
-            style={{ width: "100%" }}
-            placeholder={loading ? "Carregando..." : "Selecione"}
-            disabled={loading}
-            onOpen={fetchCompanies} // Chama a API somente ao abrir
-            renderMenu={(menu) => (loading ? <Loader center /> : menu)}
-        />
-    );
-};

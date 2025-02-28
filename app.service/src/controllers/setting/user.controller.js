@@ -15,37 +15,29 @@ export class SettingUserController {
 
         const limit = req.body.limit || 50
         const offset = req.body.offset || 0
-        const filter = req.body.filter // || { situation: ['active'] }
-
-        //const status = req.body.status
-
-        const where = [{'$companyUsers.company.companyBusiness.codigo_empresa$': 1}]
-
-        //if (status) {
-        //  where.push({'$user.status$': status})
-        //}
+        const filter = req.body.filter
 
         await db.transaction(async (transaction) => {
 
-          const company = await db.Company.findOne({attributes: ['id'], where: [{codigo_empresa_filial: companyId}], transaction})
+          const company = await db.Company.findOne({attributes: ['companyBusinessId'], where: [{codigo_empresa_filial: companyId}], transaction})
 
-          //company.companyBusinessId
+          const where = [{'$companyUsers.company.companyBusiness.codigo_empresa$': company.companyBusinessId}]
 
           const users = await db.User.findAndCountAll({
             attributes: ['id', 'userName'],
             include: [
               {model: db.UserMember, as: 'userMember', attributes: ['email']},
               {model: db.CompanyUser, as: 'companyUsers', attributes: ['id'], include: [
-                {model: db.Company, as: 'company', attributes: ['id'], include: [
+                {model: db.Company, as: 'company', attributes: ['id', 'surname'], include: [
                   {model: db.CompanyBusiness, as: 'companyBusiness', attributes: ['id']}
-                ]}
+                ]},
+                {model: db.Role, as: 'role', attributes: ['id', 'name']},
               ]},
-              //{model: db.Role, as: 'role', attributes: ['id', 'name']}
             ],
             limit: limit,
             offset: offset * limit,
             where,
-            //order: [['user', 'name', 'asc']],
+            order: [['userName', 'asc'], [{model: db.CompanyUser, as: 'companyUsers'}, {model: db.Company, as: 'company'}, 'id', 'asc']],
             transaction,
             subQuery: false
           })
@@ -184,6 +176,30 @@ export class SettingUserController {
           await db.User.update({password: newPassword}, {where: [{id: user.id}], transaction})
 
           res.status(200).json({message: 'Senha alterada com sucesso!'})
+
+        })
+
+      } catch (error) {
+        Exception.error(res, error)
+      }
+    }).catch((error) => {
+      Exception.unauthorized(res, error)
+    })
+  }
+
+  changeCompanyRole = async (req, res) => {
+    Authorization.verify(req, res).then(async({companyId, userId}) => {
+      try {
+
+        const { companyUserId, roleId } = req.body
+
+        const db = new AppContext()
+
+        await db.transaction(async (transaction) => {
+
+          await db.CompanyUser.update({roleId}, {where: [{id: companyUserId}], transaction})
+
+          res.status(200).json({message: 'Salvo com sucesso!'})
 
         })
 

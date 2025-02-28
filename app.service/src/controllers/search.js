@@ -146,6 +146,37 @@ export class SearchController {
         })
     }
 
+    role = async (req, res) => {
+        Authorization.verify(req, res).then(async ({companyId, userId}) => {
+            try {
+
+                const db = new AppContext()
+
+                const company = await db.Company.findOne({attributes: ['companyBusinessId'], where: [{codigo_empresa_filial: companyId}]})
+
+                const where = [{'$companyBusinessId$': company.companyBusinessId}]
+
+                where.push({'$name$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}})
+                
+                const roles = await db.Role.findAll({
+                    attributes: ['id', 'name'],
+                    where,
+                    order: [
+                        ['name', 'asc']
+                    ],
+                    limit: 20
+                })
+
+                res.status(200).json(roles)
+
+            } catch (error) {
+                Exception.error(res, error)
+            }
+        }).catch((error) => {
+            Exception.unauthorized(res, error)
+        })
+    }
+
     partner = async (req, res) => {
         Authorization.verify(req, res).then(async ({companyId, userId}) => {
             try {
