@@ -20,7 +20,7 @@ export class Authorization {
         attributes: ['id', 'companyId', 'userId', 'lastAcess', 'expireIn'],
         include: [
           {model: db.Company, as: 'company', attributes: ['id', 'name']},
-          {model: db.User, as: 'user', attributes: ['id', 'name']}
+          {model: db.User, as: 'user', attributes: ['id', 'userName']}
         ],
         where: {id: req.headers.authorization},
         transaction

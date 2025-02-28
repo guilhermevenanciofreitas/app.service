@@ -32,9 +32,9 @@ export class SettingUserController {
           //company.companyBusinessId
 
           const users = await db.User.findAndCountAll({
-            attributes: ['id'],
+            attributes: ['id', 'userName'],
             include: [
-              {model: db.UserMember, as: 'userMember', attributes: ['userName']},
+              {model: db.UserMember, as: 'userMember', attributes: ['email']},
               {model: db.CompanyUser, as: 'companyUsers', attributes: ['id'], include: [
                 {model: db.Company, as: 'company', attributes: ['id'], include: [
                   {model: db.CompanyBusiness, as: 'companyBusiness', attributes: ['id']}
@@ -91,14 +91,16 @@ export class SettingUserController {
         await db.transaction(async (transaction) => {
           
           userDetail = await db.User.findOne({
-            attributes: ['id', 'name', 'email', 'status'],
+            attributes: ['id', 'userName'],
             include: [
-              {model: db.CompanyUser, as: 'companyUsers', attributes: ['companyId']}
+              {model: db.UserMember, as: 'userMember', attributes: ['email']}
+              //{model: db.CompanyUser, as: 'companyUsers', attributes: ['companyId']}
             ],
-            where: [{id: req.body.id}],
+            where: [{userId: req.body.id}],
             transaction
           })
 
+          /*
           const companyUsers = await db.CompanyUser.findAll({
             attributes: ['id'],
             include: [
@@ -106,13 +108,14 @@ export class SettingUserController {
             ],
             where: [{userId: user.id}]
           })
+          */
 
-          userDetail.dataValues.companyUsers = _.map(userDetail.dataValues.companyUsers, (companyUser) => companyUser.companyId)
-          userDetail.dataValues.companies = _.map(companyUsers, (companyUser) => companyUser.company)
+          //userDetail.dataValues.companyUsers = _.map(userDetail.dataValues.companyUsers, (companyUser) => companyUser.companyId)
+          //userDetail.dataValues.companies = _.map(companyUsers, (companyUser) => companyUser.company)
 
         })
   
-        res.status(200).json(userDetail.dataValues)
+        res.status(200).json(userDetail)
 
       } catch (error) {
         Exception.error(res, error)

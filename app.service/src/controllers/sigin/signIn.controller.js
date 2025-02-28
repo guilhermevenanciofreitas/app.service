@@ -32,11 +32,11 @@ export class LoginController {
 
         
         const user = await db.User.findOne({
-          attributes: ['id', 'name', 'email'],
+          attributes: ['id', 'userName'],
           include: [
-            {model: db.UserMember, as: 'userMember', attributes: ['id', 'userName']}
+            {model: db.UserMember, as: 'userMember', attributes: ['id', 'email']}
           ],
-          where: Sequelize.literal(`"User"."email" = :email OR "userMember"."UserName" = :email`),
+          where: Sequelize.literal(`"user"."userName" = :email OR "userMember"."email" = :email`),
           replacements: { email },
           transaction
         })
@@ -47,7 +47,7 @@ export class LoginController {
         }
 
         const data = JSON.stringify({
-          username: user.userMember.userName,
+          username: user.userName,
           password: password
         })
       
@@ -125,7 +125,7 @@ export class LoginController {
           token: session.id,
           companyBusiness: _.pick(companyBusiness[0], ['description']),
           company: _.pick(companyBusiness[0].companies[0], ['id', 'surname']),
-          user: {id: user.id, userMember: {userName: user.userMember.userName}},
+          user: {id: user.id, userName: user.userName},
           lastAcess: lastAcess.format('YYYY-MM-DDTHH:mm:ss'),
           expireIn
         })

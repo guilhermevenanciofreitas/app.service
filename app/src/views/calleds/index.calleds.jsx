@@ -17,6 +17,7 @@ import _ from 'lodash'
 
 const fields = [
   { label: 'Número', value: 'number' },
+  { label: 'Assunto', value: 'subject' },
 ]
 
 class Filter extends React.Component {
@@ -48,9 +49,9 @@ class Filter extends React.Component {
           <Drawer.Body style={{padding: '30px'}}>
             <Row gutterWidth={0}>
               <div className="form-control">
-                <AutoComplete label="Responsável" value={this.state?.filter?.responsible} text={(item) => `${item.userMember.userName}`} onChange={(responsible) => this.setState({ filter: {...this.state.filter, responsible} })} onSearch={async (search) => await Search.user(search)} autoFocus>
+                <AutoComplete label="Responsável" value={this.state?.filter?.responsible} text={(item) => `${item.userName}`} onChange={(responsible) => this.setState({ filter: {...this.state.filter, responsible} })} onSearch={async (search) => await Search.user(search)} autoFocus>
                   <AutoComplete.Result>
-                    {(item) => <span>{item.userMember?.userName}</span>}
+                    {(item) => <span>{item.userName}</span>}
                   </AutoComplete.Result>
                 </AutoComplete>
               </div>
@@ -164,7 +165,7 @@ export class Calleds extends React.Component {
     { selector: (row) => dayjs(row.createdAt).format('DD/MM/YYYY HH:mm'), name: 'Abertura', minWidth: '140px', maxWidth: '140px'},
     { selector: (row) => row.company?.surname, name: 'Filial', minWidth: '120px', maxWidth: '120px'},
     { selector: (row) => row.number, name: 'Número', minWidth: '90px', maxWidth: '90px'},
-    { selector: (row) => row.responsible?.userMember?.userName, name: 'Responsável', minWidth: '160px', maxWidth: '160px'},
+    { selector: (row) => row.responsible?.userName, name: 'Responsável', minWidth: '160px', maxWidth: '160px'},
     { selector: (row) => row.requested?.surname, name: 'Solicitante', minWidth: '230px', maxWidth: '230px'},
     { selector: (row) => row.reason?.description, name: 'Motivo', minWidth: '140px', maxWidth: '140px'},
     { selector: (row) => row.occurrence?.description, name: 'Ocorrência', minWidth: '170px', maxWidth: '170px'},

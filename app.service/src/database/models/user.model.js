@@ -8,8 +8,8 @@ export class User {
     type: Sequelize.UUIDV4
   }
 
-  email = {
-    field: 'Email',
+  userName = {
+    field: 'UserName',
     type: Sequelize.STRING
   }
 

@@ -32,17 +32,12 @@ export class CalledController {
         if (search?.input) {
 
           if (search?.picker == 'number') {
-            where.push({number: search.input.match(/\d+/g)})
+            where.push({'$number$': search.input.match(/\d+/g)})
           }
 
-          if (search?.picker == 'sender') {
-            where.push({'$shippiment.sender.RazaoSocial$': {[Sequelize.Op.like]: `%${search.input.replace(' ', "%")}%`}})
+          if (search?.picker == 'subject') {
+            where.push({'$subject$': {[Sequelize.Op.like]: `%${search.input.replace(' ', "%")}%`}})
           }
-
-          if (search?.picker == 'chCTe') {
-            where.push({'$chaveCT$': search.input.match(/\d+/g)})
-          }
-        
 
         }
 
@@ -58,16 +53,12 @@ export class CalledController {
           attributes: ['id', 'number', 'createdAt', 'subject'],
           include: [
             {model: db.Company, as: 'company', attributes: ['id', 'surname']},
-            {model: db.User, as: 'responsible', attributes: ['id'], include: [
-              {model: db.UserMember, as: 'userMember', attributes: ['userName']}
-            ]},
+            {model: db.User, as: 'responsible', attributes: ['id', 'userName']},
             {model: db.Partner, as: 'requested', attributes: ['id', 'surname']},
             {model: db.CalledReason, as: 'reason', attributes: ['id', 'description']},
             {model: db.CalledOccurrence, as: 'occurrence', attributes: ['id', 'description']},
             {model: db.CalledResolution, as: 'resolutions', attributes: ['id', 'createdAt', 'detail'], include: [
-              {model: db.User, as: 'user', attributes: ['id'], include: [
-                {model: db.UserMember, as: 'userMember', attributes: ['userName']}
-              ]},
+              {model: db.User, as: 'user', attributes: ['id', 'userName']},
               {model: db.CalledStatus, as: 'status', attributes: ['id', 'description']},
             ]}
           ],
@@ -111,9 +102,7 @@ export class CalledController {
               {model: db.Company, as: 'company', attributes: ['id', 'surname']},
               {model: db.Partner, as: 'requested', attributes: ['id', 'surname']},
               {model: db.CalledStatus, as: 'status', attributes: ['id', 'description']},
-              {model: db.User, as: 'responsible', attributes: ['id'], include: [
-                {model: db.UserMember, as: 'userMember', attributes: ['userName']}
-              ]},
+              {model: db.User, as: 'responsible', attributes: ['id', 'userName']},
               {model: db.Partner, as: 'requested', attributes: ['id', 'cpfCnpj', 'surname']},
               {model: db.CalledReason, as: 'reason', attributes: ['id', 'description']},
               {model: db.CalledOccurrence, as: 'occurrence', attributes: ['id', 'description']}
@@ -161,9 +150,7 @@ export class CalledController {
 
           called = await db.Called.findOne({
             attributes: ['id', 'number'], include: [
-              {model: db.User, as: 'responsible', attributes: ['id'], include: [
-                {model: db.UserMember, as: 'userMember', attributes: ['userName']}
-              ]}
+              {model: db.User, as: 'responsible', attributes: ['id', 'userName']}
             ],
             where: [{id: called.id}],
             transaction

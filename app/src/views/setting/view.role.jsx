@@ -131,7 +131,7 @@ export class ViewRole extends React.Component {
         return this.viewModal.current.show()
     }
 
-    edit = async (id) => {
+    edit = async ({id}) => {
         try {
             
             Loading.Show()

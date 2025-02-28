@@ -148,9 +148,9 @@ export class ViewCalled extends React.Component {
                             </Col>
                             <Col md={3}>
                                 <div className='form-control'>
-                                    <AutoComplete label='Responsável' value={this.state?.responsible} text={(item) => `${item.userMember.userName}`} onChange={(responsible) => this.setState({responsible})} onSearch={async (search) => await Search.user(search)}>
+                                    <AutoComplete label='Responsável' value={this.state?.responsible} text={(item) => `${item.userName}`} onChange={(responsible) => this.setState({responsible})} onSearch={async (search) => await Search.user(search)}>
                                         <AutoComplete.Result>
-                                            {(item) => <span>{item.userMember.userName}</span>}
+                                            {(item) => <span>{item.userName}</span>}
                                         </AutoComplete.Result>
                                     </AutoComplete>
                                 </div>
@@ -167,7 +167,7 @@ export class ViewCalled extends React.Component {
                         
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button appearance="primary" color='green' onClick={this.submit} disabled={this.state?.submting}>{this.state?.submting ? <><Loader /> &nbsp; Salvando...</> : <><MdCheckCircleOutline /> &nbsp; Salvar</>}</Button>
+                        <Button appearance="primary" color='green' onClick={this.onSubmit} disabled={this.state?.submting}>{this.state?.submting ? <><Loader /> &nbsp; Salvando...</> : <><MdCheckCircleOutline /> &nbsp; Salvar</>}</Button>
                     </Modal.Footer>
                 </ViewModal>
             </Form>

@@ -12,7 +12,6 @@ import { MdAddCircleOutline, MdCheckCircleOutline } from 'react-icons/md';
 
 import Link from '../../components/NavLink'
 import { Service } from '../../service';
-import ViewUser from './view.user';
 import { ViewRole } from './view.role';
 import { FaPlusCircle } from 'react-icons/fa';
 import { Exception } from '../../utils/exception';
@@ -47,7 +46,7 @@ export class SettingRoles extends React.Component {
 
   onEdit = async (role) => {
     try {
-      await this.viewRole.current.edit(role.id)
+      await this.viewRole.current.edit(role)
     } catch (error) {
       Exception.error(error)
     }

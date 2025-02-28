@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import _ from 'lodash'
 
-import { Breadcrumb, Button, HStack, Nav, Pagination, Panel, Stack } from 'rsuite';
+import { Breadcrumb, Button, Drawer, HStack, IconButton, List, Nav, Pagination, Panel, Stack, useToaster } from 'rsuite';
 
 import { Divider } from 'rsuite';
 import PageContent from '../../components/PageContent';
@@ -12,9 +12,9 @@ import { MdAddCircleOutline, MdCheckCircleOutline } from 'react-icons/md';
 
 import Link from '../../components/NavLink'
 import { Service } from '../../service';
-import ViewUser from './view.user';
+import { ViewUser } from './view.user';
 import { Exception } from '../../utils/exception';
-import { FaPlusCircle } from 'react-icons/fa';
+import { FaPlusCircle, FaTrash, FaUserMinus } from 'react-icons/fa';
 
 const fields = [
   { label: 'Todos', value: undefined },
@@ -22,7 +22,66 @@ const fields = [
   { label: 'E-mail', value: 'email' },
 ]
 
-class SettingUsers extends React.Component {
+const CompanyDrawer = ({ data, onChange }) => {
+
+  const [companies, setCompanies] = useState(data);
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [open, setOpen] = useState(false);
+  const toaster = useToaster();
+
+  const updateList = (newList) => {
+    setCompanies(newList);
+    if (onChange) onChange(newList); // Chama onChange com a lista atualizada
+  };
+
+  const handleRemove = () => {
+    if (selectedIndex !== null) {
+      const updatedCompanies = companies.filter((_, index) => index !== selectedIndex);
+      updateList(updatedCompanies);
+      toaster.push(<Message type="error">Empresa removida!</Message>, { placement: 'topEnd' });
+      setSelectedIndex(null);
+    }
+  };
+
+  const handleAdd = () => {
+    const newCompany = { id: Date.now(), name: 'Nova Empresa', role: 'Novo Cargo' };
+    updateList([...companies, newCompany]);
+    toaster.push(<Message type="success">Empresa adicionada!</Message>, { placement: 'topEnd' });
+  };
+
+  return (
+    <>
+      <IconButton icon={<FaPlusCircle />} appearance="primary" onClick={() => setOpen(true)}>
+        Gerenciar Empresas
+      </IconButton>
+
+      <Drawer open={open} onClose={() => setOpen(false)} size="sm">
+        <Drawer.Header>
+          <Drawer.Title>Empresas e Cargos</Drawer.Title>
+        </Drawer.Header>
+        <Drawer.Body>
+          <List bordered hover>
+            {companies.map((company, index) => (
+              <List.Item 
+                key={company.id} 
+                onClick={() => setSelectedIndex(index)}
+                style={{ background: selectedIndex === index ? '#e6f7ff' : 'white', cursor: 'pointer' }}
+              >
+                <b>{company.name}</b> - {company.role}
+              </List.Item>
+            ))}
+          </List>
+        </Drawer.Body>
+        <Drawer.Footer>
+          <Button onClick={handleAdd} appearance="primary" startIcon={<FaPlusCircle />}>Adicionar</Button>
+          <Button onClick={handleRemove} appearance="ghost" color="red" startIcon={<FaTrash />} disabled={selectedIndex === null} style={{ marginLeft: 10 }}>Remover</Button>
+        </Drawer.Footer>
+      </Drawer>
+    </>
+  )
+}
+
+export class SettingUsers extends React.Component {
 
   viewUser = React.createRef()
 
@@ -43,27 +102,42 @@ class SettingUsers extends React.Component {
   }
 
   onEdit = async (user) => {
-    this.viewUser.current.editUser(user.id).then((user) => {
-      if (user) this.onSearch()
-    })
+    try {
+      await this.viewUser.current.edit(user)
+    } catch (error) {
+      Exception.error(error)
+    }
   }
 
-  onNew = () => {
-    this.viewUser.current.newUser().then((user) => {
-      if (user) this.onSearch()
-    })
+  onNew = async () => {
+    const user = await this.viewUser.current.new()
+    if (user) this.onSearch()
   }
+
+  state = {
+    companies: [
+      { id: 1, name: 'Empresa A', role: 'CEO' },
+      { id: 2, name: 'Empresa B', role: 'Gerente' },
+      { id: 3, name: 'Empresa C', role: 'Desenvolvedor' }
+    ]
+  }
+
+  handleListChange = (newList) => {
+    console.log('Lista atualizada:', newList);
+    setCompanyData(newList);
+  };
 
   columns = [
-    { selector: (row) => <DataTable.RowColor color={row.status == 'active' ? 'springgreen' : 'tomato'}>{row.userMember?.userName}</DataTable.RowColor>, name: 'Nome' },
-    { selector: (row) => row.email, name: 'E-mail' },
+    { selector: (row) => <DataTable.RowColor color={row.status == 'active' ? 'springgreen' : 'tomato'}>{row.userName}</DataTable.RowColor>, name: 'Nome' },
+    { selector: (row) => row.userMember?.email, name: 'E-mail' },
     { selector: (row) => row.role?.name, name: 'Cargo' },
+    { selector: (row) => <CompanyDrawer data={this.state?.companies} onChange={this.handleListChange} />}
   ]
 
   render = () => {
 
     return (
-      <>
+      <Panel header={<CustomBreadcrumb menu={'Configurações'} title={'Usuários'} />}>
 
         <ViewUser ref={this.viewUser} />
 
@@ -113,22 +187,8 @@ class SettingUsers extends React.Component {
 
           </Stack>
         </PageContent>
-      </>
-    )
-  }
-
-}
-
-class Page extends React.Component {
-
-  render = () => {
-    return (
-      <Panel header={<CustomBreadcrumb menu={'Configurações'} title={'Usuários'} />}>
-        <SettingUsers />
       </Panel>
     )
   }
 
 }
-
-export default Page;

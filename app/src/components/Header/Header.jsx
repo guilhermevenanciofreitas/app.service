@@ -20,7 +20,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Link from '../NavLink'
 import ViewPassword from './view.password';
-import ViewUser from '../../views/setting/view.user';
+import { ViewUser } from '../../views/setting/view.user';
 import { Loading } from '../../App';
 
 class RenderAdminSpeaker extends React.Component {
@@ -233,7 +233,7 @@ const Header = () => {
 
         <Stack direction="column" alignItems="left">
           <span style={{ fontWeight: 'bold', color: '#777' }}>
-            {Authorization?.user?.userMember?.userName} / {Authorization?.companyBusiness?.description} - {Authorization?.company?.surname}
+            {Authorization?.user?.userName} / {Authorization?.companyBusiness?.description} - {Authorization?.company?.surname}
           </span>
         </Stack>
 

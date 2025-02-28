@@ -7,41 +7,45 @@ import { MdCheckCircleOutline } from "react-icons/md";
 import { Service } from "../../service";
 import _ from "lodash";
 
-class ViewUser extends React.Component {
+export class ViewUser extends React.Component {
     viewModal = React.createRef();
 
-    newUser = async (user) => {
+    new = async (user) => {
         this.setState({ ...user });
         return this.viewModal.current.show();
     };
 
-    editUser = async (id) => {
-        Loading.Show();
+    edit = async ({id}) => {
         try {
-            const result = await new Service().Post("setting/user/detail", { id });
-            this.setState({ ...result.data });
+                    
+            Loading.Show()
+            const result = await new Service().Post('setting/user/detail', {id})
+            this.setState({...result.data})
+            return this.viewModal.current.show()
+
+        } catch (error) {
+            throw error
         } finally {
-            Loading.Hide();
+            Loading.Hide()
         }
-        return this.viewModal.current.show();
-    };
+    }
 
     submit = async () => {
-        this.setState({ submting: true }, async () => {
-            const user = _.pick(this.state, ["id", "name", "email", "status", "companyUsers"]);
+        try {
+            
+            this.setState({submting: true})
 
-            await new Service()
-                .Post("setting/user/submit", user)
-                .then(async (result) => {
-                    await toaster.push(
-                        <Message showIcon type="success">Salvo com sucesso!</Message>,
-                        { placement: "topEnd", duration: 5000 }
-                    );
-                    this.viewModal.current?.close(result.data);
-                })
-                .finally(() => this.setState({ submting: false }));
-        });
-    };
+            const user = _.pick(this.state, ["id", "name", "email", "status", "companyUsers"])
+            const result = await new Service().Post('setting/user/submit', user)
+            await toaster.push(<Message showIcon type='success'>Salvo com sucesso!</Message>, {placement: 'topEnd', duration: 5000 })
+            this.viewModal.current?.close(result.data)
+
+        } catch (error) {
+            Exception.error(error)
+        } finally {
+            this.setState({submting: false})
+        }
+    }
 
     render = () => {
         return (
@@ -61,10 +65,10 @@ class ViewUser extends React.Component {
                                         <label className="textfield-filled">
                                             <input
                                                 type="text"
-                                                value={this.state?.name}
-                                                onChange={(event) => this.setState({ name: event.target.value })}
+                                                value={this.state?.userName}
+                                                onChange={(event) => this.setState({ userName: event.target.value })}
                                             />
-                                            <span>Nome</span>
+                                            <span>Usuário</span>
                                         </label>
                                     </div>
                                 </Col>
@@ -73,8 +77,8 @@ class ViewUser extends React.Component {
                                         <label className="textfield-filled">
                                             <input
                                                 type="text"
-                                                value={this.state?.email}
-                                                onChange={(event) => this.setState({ email: event.target.value })}
+                                                value={this.state?.userMember?.email}
+                                                onChange={(event) => this.setState({userMember: {email: event.target.value}})}
                                             />
                                             <span>E-mail</span>
                                         </label>
@@ -124,11 +128,9 @@ class ViewUser extends React.Component {
                     </Modal.Footer>
                 </Form>
             </ViewModal>
-        );
-    };
+        )
+    }
 }
-
-export default ViewUser;
 
 const CompanyPicker = ({ value, onChange }) => {
     const [data, setData] = useState([]);

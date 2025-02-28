@@ -126,15 +126,12 @@ export class SearchController {
                 const db = new AppContext()
 
                 const users = await db.User.findAll({
-                    attributes: ['id'],
-                    include: [
-                        {model: db.UserMember, as: 'userMember', attributes: ['userName']}
-                    ],
+                    attributes: ['id', 'userName'],
                     where: [{
-                        '$userMember.UserName$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
+                        '$userName$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
                     }],
                     order: [
-                        [db.UserMember, 'userName', 'asc']
+                        ['userName', 'asc']
                     ],
                     limit: 20
                 })
@@ -145,7 +142,7 @@ export class SearchController {
                 Exception.error(res, error)
             }
         }).catch((error) => {
-            //Exception.unauthorized(res, error)
+            Exception.unauthorized(res, error)
         })
     }
 
@@ -205,7 +202,7 @@ export class SearchController {
                 Exception.error(res, error)
             }
         }).catch((error) => {
-            //Exception.unauthorized(res, error)
+            Exception.unauthorized(res, error)
         })
     }
 

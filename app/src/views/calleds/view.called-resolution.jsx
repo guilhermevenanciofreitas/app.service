@@ -62,9 +62,9 @@ export class ViewCalledResolution extends React.Component {
                                 
                             <Col md={6}>
                                 <div className='form-control'>
-                                    <AutoComplete label='Responsável' value={this.state?.responsible} text={(item) => `${item.userMember.userName}`} onChange={(responsible) => this.setState({ responsible })} onSearch={async (search) => await Search.user(search)} autoFocus>
+                                    <AutoComplete label='Responsável' value={this.state?.responsible} text={(item) => `${item.userName}`} onChange={(responsible) => this.setState({ responsible })} onSearch={async (search) => await Search.user(search)} autoFocus>
                                         <AutoComplete.Result>
-                                        {(item) => <span>{item.userMember?.userName}</span>}
+                                        {(item) => <span>{item.userName}</span>}
                                         </AutoComplete.Result>
                                     </AutoComplete>
                                 </div>
@@ -98,7 +98,7 @@ export class ViewCalledResolution extends React.Component {
                                             {_.map(this.state?.resolutions, (resolution) => (
                                                 <Timeline.Item key={resolution.id}>
                                                     <Tag color={'blue'}>{resolution.status?.description}</Tag>
-                                                    <div><strong>{resolution.user?.userMember?.userName}:</strong> {resolution.detail}</div>
+                                                    <div><strong>{resolution.user?.userName}:</strong> {resolution.detail}</div>
                                                     <div style={{ fontSize: "0.8em", color: "gray" }}>{dayjs(resolution.createdAt).format('DD/MM/YYYY HH:mm')}</div>
                                                 </Timeline.Item>
                                             ))}
