@@ -108,7 +108,9 @@ export class SignIn extends React.Component {
 
     return (
       <Stack justifyContent="center" alignItems="center" direction="column" style={{ height: '100vh' }}>
-        {_.size(this.state?.companyBusiness) == 0 && _.size(this.state?.company) == 0 && (
+
+        {(_.size(this.state?.companyBusiness) == 0 && _.size(this.state?.company) == 0) && (
+
           <Panel bordered style={{ background: '#fff', width: 400 }} header={<Heading level={3}>Acesse sua conta!</Heading>}>
             <Form onSubmit={this.signIn}>
               <Row gutterWidth={0}>
@@ -142,9 +144,12 @@ export class SignIn extends React.Component {
           </Panel>
         )}
 
-        {_.size(this.state?.companyBusiness) >= 1 || _.size(this.state?.company) >= 1 && (
+        {(_.size(this.state?.companyBusiness) > 0 || _.size(this.state?.company) > 0) && (
+
           <Panel bordered style={{ background: '#fff', width: '400px', height: '260px' }}>
+
             <Form>
+
               <Steps current={1}>
                 <Steps.Item title="Entrar" />
                 <Steps.Item title="Empresa" />
@@ -152,7 +157,7 @@ export class SignIn extends React.Component {
               </Steps>
 
               <Divider />
-              
+
               {_.size(this.state?.companyBusiness) >= 1 && (
                 <Form.Group>
                   <Form.ControlLabel><span>Empresa</span></Form.ControlLabel>
@@ -166,6 +171,7 @@ export class SignIn extends React.Component {
                   />
                 </Form.Group>
               )}
+
               {_.size(this.state.company) >= 1 && (
                 <Form.Group>
                   <Form.ControlLabel><span>Filial</span></Form.ControlLabel>
@@ -179,7 +185,9 @@ export class SignIn extends React.Component {
                   />
                 </Form.Group>
               )}
+
             </Form>
+
           </Panel>
         )}    
       </Stack>

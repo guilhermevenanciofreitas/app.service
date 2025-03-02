@@ -14,12 +14,12 @@ export class Authorization {
 
     let session
 
-    await db.transaction(async (transaction) => {
+    await db.transaction({ logging: false }, async (transaction) => {
 
       session = await db.Session.findOne({
         attributes: ['id', 'companyId', 'userId', 'lastAcess', 'expireIn'],
         include: [
-          {model: db.Company, as: 'company', attributes: ['id', 'name']},
+          {model: db.Company, as: 'company', attributes: ['id', 'name', 'companyBusinessId']},
           {model: db.User, as: 'user', attributes: ['id', 'userName']}
         ],
         where: {id: req.headers.authorization},
@@ -42,6 +42,7 @@ export class Authorization {
     })
 
     return {
+      companyBusinessId: session?.company?.companyBusinessId,
       companyId: session?.company?.id,
       userId: session?.user?.id
     }

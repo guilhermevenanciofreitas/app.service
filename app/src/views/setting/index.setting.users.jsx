@@ -40,7 +40,7 @@ const Role = ({role, onChange}) => {
       setUserRole(role)
 
     } catch (error) {
-
+      Exception.error(error)
     } finally {
       setSubmitting(false)
     }
@@ -72,7 +72,17 @@ const CompanyUsers = (row) => {
 
   const onChange = async ({ companyUserId, roleId }) => {
     await new Service().Post('setting/user/change-company-role', { companyUserId, roleId })
-  };
+  }
+
+  const onDelete = async ({companyUserId}) => {
+
+    const rows = _.filter(companyUsers, (item) => item.id != companyUserId)
+
+    await new Service().Post('setting/user/remove-company-role', { companyUserId })
+
+    setCompanyUsers(rows)
+
+  }
 
   const handleAddCompanyUser = async () => {
     try {
@@ -101,9 +111,7 @@ const CompanyUsers = (row) => {
       </IconButton>
 
       <Drawer open={open} onClose={() => setOpen(false)} size="sm">
-        <Drawer.Header>
-          <Drawer.Title>Filiais</Drawer.Title>
-        </Drawer.Header>
+        <Drawer.Header><Drawer.Title>Filiais</Drawer.Title></Drawer.Header>
         <Drawer.Body>
           
           <List bordered hover>
@@ -116,6 +124,7 @@ const CompanyUsers = (row) => {
                   </label>
                 </div>
                 <Role role={companyUser.role} onChange={(role) => onChange({ companyUserId: companyUser.id, roleId: role?.id })} />
+                <button onClick={() => onDelete({companyUserId: companyUser.id})}>Excluir</button>
               </List.Item>
             ))}
           </List>
@@ -131,6 +140,7 @@ const CompanyUsers = (row) => {
               Adicionar
             </IconButton>
           </div>
+          
         </Drawer.Body>
       </Drawer>
     </>

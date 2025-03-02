@@ -239,4 +239,26 @@ export class SettingUserController {
     })
   }
 
+  removeCompanyRole = async (req, res) => {
+    Authorization.verify(req, res).then(async({companyId, userId}) => {
+      try {
+
+        const db = new AppContext()
+
+        await db.transaction(async (transaction) => {
+
+          await db.CompanyUser.destroy({where: [{id: req.body.companyUserId}], transaction})
+
+          res.status(200).json({message: 'Excluído com sucesso!'})
+
+        })
+
+      } catch (error) {
+        Exception.error(res, error)
+      }
+    }).catch((error) => {
+      Exception.unauthorized(res, error)
+    })
+  }
+
 }

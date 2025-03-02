@@ -17,7 +17,7 @@ import { Exception } from "../utils/exception.js"
 export class CalledController {
 
   calleds = async (req, res) => {
-    await Authorization.verify(req, res).then(async ({companyId, userId}) => {
+    await Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
       try {
 
         const db = new AppContext()
@@ -41,12 +41,16 @@ export class CalledController {
 
         }
 
+        console.log(companyBusinessId)
+
+        where.push({'$company.codigo_empresa$': companyBusinessId})
+
         if (filter?.company) {
-          where.push({'companyId': filter.company.id})
+          where.push({'$companyId$': filter.company.id})
         }
 
         if (filter?.responsible) {
-          where.push({'responsibleId': filter.responsible.id})
+          where.push({'$responsibleId$': filter.responsible.id})
         }
 
         const calleds = await db.Called.findAndCountAll({
@@ -124,7 +128,7 @@ export class CalledController {
   }
 
   submit = async (req, res) => {
-    await Authorization.verify(req, res).then(async ({companyId, userId}) => {
+    await Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
       try {
 
         let called = {
@@ -142,8 +146,13 @@ export class CalledController {
         await db.transaction(async (transaction) => {
 
           if (_.isEmpty(called.id)) {
-            const lastNumber = await db.Called.max('number', {transaction})
+
+            let lastNumber = await db.query(`SELECT MAX(number) AS number FROM called INNER JOIN empresa_filial ON empresa_filial.codigo_empresa_filial = called.companyId WHERE empresa_filial.codigo_empresa = ${companyBusinessId}`, {type: Sequelize.QueryTypes.SELECT})
+            
+            lastNumber = parseInt(lastNumber[0]['number'])
+
             called = await db.Called.create({userId, number: lastNumber ? lastNumber + 1 : 1, createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'), ...called}, {transaction})
+
           } else {
             await db.Called.update(called, {where: [{id: called.id}], transaction})
           }

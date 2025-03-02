@@ -16,6 +16,7 @@ export class SettingUserRoute {
         this.router.post('/submit', async (req, res) => await this.controller.submit(req, res))
         this.router.post('/add-company-role', async (req, res) => await this.controller.addCompanyRole(req, res))
         this.router.post('/change-company-role', async (req, res) => await this.controller.changeCompanyRole(req, res))
+        this.router.post('/remove-company-role', async (req, res) => await this.controller.removeCompanyRole(req, res))
     }
 
 }
