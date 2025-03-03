@@ -22,7 +22,7 @@ const permissions = [
         {label: 'Visualizar', value: 'C99A9C76-BCE0-4007-8FE8-27DA5C7BA143'},
         {label: 'Cadastrar', value: 'C947A01A-6D8B-4F47-9C54-92C9CE6FDFA9'},
         {label: 'Editar', value: '8D5C0B06-0F09-42AE-9823-A261F1E98100'},
-        {label: 'Criar resolução', value: '0DAAE48E-BD1A-4C45-9644-5F90E3C4A454'},
+        {label: 'Resolucionar', value: '0DAAE48E-BD1A-4C45-9644-5F90E3C4A454'},
         {label: 'Excluir', value: '0DAAE48E-BD1A-4C45-9644-5F90E3C4A453'},
     ]},
     { value: 'customer', children: [
@@ -53,12 +53,15 @@ const permissions = [
 ]
 
 const data = [
+    /*
     {
         label: 'Caledário', value: 'calendar', children: _.filter(permissions, (c) => c.value == 'calendar')[0]?.children
     },
+    */
     {
         label: 'Chamados', value: 'called', children: _.filter(permissions, (c) => c.value == 'called')[0]?.children
     },
+    /*
     {
         label: 'Cadastros', children: [
             {
@@ -106,7 +109,7 @@ const data = [
     {
         label: 'Fiscal', value: '8', children: [],
     },
-    
+    */
     {
         label: 'Configurações', children: [
             {

@@ -21,14 +21,11 @@ export class SettingRoleController {
 
         //if (filter['situation']) where.push({situation: filter['situation']})
 
-        const roles = await db.CompanyRole.findAndCountAll({
-          attributes: ['id'],
-          include: [
-            {model: db.Role, as: 'role', attributes: ['id', 'name']}
-          ],
+        const roles = await db.Role.findAndCountAll({
+          attributes: ['id', 'name'],
           limit: limit,
           offset: offset * limit,
-          order: [['role', 'name', 'asc']],
+          order: [['name', 'asc']],
           where
         })
 
@@ -37,7 +34,7 @@ export class SettingRoleController {
             filter, limit, offset
           },
           response: {
-            rows: _.map(roles.rows, (companyRole) => companyRole.role), count: roles.count
+            rows: roles.rows, count: roles.count
           }
         })
 

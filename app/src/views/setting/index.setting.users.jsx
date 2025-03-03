@@ -14,8 +14,10 @@ import Link from '../../components/NavLink'
 import { Service } from '../../service';
 import { ViewUser } from './view.user';
 import { Exception } from '../../utils/exception';
-import { FaPlusCircle, FaSyncAlt, FaTrash, FaUserMinus } from 'react-icons/fa';
+import { FaCity, FaPlusCircle, FaSyncAlt, FaTrash, FaUserMinus } from 'react-icons/fa';
 import { Search } from '../../search';
+import Swal from 'sweetalert2';
+import { Navigate } from 'react-router-dom';
 
 const fields = [
   { label: 'Todos', value: undefined },
@@ -48,7 +50,7 @@ const Role = ({role, onChange}) => {
 
   return (
     <div className='form-control'>
-      {subting && <FaSyncAlt className='animated rotate' color='#696969' />}
+      {subting && <center><FaSyncAlt className='animated rotate' color='#696969' /></center>}
       {!subting && (
         <AutoComplete label='Cargo' value={userRole} text={(item) => `${item.name}`} onChange={onChangeRole} onSearch={async (search) => await Search.role(search)}>
           <AutoComplete.Result>
@@ -71,17 +73,30 @@ const CompanyUsers = (row) => {
   const [role, setRole] = useState(null)
 
   const onChange = async ({ companyUserId, roleId }) => {
-    await new Service().Post('setting/user/change-company-role', { companyUserId, roleId })
+    try {
+
+      await new Service().Post('setting/user/change-company-role', { companyUserId, roleId })
+
+    } catch (error) {
+      Exception.error(error)
+    }
   }
 
   const onDelete = async ({companyUserId}) => {
+    try {
 
-    const rows = _.filter(companyUsers, (item) => item.id != companyUserId)
+      const r = await Swal.fire({text: 'Tem certeza que deseja excluir ?', icon: 'question', showCancelButton: true, confirmButtonText: 'Sim', cancelButtonText: 'Não'})
+      if (!r.isConfirmed) return
 
-    await new Service().Post('setting/user/remove-company-role', { companyUserId })
+      const rows = _.filter(companyUsers, (item) => item.id != companyUserId)
 
-    setCompanyUsers(rows)
-
+      await new Service().Post('setting/user/remove-company-role', { companyUserId })
+  
+      setCompanyUsers(rows)
+  
+    } catch (error) {
+      Exception.error(error)
+    }
   }
 
   const handleAddCompanyUser = async () => {
@@ -105,45 +120,62 @@ const CompanyUsers = (row) => {
   }
 
   return (
-    <>
-      <IconButton icon={<FaPlusCircle />} appearance="primary" onClick={() => setOpen(true)}>
-        Gerenciar Empresas
-      </IconButton>
+    <div className='hidden'>
+
+      <IconButton circle icon={<FaCity />} appearance="primary" onClick={() => setOpen(true)} />
 
       <Drawer open={open} onClose={() => setOpen(false)} size="sm">
         <Drawer.Header><Drawer.Title>Filiais</Drawer.Title></Drawer.Header>
-        <Drawer.Body>
-          
-          <List bordered hover>
-            {_.map(companyUsers, (companyUser, index) => (
-              <List.Item key={index} style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }}>
-                <div className="form-control">
-                  <label className="textfield-filled">
-                    <input type="text" value={companyUser.company?.surname} readOnly />
-                    <span>Empresa</span>
-                  </label>
-                </div>
-                <Role role={companyUser.role} onChange={(role) => onChange({ companyUserId: companyUser.id, roleId: role?.id })} />
-                <button onClick={() => onDelete({companyUserId: companyUser.id})}>Excluir</button>
-              </List.Item>
-            ))}
-          </List>
-
-          <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-            <AutoComplete label='Empresa' value={company} text={(item) => `${item.surname}`} onChange={setCompany} onSearch={async (search) => await Search.company(search)}>
-              <AutoComplete.Result>
-                  {(item) => <span>{item.surname}</span>}
-              </AutoComplete.Result>
-            </AutoComplete>
-            <Role role={role} onChange={setRole} />
-            <IconButton icon={<FaPlusCircle />} appearance="primary" onClick={() => handleAddCompanyUser()}>
-              Adicionar
-            </IconButton>
-          </div>
-          
+        <Drawer.Body style={{padding: '30px'}}>
+          <table className="table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Empresa</th>
+                <th>Função</th>
+                <th style={{width: '40px'}}>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {_.map(companyUsers, (companyUser, index) => (
+                <tr key={index}>
+                  <td>
+                    <div className="form-control">
+                      <label className="textfield-filled">
+                        <input type="text" value={companyUser.company?.surname} readOnly />
+                        <span>Empresa</span>
+                      </label>
+                    </div>
+                  </td>
+                  <td>
+                    <Role role={companyUser.role} onChange={(role) => onChange({ companyUserId: companyUser.id, roleId: role?.id })} />
+                  </td>
+                  <td style={{textAlign: 'center'}}>
+                    <FaTrash size='16px' color='tomato' style={{cursor: 'pointer'}} onClick={() => onDelete({ companyUserId: companyUser.id })} />
+                  </td>
+                </tr>
+              ))}
+              <tr>
+                <td>
+                  <div className='form-control'>
+                    <AutoComplete label='Empresa' value={company} text={(item) => `${item.surname}`} onChange={setCompany} onSearch={async (search) => await Search.company(search)}>
+                      <AutoComplete.Result>
+                          {(item) => <span>{item.surname}</span>}
+                      </AutoComplete.Result>
+                    </AutoComplete>
+                  </div>
+                </td>
+                <td>
+                  <Role role={role} onChange={setRole} />
+                </td>
+                <td>
+                  <Button appearance="primary" color='green' onClick={handleAddCompanyUser}><FaPlusCircle /> &nbsp; Adicionar</Button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </Drawer.Body>
       </Drawer>
-    </>
+    </div>
   )
 
 }
@@ -185,16 +217,24 @@ export class SettingUsers extends React.Component {
     }
   }
 
+  onMenuClick = () => {
+    this.setState({redirect: '/settings'})
+  }
+
   columns = [
     { selector: (row) => <DataTable.RowColor color={row.status == 'active' ? 'springgreen' : 'tomato'}>{row.userName}</DataTable.RowColor>, name: 'Nome' },
     { selector: (row) => row.userMember?.email, name: 'E-mail' },
-    { selector: (row) => <CompanyUsers user={row} />}
+    { selector: (row) => <CompanyUsers user={row} />, minWidth: '70px', maxWidth: '70px'}
   ]
 
   render = () => {
 
+    if (this.state?.redirect) {
+      return <Navigate to={this.state?.redirect} replace />
+    }
+
     return (
-      <Panel header={<CustomBreadcrumb menu={'Configurações'} title={'Usuários'} />}>
+      <Panel header={<CustomBreadcrumb menu={'Configurações'} title={'Usuários'} onMenuClick={this.onMenuClick} />}>
 
         <ViewUser ref={this.viewUser} />
 

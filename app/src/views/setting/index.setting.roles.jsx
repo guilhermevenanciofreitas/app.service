@@ -15,6 +15,7 @@ import { Service } from '../../service';
 import { ViewRole } from './view.role';
 import { FaPlusCircle } from 'react-icons/fa';
 import { Exception } from '../../utils/exception';
+import { Navigate } from 'react-router-dom';
 
 const fields = [
   { label: 'Cargo', value: 'name' },
@@ -52,14 +53,22 @@ export class SettingRoles extends React.Component {
     }
   }
 
+  onMenuClick = () => {
+    this.setState({redirect: '/settings'})
+  }
+
   columns = [
     { selector: (row) => row.name, name: 'Cargo' },
   ]
 
   render = () => {
 
+    if (this.state?.redirect) {
+      return <Navigate to={this.state?.redirect} replace />
+    }
+    
     return (
-      <Panel header={<CustomBreadcrumb menu={'Configurações'} title={'Cargos'} />}>
+      <Panel header={<CustomBreadcrumb menu={'Configurações'} title={'Cargos'} onMenuClick={this.onMenuClick} />}>
 
         <ViewRole ref={this.viewRole} />
 

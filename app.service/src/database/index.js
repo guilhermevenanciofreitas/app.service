@@ -62,7 +62,7 @@ export class AppContext extends Sequelize {
 
   CompanyIntegration = this.define('companyIntegration', new CompanyIntegration(), { tableName: 'companyIntegration' })
 
-  CompanyRole = this.define('companyRole', new CompanyRole(), { tableName: 'companyRole' })
+  //CompanyRole = this.define('companyRole', new CompanyRole(), { tableName: 'companyRole' })
 
   CompanyUser = this.define('companyUser', new CompanyUser(), { tableName: 'companyUser' })
 
@@ -172,7 +172,7 @@ export class AppContext extends Sequelize {
 
     this.CompanyIntegration.belongsTo(this.Integration, {as: 'integration', foreignKey: 'integrationId', targetKey: 'id'})
 
-    this.CompanyRole.belongsTo(this.Role, {as: 'role', foreignKey: 'roleId', targetKey: 'id'})
+    //this.CompanyRole.belongsTo(this.Role, {as: 'role', foreignKey: 'roleId', targetKey: 'id'})
 
     this.CompanyUser.belongsTo(this.Company, {as: 'company', foreignKey: 'companyId', targetKey: 'id'})
     this.CompanyUser.belongsTo(this.User, {as: 'user', foreignKey: 'userId', targetKey: 'id'})
