@@ -13,41 +13,47 @@ import { Exception } from "../../utils/exception";
 
 const permissions = [
     { value: 'calendar', children: [
-        {label: 'Visualizar', value: 'C99A9C76-BCE0-4007-8FE8-27DA5C7BA142'},
-        {label: 'Cadastrar', value: 'C947A01A-6D8B-4F47-9C54-92C9CE6FDFA8'},
-        {label: 'Editar', value: '8D5C0B06-0F09-42AE-9823-A261F1E98109'},
-        {label: 'Excluir', value: '0DAAE48E-BD1A-4C45-9644-5F90E3C4A452'},
+        {label: 'Visualizar', value: ''},
+        {label: 'Cadastrar', value: ''},
+        {label: 'Editar', value: ''},
+        {label: 'Excluir', value: ''},
     ]},
     { value: 'called', children: [
-        {label: 'Visualizar', value: 'C99A9C76-BCE0-4007-8FE8-27DA5C7BA143'},
-        {label: 'Cadastrar', value: 'C947A01A-6D8B-4F47-9C54-92C9CE6FDFA9'},
-        {label: 'Editar', value: '8D5C0B06-0F09-42AE-9823-A261F1E98100'},
+        {label: 'Visualizar', value: '0F7D1201-F8C9-4F1D-934D-B32A3232F7EE'},
+        {label: 'Cadastrar', value: '439FE31F-D9D2-47AA-A37A-A19D01024C4F'},
+        {label: 'Editar', value: '90D03DB1-E1FB-485F-9BDC-98A015427A3B'},
         {label: 'Resolucionar', value: '0DAAE48E-BD1A-4C45-9644-5F90E3C4A454'},
         {label: 'Excluir', value: '0DAAE48E-BD1A-4C45-9644-5F90E3C4A453'},
     ]},
     { value: 'customer', children: [
-        {label: 'Visualizar', value: 'C99A9C76-BCE0-4007-8FE8-27DA5C7BA141'},
-        {label: 'Cadastrar', value: 'C947A01A-6D8B-4F47-9C54-92C9CE6FDFA7'},
-        {label: 'Editar', value: '8D5C0B06-0F09-42AE-9823-A261F1E98108'},
-        {label: 'Excluir', value: '0DAAE48E-BD1A-4C45-9644-5F90E3C4A451'},
+        {label: 'Visualizar', value: ''},
+        {label: 'Cadastrar', value: ''},
+        {label: 'Editar', value: ''},
+        {label: 'Excluir', value: ''},
     ]},
     { value: 'supplier', children: [
-        {label: 'Visualizar', value: '90CE2715-A5DF-4EA3-A658-0F2E076A5441'},
-        {label: 'Cadastrar', value: '9EB31BD7-EABB-46E8-B4B7-62053C561E56'},
-        {label: 'Editar', value: '956E095E-46C9-4DD0-828B-EA456ED3E803'},
-        {label: 'Excluir', value: 'A606B1CC-BBF7-4489-9948-2DD71D891CF2'},
+        {label: 'Visualizar', value: ''},
+        {label: 'Cadastrar', value: ''},
+        {label: 'Editar', value: ''},
+        {label: 'Excluir', value: ''},
     ]},
     { value: 'product', children: [
-        {label: 'Visualizar', value: 'CE879C5F-57D2-4A53-AC55-0F9E77CF20CB'},
-        {label: 'Cadastrar', value: 'B2627091-06DE-49FA-A0B1-508489FFF04E'},
-        {label: 'Editar', value: '650EA2F9-9365-4162-AACC-BB0B971CF4BA'},
-        {label: 'Excluir', value: 'FFC90B11-F308-4B32-BB14-4F1180D90B09'},
+        {label: 'Visualizar', value: ''},
+        {label: 'Cadastrar', value: ''},
+        {label: 'Editar', value: ''},
+        {label: 'Excluir', value: ''},
     ]},
     { value: 'service', children: [
-        {label: 'Visualizar', value: 'CE879C5F-57D2-4A53-AC55-0F9E77CF20CB'},
-        {label: 'Cadastrar', value: 'B2627091-06DE-49FA-A0B1-508489FFF04E'},
-        {label: 'Editar', value: '650EA2F9-9365-4162-AACC-BB0B971CF4BA'},
-        {label: 'Excluir', value: 'FFC90B11-F308-4B32-BB14-4F1180D90B09'},
+        {label: 'Visualizar', value: ''},
+        {label: 'Cadastrar', value: ''},
+        {label: 'Editar', value: ''},
+        {label: 'Excluir', value: ''},
+    ]},
+    { value: 'cte', children: [
+        {label: 'Visualizar', value: 'FC9DE921-1B87-4BDE-85CC-2D5FD0CDDD6C'},
+        {label: 'Cadastrar', value: ''},
+        {label: 'Editar', value: ''},
+        {label: 'Excluir', value: ''},
     ]},
     
 ]
@@ -111,10 +117,17 @@ const data = [
     },
     */
     {
-        label: 'Configurações', children: [
+        label: 'Logística', children: [
             {
-                label: 'Informações', value: 'company', children: _.filter(permissions, (c) => c.value == 'company')[0]?.children
+                label: 'Conhecimentos', value: 'cte', children: _.filter(permissions, (c) => c.value == 'cte')[0]?.children
             },
+        ],
+    },
+    {
+        label: 'Configurações', children: [
+            /*{
+                label: 'Empresa', value: 'company', children: _.filter(permissions, (c) => c.value == 'company')[0]?.children
+            },*/
             {
                 label: 'Usuários', value: 'user', children: _.filter(permissions, (c) => c.value == 'user')[0]?.children
             },
@@ -180,6 +193,8 @@ export class ViewRole extends React.Component {
             //Cadastros
             'customer',
             'supplier',
+            //Logística
+            'cte',
             //Configuração
             'company',
             'user',

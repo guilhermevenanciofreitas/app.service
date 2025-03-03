@@ -7,6 +7,8 @@ import Header from '../Header';
 import NavLink from '../NavLink';
 import Brand from '../Brand';
 
+import _ from 'lodash'
+
 const { getHeight, on } = DOMHelper;
 
 const NavItem = props => {
@@ -19,10 +21,14 @@ const NavItem = props => {
 };
 
 const Frame = (props) => {
+  
   const { navs } = props;
   const [expand, setExpand] = useState(false);
   const [hoverExpand, setHoverExpand] = useState(false);
   const [windowHeight, setWindowHeight] = useState(getHeight(window));
+
+  
+  const Authorization = JSON.parse(localStorage.getItem("Authorization"))
 
   useEffect(() => {
     setWindowHeight(getHeight(window));
@@ -74,7 +80,26 @@ const Frame = (props) => {
           <Sidenav.Body style={navBodyStyle}>
             <Nav>
               {navs.map(item => {
-                const { children, ...rest } = item;
+
+                if (item.ruleId) {
+                  if (_.size(_.filter(Authorization.user.rules, (ruleId) => ruleId == item.ruleId)) == 0) return
+                }
+
+                let { children, ...rest } = item
+
+                //children = _.filter(children, (child) => child.ruleId == item.ruleId)
+
+                /*
+                children = _.map(children, (child) => {
+                  
+                  if (child.ruleId) {
+                    if (_.size(_.filter(Authorization.user.rules, (ruleId) => ruleId == child?.ruleId)) == 0) return
+                  }
+
+                  return child
+                })
+                */
+
                 if (children) {
                   return (
                     <Nav.Menu key={item.eventKey} placement="rightStart" trigger="hover" {...rest}>

@@ -7,7 +7,7 @@ import { CustomBreadcrumb } from '../../controls';
 
 const sections = {
   Geral: [
-    { name: 'Empresa', icon: <FaBuilding />, path: '/settings/company' },
+    //{ name: 'Empresa', icon: <FaBuilding />, path: '/settings/company' },
     { name: 'Usuários', icon: <FaUsers />, path: '/settings/users' },
     { name: 'Cargos', icon: <FaBriefcase />, path: '/settings/roles' }
   ],

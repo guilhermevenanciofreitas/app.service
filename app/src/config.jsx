@@ -17,7 +17,8 @@ export const appNavs = [
     eventKey: 'calleds',
     icon: <Icon as={MdSupport} />,
     title: 'Chamados',
-    to: '/calleds'
+    to: '/calleds',
+    ruleId: '0F7D1201-F8C9-4F1D-934D-B32A3232F7EE'
   },
   /*
   {
@@ -211,7 +212,8 @@ export const appNavs = [
       {
         eventKey: 'ctes',
         title: 'Conhecimentos',
-        to: '/logistic/ctes'
+        to: '/logistic/ctes',
+        ruleId: 'FC9DE921-1B87-4BDE-85CC-2D5FD0CDDD6C'
       },
       {
         eventKey: 'shippiments',

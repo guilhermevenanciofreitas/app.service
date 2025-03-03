@@ -34,7 +34,7 @@ export class LoginController {
         const user = await db.User.findOne({
           attributes: ['id', 'userName'],
           include: [
-            {model: db.UserMember, as: 'userMember', attributes: ['id', 'email']}
+            {model: db.UserMember, as: 'userMember', attributes: ['id', 'email']},
           ],
           where: Sequelize.literal(`"user"."userName" = :email OR "userMember"."email" = :email`),
           replacements: { email },
@@ -90,7 +90,7 @@ export class LoginController {
           include: [
             {model: db.Company, as: 'companies', attributes: ['id', 'name', 'surname'],
               include: [
-                {model: db.CompanyUser, as: 'companyUsers', attributes: ['userId']}
+                {model: db.CompanyUser, as: 'companyUsers', attributes: ['userId', 'roleId']}
               ]
             },
           ],
@@ -120,12 +120,16 @@ export class LoginController {
 
         const session = await db.Session.create({companyId: companyBusiness[0].companies[0].id, userId: user.id, lastAcess: lastAcess.format('YYYY-MM-DD HH:mm:ss'), expireIn}, {transaction})
 
+        console.log(companyBusiness[0].companies[0])
+
+        const rules = await db.RoleRule.findAll({attributes: ['ruleId'], where: [{roleId: companyBusiness[0].companies[0].companyUsers[0].roleId}], transaction})
+
         res.status(200).json({
           message: 'Autorizado com sucesso!',
           token: session.id,
           companyBusiness: _.pick(companyBusiness[0], ['description']),
           company: _.pick(companyBusiness[0].companies[0], ['id', 'surname']),
-          user: {id: user.id, userName: user.userName},
+          user: {id: user.id, userName: user.userName, rules: _.map(rules, (rule) => rule.ruleId)},
           lastAcess: lastAcess.format('YYYY-MM-DDTHH:mm:ss'),
           expireIn
         })
