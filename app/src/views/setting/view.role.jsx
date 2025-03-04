@@ -85,44 +85,46 @@ export class ViewRole extends React.Component {
         checkTree.forEach(group => {
             // Verifica se o grupo pai foi selecionado
             if (selectedValues.includes(group.value)) {
-                // Se o grupo pai for selecionado, adiciona todos os filhos de todos os níveis
+                // Se o grupo pai for selecionado, percorre todos os filhos e sub-filhos
                 group.children.forEach(child => {
-                    // Adiciona os filhos diretamente ao updatedRoleRules
-                    if (!updatedRoleRules.includes(child.value)) {
-                        updatedRoleRules.push(child.value);
-                    }
-    
-                    // Caso o filho também tenha filhos, vamos entrar recursivamente
+                    // Verifica se o filho tem filhos (sub-filhos)
                     if (child.children) {
                         child.children.forEach(subChild => {
+                            // Adiciona apenas os sub-filhos diretamente ao updatedRoleRules
                             if (!updatedRoleRules.includes(subChild.value)) {
                                 updatedRoleRules.push(subChild.value);
                             }
                         });
+                    } else {
+                        // Caso não tenha sub-filhos, adiciona o filho diretamente
+                        if (!updatedRoleRules.includes(child.value)) {
+                            updatedRoleRules.push(child.value);
+                        }
                     }
                 });
             } else {
-                // Caso o grupo pai não esteja selecionado, verifica cada filho individualmente
+                // Caso o grupo pai não esteja selecionado, verifica se algum filho foi selecionado individualmente
                 group.children.forEach(child => {
-                    if (selectedValues.includes(child.value) && !updatedRoleRules.includes(child.value)) {
-                        updatedRoleRules.push(child.value);
-                    }
-    
-                    // Caso o filho tenha filhos, verifica cada um deles individualmente
+                    // Verifica se o filho tem filhos (sub-filhos)
                     if (child.children) {
                         child.children.forEach(subChild => {
                             if (selectedValues.includes(subChild.value) && !updatedRoleRules.includes(subChild.value)) {
                                 updatedRoleRules.push(subChild.value);
                             }
                         });
+                    } else {
+                        if (selectedValues.includes(child.value) && !updatedRoleRules.includes(child.value)) {
+                            updatedRoleRules.push(child.value);
+                        }
                     }
                 });
             }
         });
     
-        // Atualiza o estado com os valores corretos de roleRules (somente filhos)
+        // Atualiza o estado com os valores corretos de roleRules (somente filhos e sub-filhos, sem os pais)
         this.setState({ roleRules: updatedRoleRules });
     };
+    
     
     onSubmit = async () => {
         try {
