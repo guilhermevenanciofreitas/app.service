@@ -219,7 +219,7 @@ export const appNavs = [
         eventKey: 'shippiments',
         title: 'Romaneios',
         to: '/logistic/shippiments',
-        roleId: '6F1F9996-C17B-470A-93B7-A2491DFDF20F'
+        ruleId: '6F1F9996-C17B-470A-93B7-A2491DFDF20F'
       },
       /*{
         eventKey: 'trips',

@@ -47,7 +47,7 @@ const checkTree = [
     { label: 'Configurações', value: 'settings', children: [
         { label: 'Usuários', value: 'user', children: permissions.find(p => p.value === 'user')?.children },
     ]},
-];
+]
 
 export class ViewRole extends React.Component {
     constructor(props) {
@@ -65,7 +65,7 @@ export class ViewRole extends React.Component {
     new = async () => {
         this.setState({ id: undefined, name: '', roleRules: [] });
         this.viewModal.current.show();
-    };
+    }
 
     edit = async ({ id }) => {
         try {
@@ -83,7 +83,7 @@ export class ViewRole extends React.Component {
         } finally {
             Loading.Hide();
         }
-    };
+    }
 
     onChangeRules = (selectedValues) => {
         let updatedRoleRules = [];
@@ -108,7 +108,7 @@ export class ViewRole extends React.Component {
                             updatedRoleRules.push(child.value);
                         }
                     }
-                });
+                })
             } else {
                 // Caso o grupo pai não esteja selecionado, verifica se algum filho foi selecionado individualmente
                 group.children.forEach(child => {
@@ -126,13 +126,37 @@ export class ViewRole extends React.Component {
                     }
                 });
             }
-        });
+        })
     
         // Atualiza o estado com os valores corretos de roleRules (somente filhos e sub-filhos, sem os pais)
-        this.setState({ roleRules: updatedRoleRules });
+        this.setState({ roleRules: updatedRoleRules })
     };
-    
-    
+
+    // Função para filtrar o checkTree com base nas permissões do usuário
+    filterCheckTree = () => {
+
+        const Authorization = JSON.parse(localStorage.getItem("Authorization"));
+        const userRules = Authorization?.user?.rules || []
+
+        return checkTree
+            .map(group => {
+                // Filtra os filhos com base nas permissões que o usuário possui
+                const filteredChildren = group.children.filter(child => 
+                    userRules.includes(child.value) || 
+                    (child.children && child.children.some(subChild => userRules.includes(subChild.value)))
+                );
+
+                // Se o grupo tiver filhos visíveis, retorna o grupo com os filhos filtrados
+                if (filteredChildren.length > 0) {
+                    return { ...group, children: filteredChildren };
+                }
+
+                // Caso o grupo não tenha filhos visíveis, não o exibe
+                return null;
+            })
+            .filter(group => group !== null); // Remove os grupos que não têm filhos visíveis
+    };
+
     onSubmit = async () => {
         try {
             this.setState({ submitting: true });
@@ -159,6 +183,8 @@ export class ViewRole extends React.Component {
     }
 
     render() {
+        const filteredCheckTree = this.filterCheckTree(); // Filtra as permissões com base no Authorization
+
         return (
             <Form autoComplete="off" onSubmit={this.onSubmit}>
                 <ViewModal ref={this.viewModal} size={450}>
@@ -187,7 +213,7 @@ export class ViewRole extends React.Component {
                             <Col md={12}>
                                 <label>Permissões</label>
                                 <CheckTree 
-                                    data={checkTree} 
+                                    data={filteredCheckTree}  // Usando o checkTree filtrado
                                     value={this.state.roleRules} 
                                     onChange={this.onChangeRules} 
                                 />

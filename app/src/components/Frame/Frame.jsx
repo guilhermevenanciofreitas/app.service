@@ -37,13 +37,19 @@ const Frame = ({ navs }) => {
   const navBodyStyle = expand || hoverExpand ? { height: 'calc(100vh - 112px)', overflow: 'auto' } : {}
 
   const filteredNavs = _.cloneDeep(navs)
-  .map(item => {
+  .map((item) => {
     
-    if (!item.children || userRules.includes(item.ruleId)) return item;
+    if (!item?.children && !item.ruleId) return item
 
-    const children = item.children.filter(subItem => userRules.includes(subItem.ruleId));
+    if ((!item?.children) && (_.includes(userRules, item.ruleId))) return item
 
-    return children.length > 0 ? { ...item, children } : null;
+      const children = _.filter(item.children, (subItem) => {
+
+      return userRules.includes(subItem.ruleId)
+    })
+
+    return _.size(children) > 0 ? { ...item, children } : null
+
   })
   .filter(Boolean)
 
