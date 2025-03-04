@@ -28,7 +28,7 @@ const permissions = [
         { label: 'Visualizar', value: 'EA48106A-F533-4747-8E52-A3006F006FB8' },
         { label: 'Cadastrar', value: '28A68BD8-0E58-4A30-8C22-3E55C0ABA42A' },
         { label: 'Editar', value: '15AF159F-A450-4CB5-A347-28AD6306C930' },
-        { label: 'Excluir', value: '15AF159F-A450-4CB5-A347-28AD6306C930' },
+        { label: 'Excluir', value: '46D20036-32FE-4F19-9D80-41D38E0B5E5C' },
     ]},
 ];
 
@@ -79,31 +79,64 @@ export class ViewRole extends React.Component {
     };
 
     onChangeRules = (selectedValues) => {
-        
-        const allChildValues = checkTree.flatMap(parent =>
-            parent.children?.flatMap(child => child.children ? child.children.map(c => c.value) : child.value) || []
-        );
+        let updatedRoleRules = [];
     
-        const onlyChildrenSelected = selectedValues.filter(value => allChildValues.includes(value));
+        // Itera sobre os grupos de permissões
+        checkTree.forEach(group => {
+            // Verifica se o grupo pai foi selecionado
+            if (selectedValues.includes(group.value)) {
+                // Se o grupo pai for selecionado, adiciona todos os filhos de todos os níveis
+                group.children.forEach(child => {
+                    // Adiciona os filhos diretamente ao updatedRoleRules
+                    if (!updatedRoleRules.includes(child.value)) {
+                        updatedRoleRules.push(child.value);
+                    }
     
-        this.setState({ roleRules: onlyChildrenSelected })
-        
+                    // Caso o filho também tenha filhos, vamos entrar recursivamente
+                    if (child.children) {
+                        child.children.forEach(subChild => {
+                            if (!updatedRoleRules.includes(subChild.value)) {
+                                updatedRoleRules.push(subChild.value);
+                            }
+                        });
+                    }
+                });
+            } else {
+                // Caso o grupo pai não esteja selecionado, verifica cada filho individualmente
+                group.children.forEach(child => {
+                    if (selectedValues.includes(child.value) && !updatedRoleRules.includes(child.value)) {
+                        updatedRoleRules.push(child.value);
+                    }
+    
+                    // Caso o filho tenha filhos, verifica cada um deles individualmente
+                    if (child.children) {
+                        child.children.forEach(subChild => {
+                            if (selectedValues.includes(subChild.value) && !updatedRoleRules.includes(subChild.value)) {
+                                updatedRoleRules.push(subChild.value);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    
+        // Atualiza o estado com os valores corretos de roleRules (somente filhos)
+        this.setState({ roleRules: updatedRoleRules });
     };
     
-
     onSubmit = async () => {
         try {
             this.setState({ submitting: true });
-
+    
             const role = {
                 id: this.state.id,
                 name: this.state.name,
                 roleRules: this.state.roleRules.map(ruleId => ({ ruleId })),
             };
-
+    
             await new Service().Post('setting/role/submit', role);
             await toaster.push(<Message showIcon type="success">Salvo com sucesso!</Message>, { placement: 'topEnd', duration: 5000 });
-
+    
             this.viewModal.current?.close(role);
         } catch (error) {
             Exception.error(error);

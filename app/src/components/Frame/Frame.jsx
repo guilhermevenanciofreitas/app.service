@@ -50,15 +50,24 @@ const Frame = ({ navs }) => {
 
   // Filtrar menus e submenus com permissão
   const filteredNavs = navs.filter(item => {
+    // Se o item (menu principal) não tem permissão e não tem filhos, ele é excluído
     if (item.ruleId && !userRules.includes(item.ruleId)) {
       return false;
     }
+  
+    // Caso o item tenha filhos (submenus), filtramos os filhos
     if (item.children) {
+      // Filtra os filhos com base na permissão do usuário
       item.children = item.children.filter(child => !child.ruleId || userRules.includes(child.ruleId));
-      return item.children.length > 0;
+  
+      // Se o item tem filhos e pelo menos um filho tem permissão, mostramos o menu
+      return item.children.length > 0 || userRules.includes(item.ruleId);
     }
+  
+    // Se o item não tem filhos, mas tem permissão, mostramos o item
     return true;
-  })
+  });
+  
 
   return (
     <Container className="frame" style={{ height: '100vh', overflow: 'hidden', display: 'flex' }}>
