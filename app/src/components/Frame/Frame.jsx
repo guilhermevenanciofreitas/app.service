@@ -66,9 +66,9 @@ const Frame = ({ navs }) => {
   
     // Se o item não tem filhos, mas tem permissão, mostramos o item
     return true;
+    
   });
   
-
   return (
     <Container className="frame" style={{ height: '100vh', overflow: 'hidden', display: 'flex' }}>
       <Sidebar
