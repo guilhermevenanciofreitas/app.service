@@ -215,6 +215,7 @@ export const appNavs = [
         to: '/logistic/ctes',
         ruleId: 'FC9DE921-1B87-4BDE-85CC-2D5FD0CDDD6C'
       },
+      /*
       {
         eventKey: 'shippiments',
         title: 'Romaneios',
@@ -225,6 +226,7 @@ export const appNavs = [
         title: 'Viagens',
         to: '/logistic/trips'
       },
+      */
     ]
   },/*
   {

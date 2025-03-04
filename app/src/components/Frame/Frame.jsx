@@ -6,36 +6,29 @@ import NavToggle from './NavToggle';
 import Header from '../Header';
 import NavLink from '../NavLink';
 import Brand from '../Brand';
-
-import _ from 'lodash'
+import _ from 'lodash';
 
 const { getHeight, on } = DOMHelper;
 
-const NavItem = props => {
-  const { title, eventKey, ...rest } = props;
-  return (
-    <Nav.Item eventKey={eventKey} as={NavLink} {...rest}>
-      {title}
-    </Nav.Item>
-  );
-};
+const NavItem = ({ title, eventKey, ...rest }) => (
+  <Nav.Item eventKey={eventKey} as={NavLink} {...rest}>
+    {title}
+  </Nav.Item>
+);
 
-const Frame = (props) => {
-  
-  const { navs } = props;
+const Frame = ({ navs }) => {
   const [expand, setExpand] = useState(false);
   const [hoverExpand, setHoverExpand] = useState(false);
   const [windowHeight, setWindowHeight] = useState(getHeight(window));
 
-  
-  const Authorization = JSON.parse(localStorage.getItem("Authorization"))
+  const Authorization = JSON.parse(localStorage.getItem("Authorization"));
+  const userRules = Authorization?.user?.rules || [];
 
   useEffect(() => {
     setWindowHeight(getHeight(window));
-    const resizeListenner = on(window, 'resize', () => setWindowHeight(getHeight(window)));
-
+    const resizeListener = on(window, 'resize', () => setWindowHeight(getHeight(window)));
     return () => {
-      resizeListenner.off();
+      resizeListener.off();
     };
   }, []);
 
@@ -55,6 +48,18 @@ const Frame = (props) => {
     ? { height: 'calc(100vh - 112px)', overflow: 'auto' }
     : {};
 
+  // Filtrar menus e submenus com permissão
+  const filteredNavs = navs.filter(item => {
+    if (item.ruleId && !userRules.includes(item.ruleId)) {
+      return false;
+    }
+    if (item.children) {
+      item.children = item.children.filter(child => !child.ruleId || userRules.includes(child.ruleId));
+      return item.children.length > 0;
+    }
+    return true;
+  })
+
   return (
     <Container className="frame" style={{ height: '100vh', overflow: 'hidden', display: 'flex' }}>
       <Sidebar
@@ -63,8 +68,7 @@ const Frame = (props) => {
           flexDirection: 'column',
           height: '100vh',
           transition: 'width 0.3s',
-          borderRight: hoverExpand && !expand ? '0.1px solid #ddd' : 'none', 
-          //boxShadow: hoverExpand ? '1px 0 3px rgba(0, 0, 0, 0.08)' : 'none',
+          borderRight: hoverExpand && !expand ? '0.1px solid #ddd' : 'none',
           overflow: 'hidden',
           zIndex: 1000
         }}
@@ -76,48 +80,20 @@ const Frame = (props) => {
         <Sidenav.Header>
           <Brand />
         </Sidenav.Header>
-        <Sidenav expanded={expand || hoverExpand} appearance="subtle" defaultOpenKeys={['2', '3']}>
+        <Sidenav expanded={expand || hoverExpand} appearance="subtle">
           <Sidenav.Body style={navBodyStyle}>
             <Nav>
-              {navs.map(item => {
-
-                if (item.ruleId) {
-                  if (_.size(_.filter(Authorization.user.rules, (ruleId) => ruleId == item.ruleId)) == 0) return
-                }
-
-                let { children, ...rest } = item
-
-                //children = _.filter(children, (child) => child.ruleId == item.ruleId)
-
-                /*
-                children = _.map(children, (child) => {
-                  
-                  if (child.ruleId) {
-                    if (_.size(_.filter(Authorization.user.rules, (ruleId) => ruleId == child?.ruleId)) == 0) return
-                  }
-
-                  return child
-                })
-                */
-
-                if (children) {
-                  return (
-                    <Nav.Menu key={item.eventKey} placement="rightStart" trigger="hover" {...rest}>
-                      {children.map(child => {
-                        return <NavItem key={child.eventKey} {...child} />;
-                      })}
-                    </Nav.Menu>
-                  );
-                }
-                if (rest.target === '_blank') {
-                  return (
-                    <Nav.Item key={item.eventKey} {...rest}>
-                      {item.title}
-                    </Nav.Item>
-                  );
-                }
-                return <NavItem key={rest.eventKey} {...rest} />;
-              })}
+              {filteredNavs.map(item => (
+                item.children ? (
+                  <Nav.Menu key={item.eventKey} placement="rightStart" trigger="hover" {...item}>
+                    {item.children.map(child => (
+                      <NavItem key={child.eventKey} {...child} />
+                    ))}
+                  </Nav.Menu>
+                ) : (
+                  <NavItem key={item.eventKey} {...item} />
+                )
+              ))}
             </Nav>
           </Sidenav.Body>
         </Sidenav>
