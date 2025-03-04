@@ -1,91 +1,60 @@
-import React, { useEffect, useState } from 'react';
-import classNames from 'classnames';
-import { Container, Sidebar, Sidenav, Content, Nav, DOMHelper } from 'rsuite';
-import { Outlet } from 'react-router-dom';
-import NavToggle from './NavToggle';
-import Header from '../Header';
-import NavLink from '../NavLink';
-import Brand from '../Brand';
-import _ from 'lodash';
-
-const { getHeight, on } = DOMHelper;
+import React, { useState } from 'react'
+import classNames from 'classnames'
+import { Container, Sidebar, Sidenav, Content, Nav } from 'rsuite'
+import { Outlet } from 'react-router-dom'
+import NavToggle from './NavToggle'
+import Header from '../Header'
+import NavLink from '../NavLink'
+import Brand from '../Brand'
+import _ from 'lodash'
 
 const NavItem = ({ title, eventKey, ...rest }) => (
   <Nav.Item eventKey={eventKey} as={NavLink} {...rest}>
     {title}
   </Nav.Item>
-);
+)
 
 const Frame = ({ navs }) => {
-  const [expand, setExpand] = useState(false);
-  const [hoverExpand, setHoverExpand] = useState(false);
-  const [windowHeight, setWindowHeight] = useState(getHeight(window));
 
-  const Authorization = JSON.parse(localStorage.getItem("Authorization"));
-  const userRules = Authorization?.user?.rules || [];
-
-  useEffect(() => {
-    setWindowHeight(getHeight(window));
-    const resizeListener = on(window, 'resize', () => setWindowHeight(getHeight(window)));
-    return () => {
-      resizeListener.off();
-    };
-  }, []);
+  const [expand, setExpand] = useState(false)
+  const [hoverExpand, setHoverExpand] = useState(false)
+ 
+  const Authorization = JSON.parse(localStorage.getItem("Authorization"))
+  const userRules = Authorization?.user?.rules || []
 
   const handleMouseEnter = () => {
-    if (!expand) setHoverExpand(true);
-  };
+    if (!expand) setHoverExpand(true)
+  }
 
   const handleMouseLeave = () => {
-    if (!expand) setHoverExpand(false);
-  };
+    if (!expand) setHoverExpand(false)
+  }
 
   const containerClasses = classNames('page-container', {
     'container-full': !expand
-  });
+  })
 
-  const navBodyStyle = expand || hoverExpand
-    ? { height: 'calc(100vh - 112px)', overflow: 'auto' }
-    : {};
+  const navBodyStyle = expand || hoverExpand ? { height: 'calc(100vh - 112px)', overflow: 'auto' } : {}
 
-  // Filtrar menus e submenus com permissão
-  const filteredNavs = navs.filter(item => {
-    // Se o item (menu principal) não tem permissão e não tem filhos, ele é excluído
-    if (item.ruleId && !userRules.includes(item.ruleId)) {
-      return false;
-    }
-  
-    // Caso o item tenha filhos (submenus), filtramos os filhos
-    if (item.children) {
-      // Filtra os filhos com base na permissão do usuário
-      item.children = item.children.filter(child => !child.ruleId || userRules.includes(child.ruleId));
-  
-      // Se o item tem filhos e pelo menos um filho tem permissão, mostramos o menu
-      return item.children.length > 0 || userRules.includes(item.ruleId);
-    }
-  
-    // Se o item não tem filhos, mas tem permissão, mostramos o item
-    return true;
+  const filteredNavs = _.cloneDeep(navs).filter(item => {
     
-  });
+    if (item.ruleId && !userRules.includes(item.ruleId)) {
+      return false
+    }
+  
+    if (item.children) {
+      item.children = item.children.filter(child => !child.ruleId || userRules.includes(child.ruleId))
+  
+      return item.children.length > 0 || userRules.includes(item.ruleId)
+    }
+  
+    return true
+    
+  })
   
   return (
     <Container className="frame" style={{ height: '100vh', overflow: 'hidden', display: 'flex' }}>
-      <Sidebar
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100vh',
-          transition: 'width 0.3s',
-          borderRight: hoverExpand && !expand ? '0.1px solid #ddd' : 'none',
-          overflow: 'hidden',
-          zIndex: 1000
-        }}
-        width={expand || hoverExpand ? 260 : 56}
-        collapsible
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
+      <Sidebar style={{ display: 'flex', flexDirection: 'column', height: '100vh', borderRight: hoverExpand && !expand ? '0.1px solid #ddd' : 'none', overflow: 'hidden', zIndex: 1000 }} width={expand || hoverExpand ? 260 : 56} collapsible onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
         <Sidenav.Header>
           <Brand />
         </Sidenav.Header>
@@ -94,14 +63,7 @@ const Frame = ({ navs }) => {
             <Nav>
               {filteredNavs.map(item => (
                 item.children ? (
-                  <Nav.Menu key={item.eventKey} placement="rightStart" trigger="hover" {...item}>
-                    {item.children.map(child => (
-                      <NavItem key={child.eventKey} {...child} />
-                    ))}
-                  </Nav.Menu>
-                ) : (
-                  <NavItem key={item.eventKey} {...item} />
-                )
+                  <Nav.Menu key={item.eventKey} placement="rightStart" trigger="hover" {...item}>{item.children.map(child => (<NavItem key={child.eventKey} {...child} />))}</Nav.Menu>) : (<NavItem key={item.eventKey} {...item} />)
               ))}
             </Nav>
           </Sidenav.Body>
@@ -115,8 +77,10 @@ const Frame = ({ navs }) => {
           <Outlet />
         </Content>
       </Container>
-    </Container>
-  );
-};
 
-export default Frame;
+    </Container>
+  )
+
+}
+
+export default Frame

@@ -48,7 +48,13 @@ import { IntlProvider } from 'react-intl';
 export class Loading extends React.Component {
 
   static Show(message = 'Carregando...') {
+    
+    var loaderElement = document.getElementsByClassName('rs-loader-content')
+  
+    loaderElement[0].innerHTML = message
+
     document.getElementById('loading').style.display = 'block'
+    
   }
 
   static Hide() {
@@ -59,7 +65,7 @@ export class Loading extends React.Component {
     return (
       <div id='loading' className="loader-overlay" style={{display: 'none'}}>
         <div className="loader-content loader-center">
-          <div className="loader-center"><Loader size="lg" inverse content='Carregando...' /></div>
+          <div className="loader-center"><Loader id='loader' size="lg" inverse content='Carregando...' /></div>
         </div>
       </div>
     );
