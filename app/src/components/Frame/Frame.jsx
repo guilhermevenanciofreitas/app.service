@@ -36,22 +36,17 @@ const Frame = ({ navs }) => {
 
   const navBodyStyle = expand || hoverExpand ? { height: 'calc(100vh - 112px)', overflow: 'auto' } : {}
 
-  const filteredNavs = _.cloneDeep(navs).filter(item => {
+  const filteredNavs = _.cloneDeep(navs)
+  .map(item => {
     
-    if (item.ruleId && !userRules.includes(item.ruleId)) {
-      return false
-    }
-  
-    if (item.children) {
-      item.children = item.children.filter(child => !child.ruleId || userRules.includes(child.ruleId))
-  
-      return item.children.length > 0 || userRules.includes(item.ruleId)
-    }
-  
-    return true
-    
+    if (!item.children || userRules.includes(item.ruleId)) return item;
+
+    const children = item.children.filter(subItem => userRules.includes(subItem.ruleId));
+
+    return children.length > 0 ? { ...item, children } : null;
   })
-  
+  .filter(Boolean)
+
   return (
     <Container className="frame" style={{ height: '100vh', overflow: 'hidden', display: 'flex' }}>
       <Sidebar style={{ display: 'flex', flexDirection: 'column', height: '100vh', borderRight: hoverExpand && !expand ? '0.1px solid #ddd' : 'none', overflow: 'hidden', zIndex: 1000 }} width={expand || hoverExpand ? 260 : 56} collapsible onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>

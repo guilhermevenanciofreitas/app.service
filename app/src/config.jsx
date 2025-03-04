@@ -215,13 +215,13 @@ export const appNavs = [
         to: '/logistic/ctes',
         ruleId: 'FC9DE921-1B87-4BDE-85CC-2D5FD0CDDD6C'
       },
-      /*
       {
         eventKey: 'shippiments',
         title: 'Romaneios',
-        to: '/logistic/shippiments'
+        to: '/logistic/shippiments',
+        roleId: '6F1F9996-C17B-470A-93B7-A2491DFDF20F'
       },
-      {
+      /*{
         eventKey: 'trips',
         title: 'Viagens',
         to: '/logistic/trips'

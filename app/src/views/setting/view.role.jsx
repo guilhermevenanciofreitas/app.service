@@ -30,12 +30,19 @@ const permissions = [
         { label: 'Editar', value: '15AF159F-A450-4CB5-A347-28AD6306C930' },
         { label: 'Excluir', value: '46D20036-32FE-4F19-9D80-41D38E0B5E5C' },
     ]},
-];
+    { value: 'shippiment', children: [
+        { label: 'Visualizar', value: '6F1F9996-C17B-470A-93B7-A2491DFDF20F' },
+        { label: 'Cadastrar', value: '53E6907C-14DF-464A-A60F-432539EA979B' },
+        { label: 'Editar', value: '6A417948-4AA0-43A7-AD13-50CE8BCDE59A' },
+        { label: 'Excluir', value: 'BA6B05D7-C4BE-49AB-A8C2-34737EABF8E3' },
+    ]},
+]
 
 const checkTree = [
     { label: 'Chamados', value: 'called', children: permissions.find(p => p.value === 'called')?.children },
     { label: 'Logística', value: 'logistic', children: [
         { label: 'Conhecimentos', value: 'cte', children: permissions.find(p => p.value === 'cte')?.children },
+        { label: 'Romaneios', value: 'shippiment', children: permissions.find(p => p.value === 'shippiment')?.children },
     ]},
     { label: 'Configurações', value: 'settings', children: [
         { label: 'Usuários', value: 'user', children: permissions.find(p => p.value === 'user')?.children },
