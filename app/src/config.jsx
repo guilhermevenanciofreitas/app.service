@@ -269,6 +269,7 @@ export const appNavs = [
     eventKey: 'settings',
     icon: <Icon as={MdSettings} />,
     title: 'Configurações',
-    to: '/settings'
+    to: '/settings',
+    ruleId: 'B77BA3E3-C830-40D7-9E7C-FE21C42BF014'
   },
 ];

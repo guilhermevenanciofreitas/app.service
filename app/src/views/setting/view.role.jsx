@@ -24,17 +24,26 @@ const permissions = [
         { label: 'Editar', value: '56F79D70-950C-4CDF-A017-E6BF8681B6AC' },
         { label: 'Excluir', value: '5DE7BC80-AC16-41A8-900F-504A10D0EFA6' },
     ]},
+    { value: 'shippiment', children: [
+        { label: 'Visualizar', value: '6F1F9996-C17B-470A-93B7-A2491DFDF20F' },
+        { label: 'Cadastrar', value: '53E6907C-14DF-464A-A60F-432539EA979B' },
+        { label: 'Editar', value: '6A417948-4AA0-43A7-AD13-50CE8BCDE59A' },
+        { label: 'Excluir', value: 'BA6B05D7-C4BE-49AB-A8C2-34737EABF8E3' },
+    ]},
+    { value: 'company', children: [
+        { label: 'Editar', value: 'B77BA3E3-C830-40D7-9E7C-FE21C42BF014' },
+    ]},
     { value: 'user', children: [
         { label: 'Visualizar', value: 'EA48106A-F533-4747-8E52-A3006F006FB8' },
         { label: 'Cadastrar', value: '28A68BD8-0E58-4A30-8C22-3E55C0ABA42A' },
         { label: 'Editar', value: '15AF159F-A450-4CB5-A347-28AD6306C930' },
         { label: 'Excluir', value: '46D20036-32FE-4F19-9D80-41D38E0B5E5C' },
     ]},
-    { value: 'shippiment', children: [
-        { label: 'Visualizar', value: '6F1F9996-C17B-470A-93B7-A2491DFDF20F' },
-        { label: 'Cadastrar', value: '53E6907C-14DF-464A-A60F-432539EA979B' },
-        { label: 'Editar', value: '6A417948-4AA0-43A7-AD13-50CE8BCDE59A' },
-        { label: 'Excluir', value: 'BA6B05D7-C4BE-49AB-A8C2-34737EABF8E3' },
+    { value: 'role', children: [
+        { label: 'Visualizar', value: 'B04301AB-679E-4EA9-9AA7-F9EA83CE4F0D' },
+        { label: 'Cadastrar', value: '3CC589CB-43FF-426D-AE0F-6C36E102AE22' },
+        { label: 'Editar', value: 'A0B3C522-203B-405D-8E93-854DF8A94BBA' },
+        { label: 'Excluir', value: 'D19D7281-8BA3-4287-897B-03E297119ED4' },
     ]},
 ]
 
@@ -45,11 +54,14 @@ const checkTree = [
         { label: 'Romaneios', value: 'shippiment', children: permissions.find(p => p.value === 'shippiment')?.children },
     ]},
     { label: 'Configurações', value: 'settings', children: [
+        { label: 'Empresa', value: 'company', children: permissions.find(p => p.value === 'company')?.children },
         { label: 'Usuários', value: 'user', children: permissions.find(p => p.value === 'user')?.children },
+        { label: 'Cargos', value: 'role', children: permissions.find(p => p.value === 'role')?.children },
     ]},
 ]
 
 export class ViewRole extends React.Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -86,52 +98,9 @@ export class ViewRole extends React.Component {
     }
 
     onChangeRules = (selectedValues) => {
-        let updatedRoleRules = [];
-    
-        // Itera sobre os grupos de permissões
-        checkTree.forEach(group => {
-            // Verifica se o grupo pai foi selecionado
-            if (selectedValues.includes(group.value)) {
-                // Se o grupo pai for selecionado, percorre todos os filhos e sub-filhos
-                group.children.forEach(child => {
-                    // Verifica se o filho tem filhos (sub-filhos)
-                    if (child.children) {
-                        child.children.forEach(subChild => {
-                            // Adiciona apenas os sub-filhos diretamente ao updatedRoleRules
-                            if (!updatedRoleRules.includes(subChild.value)) {
-                                updatedRoleRules.push(subChild.value);
-                            }
-                        });
-                    } else {
-                        // Caso não tenha sub-filhos, adiciona o filho diretamente
-                        if (!updatedRoleRules.includes(child.value)) {
-                            updatedRoleRules.push(child.value);
-                        }
-                    }
-                })
-            } else {
-                // Caso o grupo pai não esteja selecionado, verifica se algum filho foi selecionado individualmente
-                group.children.forEach(child => {
-                    // Verifica se o filho tem filhos (sub-filhos)
-                    if (child.children) {
-                        child.children.forEach(subChild => {
-                            if (selectedValues.includes(subChild.value) && !updatedRoleRules.includes(subChild.value)) {
-                                updatedRoleRules.push(subChild.value);
-                            }
-                        });
-                    } else {
-                        if (selectedValues.includes(child.value) && !updatedRoleRules.includes(child.value)) {
-                            updatedRoleRules.push(child.value);
-                        }
-                    }
-                });
-            }
-        })
-    
-        // Atualiza o estado com os valores corretos de roleRules (somente filhos e sub-filhos, sem os pais)
-        this.setState({ roleRules: updatedRoleRules })
-    };
-
+        this.setState({ roleRules: selectedValues });
+    }
+ 
     // Função para filtrar o checkTree com base nas permissões do usuário
     filterCheckTree = () => {
 
@@ -161,10 +130,47 @@ export class ViewRole extends React.Component {
         try {
             this.setState({ submitting: true });
     
+            // Função recursiva para obter os filhos de um nó
+            const getChildrenValues = (nodes) => {
+                let childrenValues = [];
+                nodes.forEach(node => {
+                    if (node.children) {
+                        childrenValues = childrenValues.concat(getChildrenValues(node.children)); // Recursão para buscar filhos
+                    } else {
+                        childrenValues.push(node.value); // Adiciona apenas os valores dos filhos (UUIDs)
+                    }
+                });
+                return childrenValues;
+            };
+    
+            // Função para obter os filhos de um nó específico (incluindo quando o pai está marcado)
+            const getAllSelectedChildren = (selectedValues, nodes) => {
+                let finalSelected = [];
+    
+                nodes.forEach(node => {
+                    if (selectedValues.includes(node.value)) {
+                        // Se o pai estiver marcado, adicionamos todos os filhos dele
+                        finalSelected = finalSelected.concat(getChildrenValues([node]));
+                    }
+                    // Continua a busca recursiva
+                    if (node.children) {
+                        finalSelected = finalSelected.concat(getAllSelectedChildren(selectedValues, node.children));
+                    }
+                });
+    
+                return finalSelected;
+            };
+    
+            // Obtém todos os filhos que devem ser selecionados caso o pai tenha sido marcado
+            const selectedChildren = getAllSelectedChildren(this.state.roleRules, checkTree);
+    
+            // Garantir que apenas os filhos (UUIDs) estão na lista final
+            const onlyChildrenRules = [...new Set(selectedChildren)]; // Remove duplicatas
+    
             const role = {
                 id: this.state.id,
                 name: this.state.name,
-                roleRules: this.state.roleRules.map(ruleId => ({ ruleId })),
+                roleRules: onlyChildrenRules.map(ruleId => ({ ruleId })), // Enviar apenas os UUIDs das permissões
             };
     
             await new Service().Post('setting/role/submit', role);
@@ -177,6 +183,7 @@ export class ViewRole extends React.Component {
             this.setState({ submitting: false });
         }
     };
+    
 
     close(role) {
         this.viewModal.current?.close(role);
