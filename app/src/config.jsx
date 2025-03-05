@@ -120,6 +120,7 @@ export const appNavs = [
     title: 'Finanças',
     to: '/finance',
     children: [
+      /*
       {
         eventKey: 'cashiers',
         title: 'Caixa',
@@ -154,11 +155,12 @@ export const appNavs = [
         eventKey: 'charges',
         title: 'Retornos',
         to: '/finance/charges'
-      },
+      },*/
       {
         eventKey: 'statements',
         title: 'Extratos',
-        to: '/finance/statements'
+        to: '/finance/statements',
+        ruleId: '53AFC0B2-7890-4D43-A6E0-B6035ADBFD64'
       }
     ]
   },/*

@@ -18,6 +18,12 @@ const permissions = [
         { label: 'Resolucionar', value: 'CE2D3FEB-EFCE-4A92-A08E-D76361006F9C' },
         { label: 'Excluir', value: '1EE59E63-2674-4F48-8E2A-90F013F6A0E1' },
     ]},
+    { value: 'statement', children: [
+        { label: 'Visualizar', value: '53AFC0B2-7890-4D43-A6E0-B6035ADBFD64' },
+        { label: 'Cadastrar', value: 'C3186E4A-6460-477D-84D9-66A1FFAC1895' },
+        { label: 'Editar', value: '714FF619-EE95-4F2C-B73B-4B81A8AF74F6' },
+        { label: 'Excluir', value: '7912924E-7782-4221-9D44-46EBD6E05410' },
+    ]},
     { value: 'cte', children: [
         { label: 'Visualizar', value: 'FC9DE921-1B87-4BDE-85CC-2D5FD0CDDD6C' },
         { label: 'Cadastrar', value: 'CB5B6FC1-3409-466F-80F5-58532BFE152A' },
@@ -55,6 +61,9 @@ const permissions = [
 
 const checkTree = [
     { label: 'Chamados', value: 'called', children: permissions.find(p => p.value === 'called')?.children },
+    { label: 'Finanças', value: 'finance', children: [
+        { label: 'Extrato', value: 'statement', children: permissions.find(p => p.value === 'statement')?.children },
+    ]},
     { label: 'Logística', value: 'logistic', children: [
         { label: 'Conhecimentos', value: 'cte', children: permissions.find(p => p.value === 'cte')?.children },
         { label: 'Romaneios', value: 'shippiment', children: permissions.find(p => p.value === 'shippiment')?.children },
