@@ -113,7 +113,7 @@ export const appNavs = [
         to: '/suppliers/production'
       }
     ]
-  },
+  },*/
   {
     eventKey: 'finance',
     icon: <Icon as={FaMoneyBill} />,
@@ -161,7 +161,7 @@ export const appNavs = [
         to: '/finance/statements'
       }
     ]
-  },
+  },/*
   {
     eventKey: 'sale',
     title: 'Vendas',
@@ -257,14 +257,13 @@ export const appNavs = [
     icon: <Icon as={FaTasks} />,
     title: 'Tarefas',
     to: '/tasks'
-  },
+  },*/
   {
     eventKey: 'integrations',
     icon: <Icon as={FaInfoCircle} />,
     title: 'Integrações',
     to: '/integrations'
   },
-  */
   {
     eventKey: 'settings',
     icon: <Icon as={MdSettings} />,

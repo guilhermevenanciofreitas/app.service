@@ -109,8 +109,23 @@ export class Cte {
     type: Sequelize.DECIMAL
   }
 
+  senderId = {
+    field: 'senderId',
+    type: Sequelize.BIGINT
+  }
+
   recipientId = {
     field: 'IDCliente',
+    type: Sequelize.BIGINT
+  }
+  
+  dispatcherId = {
+    field: 'dispatcherId',
+    type: Sequelize.BIGINT
+  }
+
+  receiverId = {
+    field: 'receiverId',
     type: Sequelize.BIGINT
   }
 

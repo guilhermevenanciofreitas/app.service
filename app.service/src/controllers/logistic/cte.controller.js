@@ -52,8 +52,8 @@ export class LogisticCteController {
         const ctes = await db.Cte.findAndCountAll({
           attributes: ['id', 'dhEmi', 'nCT', 'serie', 'chCTe', 'cStat', 'baseCalculo'],
           include: [
-            {model: db.Partner, as:
-               'recipient', attributes: ['id', 'surname']},
+            {model: db.Partner, as: 'sender', attributes: ['id', 'cpfCnpj', 'name', 'surname']},
+            {model: db.Partner, as: 'recipient', attributes: ['id', 'surname']},
             {model: db.Shippiment, as: 'shippiment', attributes: ['id'], include: [
               {model: db.Partner, as: 'sender', attributes: ['id', 'surname']}
             ]},
@@ -96,10 +96,13 @@ export class LogisticCteController {
         await db.transaction(async (transaction) => {
             
           const cte = await db.Cte.findOne({
-            attributes: ['id', 'nCT', 'serie', 'chCTe'],
+            attributes: ['id', 'nCT', 'serie', 'dhEmi', 'chCTe'],
             include: [
-              {model: db.Partner, as: 'taker', attributes: ['id', 'cpfCnpj', 'name', 'surname']},
-              {model: db.Partner, as: 'recipient', attributes: ['id', 'cpfCnpj', 'name', 'surname']},
+              {model: db.Partner, as: 'sender', attributes: ['id', 'cpfCnpj', 'surname']},
+              {model: db.Partner, as: 'recipient', attributes: ['id', 'cpfCnpj', 'surname']},
+              {model: db.Partner, as: 'dispatcher', attributes: ['id', 'cpfCnpj', 'surname']},
+              {model: db.Partner, as: 'receiver', attributes: ['id', 'cpfCnpj', 'surname']},
+              {model: db.Partner, as: 'taker', attributes: ['id', 'cpfCnpj', 'surname']},
               {model: db.City, as: 'origin', attributes: ['id', 'name'],
                 include: [{model: db.State, as: 'state', attributes: ['id', 'acronym']}]
               },
@@ -129,8 +132,11 @@ export class LogisticCteController {
 
         let cte = {
           id: req.body.id,
-          takerId: req.body.taker?.id || null,
+          senderId: req.body.sender?.id || null,
           recipientId: req.body.recipient?.id || null,
+          dispatcherId: req.body.dispatcher?.id || null,
+          receiverId: req.body.receiver?.id || null,
+          takerId: req.body.taker?.id || null,
           originId: req.body.origin?.id || null,
           destinyId: req.body.destiny?.id || null,
         }
@@ -167,9 +173,9 @@ export class LogisticCteController {
 
         const archives = await form.parse(req)
 
-        for (const file of archives[1].files) {
+        await db.transaction(async (transaction) => {
 
-          await db.transaction(async (transaction) => {
+          for (const file of archives[1].files) {
 
             const xml = fs.readFileSync(file.filepath, 'utf8')
 
@@ -256,7 +262,7 @@ export class LogisticCteController {
             }
 
             if (cte.id) {
-              
+
               await db.Cte.update(cte, {where: [{id: cte.id}], transaction})
 
             } else {
@@ -272,7 +278,7 @@ export class LogisticCteController {
                 categorieId: 1766,
                 createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
               }, {transaction})
-  
+
               await db.ReceivementInstallment.create({
                 receivementId: receivement.id,
                 description: receivement.description,
@@ -281,17 +287,16 @@ export class LogisticCteController {
                 amount: cte.valorAReceber,
                 createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
               }, {transaction})
-  
+
               cte.receivementId = receivement.id
 
               await db.Cte.create(cte, {transaction})
-              
+
             }
-            
-          })
 
-        }
+          }
 
+        })
 
         res.status(200).json({})
 
@@ -350,7 +355,7 @@ export class LogisticCteController {
     })
   }
 
-  async deleteNfe(req, res) {
+  deleteNfe = async (req, res) => {
     await Authorization.verify(req, res).then(async ({companyId, userId}) => {
       try {
 
@@ -372,7 +377,7 @@ export class LogisticCteController {
     })
   }
 
-  async dacte(req, res) {
+  dacte = async (req, res) => {
     await Authorization.verify(req, res).then(async ({companyId, userId}) => {
       try {
 

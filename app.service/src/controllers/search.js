@@ -7,21 +7,25 @@ import { Exception } from "../utils/exception.js";
 export class SearchController {
 
     company = async (req, res) => {
-        Authorization.verify(req, res).then(async ({companyId, userId}) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext()
+
+                const where = []
+
+                where.push({
+                    '$company.codigo_empresa$': companyBusinessId,
+                    '$userId$': userId,
+                    '$company.nome_fantasia$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}
+                })
 
                 const companies = await db.CompanyUser.findAll({
                     attributes: ['id'],
                     include: [
                         {model: db.Company, as: 'company', attributes: ['id', 'name', 'surname']}
                     ],
-                    where: [{
-                        '$company.codigo_empresa$': 1,
-                        '$userId$': userId,
-                        '$company.nome_fantasia$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}
-                    }],
+                    where,
                     order: [
                         [{model: db.Company, as: 'company'}, 'id', 'asc']
                     ],
@@ -39,7 +43,7 @@ export class SearchController {
     }
 
     calledReason = async (req, res) => {
-        Authorization.verify(req, res).then(async ({companyId, userId}) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext()
@@ -66,7 +70,7 @@ export class SearchController {
     }
 
     calledOccurrence = async (req, res) => {
-        Authorization.verify(req, res).then(async ({companyId, userId}) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext()
@@ -93,7 +97,7 @@ export class SearchController {
     }
 
     calledStatus = async (req, res) => {
-        Authorization.verify(req, res).then(async ({companyId, userId}) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext()
@@ -120,20 +124,30 @@ export class SearchController {
     }
 
     user = async (req, res) => {
-        Authorization.verify(req, res).then(async ({companyId, userId}) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext()
 
+                const where = []
+
+                where.push({'$companyUsers.company.codigo_empresa$': companyBusinessId})
+
+                where.push({'$userName$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}})
+
                 const users = await db.User.findAll({
                     attributes: ['id', 'userName'],
-                    where: [{
-                        '$userName$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`},
-                    }],
+                    include: [
+                        {model: db.CompanyUser, as: 'companyUsers', attributes: ['id'], include: [
+                            {model: db.Company, as: 'company', attributes: ['id', 'companyBusinessId']}
+                        ]}
+                    ],
+                    where,
                     order: [
                         ['userName', 'asc']
                     ],
-                    limit: 20
+                    limit: 20,
+                    subQuery: false
                 })
 
                 res.status(200).json(users)
@@ -147,7 +161,7 @@ export class SearchController {
     }
 
     role = async (req, res) => {
-        Authorization.verify(req, res).then(async ({companyId, userId}) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext()
@@ -178,19 +192,23 @@ export class SearchController {
     }
 
     partner = async (req, res) => {
-        Authorization.verify(req, res).then(async ({companyId, userId}) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext()
 
+                const where = []
+
+                where.push({'$companyBusinessId$': companyBusinessId})
+
+                where.push({[Sequelize.Op.or]: [
+                    {'$CpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}},
+                    {'$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}
+                ]})
+
                 const partners = await db.Partner.findAll({
                     attributes: ['id', 'cpfCnpj', 'name', 'surname'],
-                    where: [{
-                        [Sequelize.Op.or]: [
-                            {'$CpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}},
-                            {'$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}
-                        ],
-                    }],
+                    where,
                     order: [
                         ['surname', 'asc']
                     ],
@@ -208,7 +226,7 @@ export class SearchController {
     }
 
     city = async (req, res) => {
-        Authorization.verify(req, res).then(async ({company}) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext()
@@ -238,20 +256,23 @@ export class SearchController {
     }
 
     sender = async (req, res) => {
-        Authorization.verify(req, res).then(async ({company}) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext()
 
+                const where = []
+
+                where.push({'$companyBusinessId$': companyBusinessId})
+
+                where.push({[Sequelize.Op.or]: [
+                    {'$CpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}},
+                    {'$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}
+                ]})
+
                 const sender = await db.Partner.findAll({
                     attributes: ['id', 'cpfCnpj', 'name', 'surname'],
-                    where: [{
-                        [Sequelize.Op.or]: [
-                            {'$CpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}},
-                            {'$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}
-                        ],
-                        //ISRemetente: 1
-                    }],
+                    where,
                     order: [
                         ['surname', 'asc']
                     ],
@@ -269,20 +290,23 @@ export class SearchController {
     }
 
     recipient = async (req, res) => {
-        Authorization.verify(req, res).then(async ({company}) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext()
 
+                const where = []
+
+                where.push({'$companyBusinessId$': companyBusinessId})
+
+                where.push({[Sequelize.Op.or]: [
+                    {'$CpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}},
+                    {'$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}
+                ]})
+
                 const recipient = await db.Partner.findAll({
                     attributes: ['id', 'cpfCnpj', 'name', 'surname'],
-                    where: [{
-                        [Sequelize.Op.or]: [
-                            {'$CpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}},
-                            {'$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}
-                        ],
-                        ISDestinatario: 1
-                    }],
+                    where,
                     order: [
                         ['surname', 'asc']
                     ],
@@ -300,19 +324,23 @@ export class SearchController {
     }
 
     employee = async (req, res) => {
-        Authorization.verify(req, res).then(async ({options}) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext(options)
 
+                const where = []
+
+                where.push({'$companyBusinessId$': companyBusinessId})
+
+                where.push({[Sequelize.Op.or]: [
+                    {'$CpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}},
+                    {'$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}
+                ]})
+
                 const partners = await db.Partner.findAll({
                     attributes: ['id', 'cpfCnpj', 'name', 'surname'],
-                    where: [{
-                        [Sequelize.Op.or]: [
-                            {'$CpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}},
-                            {'$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}
-                        ],
-                    }],
+                    where,
                     order: [
                         ['surname', 'asc']
                     ],
@@ -330,7 +358,7 @@ export class SearchController {
     }
 
     bankAccount = async (req, res) => {
-        Authorization.verify(req, res).then(async ({options}) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext(options)
@@ -366,7 +394,7 @@ export class SearchController {
     }
 
     contabilityCategorie = async (req, res) => {
-        Authorization.verify(req, res).then(async ({company}) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext()
@@ -393,7 +421,7 @@ export class SearchController {
     }
 
     receivementMethod = async (req, res) => {
-        Authorization.verify(req, res).then(async ({company}) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext()
@@ -424,7 +452,7 @@ export class SearchController {
     }
 
     taskMethod = async (req, res) => {
-        Authorization.verify(req, res).then(async ({user}) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext()
@@ -449,7 +477,7 @@ export class SearchController {
 
     /*
     async service(req, res) {
-        Auth.verify(req, res).then(async ({options}) => {
+        Auth.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext(options)
@@ -474,7 +502,7 @@ export class SearchController {
 
     /*
     async vehicle(req, res) {
-        Auth.verify(req, res).then(async ({options}) => {
+        Auth.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext(options)
@@ -498,7 +526,7 @@ export class SearchController {
     */
 
     cfop = async (req, res) => {
-        Authorization.verify(req, res).then(async ({company}) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
                 const db = new AppContext()

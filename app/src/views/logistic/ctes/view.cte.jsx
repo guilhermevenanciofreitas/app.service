@@ -30,8 +30,11 @@ class ViewCte extends React.Component {
 
             const cte = _.pick(this.state, [
                 'id',
-                'taker.id',
+                'sender.id',
                 'recipient.id',
+                'dispatcher.id',
+                'receiver.id',
+                'taker.id',
                 'origin.id',
                 'destiny.id'
             ])
@@ -66,7 +69,7 @@ class ViewCte extends React.Component {
                             <Col md={1}>
                                 <div className='form-control'>
                                     <label class="textfield-filled">
-                                        <input type='text' value={this.state?.serieCT} onChange={(event) => this.setState({serieCT: event.target.value})} readOnly />
+                                        <input type='text' value={this.state?.serie} onChange={(event) => this.setState({serie: event.target.value})} readOnly />
                                         <span>Série</span>
                                     </label>
                                 </div>
@@ -74,7 +77,7 @@ class ViewCte extends React.Component {
                             <Col md={2}>
                                 <div className='form-control'>
                                     <label class="textfield-filled">
-                                        <input type='date' value={this.state?.nCT} onChange={(event) => this.setState({nCT: event.target.value})} readOnly />
+                                        <input type='date' value={this.state?.dhEmi} onChange={(event) => this.setState({dhEmi: event.target.value})} readOnly />
                                         <span>Emissão</span>
                                     </label>
                                 </div>
@@ -134,45 +137,45 @@ class ViewCte extends React.Component {
                             </Col>
                             <Col md={6}>
                                 <div className='form-control'>
-                                    <AutoComplete label='Remetente' value={this.state?.taker} text={(item) => `${item.cpfCnpj} - ${item.name}`} onChange={(taker) => this.setState({taker})} onSearch={async (search) => await Search.recipient(search)}>
+                                    <AutoComplete label='Remetente' value={this.state?.sender} text={(item) => `${item.cpfCnpj} - ${item.surname}`} onChange={(sender) => this.setState({sender})} onSearch={async (search) => await Search.sender(search)}>
                                         <AutoComplete.Result>
-                                            {(item) => <span>{item.cpfCnpj} - {item.name}</span>}
+                                            {(item) => <span>{item.cpfCnpj} - {item.surname}</span>}
                                         </AutoComplete.Result>
                                     </AutoComplete>
                                 </div>
                             </Col>
                             <Col md={6}>
                                 <div className='form-control'>
-                                    <AutoComplete label='Destinatário' value={this.state?.recipient} text={(item) => `${item.cpfCnpj} - ${item.name}`} onChange={(recipient) => this.setState({recipient})} onSearch={async (search) => await Search.recipient(search)}>
+                                    <AutoComplete label='Destinatário' value={this.state?.recipient} text={(item) => `${item.cpfCnpj} - ${item.surname}`} onChange={(recipient) => this.setState({recipient})} onSearch={async (search) => await Search.recipient(search)}>
                                         <AutoComplete.Result>
-                                            {(item) => <span>{item.cpfCnpj} - {item.name}</span>}
+                                            {(item) => <span>{item.cpfCnpj} - {item.surname}</span>}
                                         </AutoComplete.Result>
                                     </AutoComplete>
                                 </div>
                             </Col>
                             <Col md={6}>
                                 <div className='form-control'>
-                                    <AutoComplete label='Expedidor' value={this.state?.recipient} text={(item) => `${item.cpfCnpj} - ${item.name}`} onChange={(recipient) => this.setState({recipient})} onSearch={async (search) => await Search.recipient(search)}>
+                                    <AutoComplete label='Expedidor' value={this.state?.dispatcher} text={(item) => `${item.cpfCnpj} - ${item.surname}`} onChange={(dispatcher) => this.setState({dispatcher})} onSearch={async (search) => await Search.partner(search)}>
                                         <AutoComplete.Result>
-                                            {(item) => <span>{item.cpfCnpj} - {item.name}</span>}
+                                            {(item) => <span>{item.cpfCnpj} - {item.surname}</span>}
                                         </AutoComplete.Result>
                                     </AutoComplete>
                                 </div>
                             </Col>
                             <Col md={6}>
                                 <div className='form-control'>
-                                    <AutoComplete label='Recebedor' value={this.state?.recipient} text={(item) => `${item.cpfCnpj} - ${item.name}`} onChange={(recipient) => this.setState({recipient})} onSearch={async (search) => await Search.recipient(search)}>
+                                    <AutoComplete label='Recebedor' value={this.state?.receiver} text={(item) => `${item.cpfCnpj} - ${item.surname}`} onChange={(receiver) => this.setState({receiver})} onSearch={async (search) => await Search.recipient(search)}>
                                         <AutoComplete.Result>
-                                            {(item) => <span>{item.cpfCnpj} - {item.name}</span>}
+                                            {(item) => <span>{item.cpfCnpj} - {item.surname}</span>}
                                         </AutoComplete.Result>
                                     </AutoComplete>
                                 </div>
                             </Col>
                             <Col md={12}>
                                 <div className='form-control'>
-                                    <AutoComplete label='Tomador' value={this.state?.taker} text={(item) => `${item.cpfCnpj} - ${item.name}`} onChange={(taker) => this.setState({taker})} onSearch={async (search) => await Search.recipient(search)}>
+                                    <AutoComplete label='Tomador' value={this.state?.taker} text={(item) => `${item.cpfCnpj} - ${item.surname}`} onChange={(taker) => this.setState({taker})} onSearch={async (search) => await Search.recipient(search)}>
                                         <AutoComplete.Result>
-                                            {(item) => <span>{item.cpfCnpj} - {item.name}</span>}
+                                            {(item) => <span>{item.cpfCnpj} - {item.surname}</span>}
                                         </AutoComplete.Result>
                                     </AutoComplete>
                                 </div>

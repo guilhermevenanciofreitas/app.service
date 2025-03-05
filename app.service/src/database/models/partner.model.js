@@ -9,6 +9,11 @@ export class Partner {
     type: Sequelize.UUID
   }
 
+  companyBusinessId = {
+    field: 'companyBusinessId',
+    type: Sequelize.INTEGER
+  }
+
   cpfCnpj = {
     field: 'cpfCnpj',
     type: Sequelize.STRING(14)
