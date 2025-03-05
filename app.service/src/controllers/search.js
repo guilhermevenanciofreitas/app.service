@@ -361,24 +361,25 @@ export class SearchController {
         Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {
 
-                const db = new AppContext(options)
+                const db = new AppContext()
 
                 const bankAccounts = await db.BankAccount.findAll({
-                    attributes: ['id', 'name', 'agency', 'agencyDigit', 'account', 'accountDigit'],
+                    attributes: ['id', 'agency', 'account'],
                     include: [
-                        {model: db.Bank, as: 'bank', attributes: ['id', 'name', 'image']}
+                        //{model: db.Bank, as: 'bank', attributes: ['id', 'name']}
                     ],
                     where: [{
+                        /*
                         [Op.or]: {
                             '$bank.name$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%")}%`},
                             'agency': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%")}%`},
                             'agencyDigit': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%")}%`},
                             'account': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%")}%`},
                             'accountDigit': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%")}%`},
-                        }
+                        }*/
                     }],
                     order: [
-                        ['bank', 'name', 'asc']
+                        //['bank', 'name', 'asc']
                     ],
                     limit: 20
                 });

@@ -3,20 +3,21 @@ import Sequelize from 'sequelize'
 export class Bank {
 
   id = {
-    field: 'id',
+    field: 'ID',
     primaryKey: true,
     autoIncrement: true,
-    type: Sequelize.UUID,
+    type: Sequelize.INTEGER,
   }
 
   name = {
-    field: 'name',
-    type: Sequelize.STRING(30)
+    field: 'Descricao',
+    type: Sequelize.STRING(50)
   }
 
+  /*
   image = {
     field: 'image',
     type: Sequelize.STRING(200)
-  }
+  }*/
 
 }

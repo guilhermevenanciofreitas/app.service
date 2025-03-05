@@ -6,7 +6,7 @@ export class Integration {
     field: 'id',
     primaryKey: true,
     autoIncrement: true,
-    type: Sequelize.UUID,
+    type: Sequelize.UUIDV4,
   }
 
   name = {

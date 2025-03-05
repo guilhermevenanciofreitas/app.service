@@ -14,6 +14,7 @@ export class SearchRoute {
         this.router.post('/company', async (req, res) => await this.controller.company(req, res))
         this.router.post('/user', async (req, res) => await this.controller.user(req, res))
         this.router.post('/role', async (req, res) => await this.controller.role(req, res))
+        this.router.post('/bank-account', async (req, res) => await this.controller.bankAccount(req, res))
         this.router.post('/called-reason', async (req, res) => await this.controller.calledReason(req, res))
         this.router.post('/called-occurrence', async (req, res) => await this.controller.calledOccurrence(req, res))
         this.router.post('/called-status', async (req, res) => await this.controller.calledStatus(req, res))

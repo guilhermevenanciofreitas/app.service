@@ -80,9 +80,9 @@ export class AppContext extends Sequelize {
   
   Integration = this.define('integration', new Integration(), { tableName: 'integration' })
 
-  Bank = this.define('bank', new Bank(), { tableName: 'bank' })
+  Bank = this.define('bank', new Bank(), { tableName: 'Banco' })
 
-  BankAccount = this.define('bankAccount', new BankAccount(), { tableName: 'bankAccount' })
+  BankAccount = this.define('bankAccount', new BankAccount(), { tableName: 'conta_bancaria' })
   
   BankAccountStatement = this.define('bankAccountStatement', new BankAccountStatement(), { tableName: 'bankAccountStatement' })
 
@@ -228,6 +228,8 @@ export class AppContext extends Sequelize {
     this.Shippiment.belongsTo(this.Partner, {as: 'sender', foreignKey: 'senderId', targetKey: 'id'})
     this.Shippiment.hasMany(this.Cte, {as: 'ctes', foreignKey: 'shippimentId'})
 
+    
+    this.Statement.belongsTo(this.Company, {as: 'company', foreignKey: 'companyId', targetKey: 'id'})
     this.Statement.belongsTo(this.BankAccount, {as: 'bankAccount', foreignKey: 'bankAccountId', targetKey: 'id'})
 
     this.Task.belongsTo(this.TaskMethod, {as: 'method', foreignKey: 'methodId', targetKey: 'id'})

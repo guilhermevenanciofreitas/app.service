@@ -24,7 +24,7 @@ import FinanceCashiers from './views/finance/cashiers/index.cashiers';
 import FinanceBankAccounts from './views/finance/bank-accounts/index.bank-accounts';
 import FinancePayments from './views/finance/payments/index.payments';
 import FinanceReceivements from './views/finance/receivements/index.receivements';
-import FinanceStatements from './views/finance/statements/index.statements';
+import { Statements } from './views/finance/statements/index.statements';
 
 
 //Logistic
@@ -168,7 +168,7 @@ const App = () => {
               <Route path="finance/bank-accounts" element={<FinanceBankAccounts />} />
               <Route path="finance/payments" element={<FinancePayments />} />
               <Route path="finance/receivements" element={<FinanceReceivements />} />
-              <Route path="finance/statements" element={<FinanceStatements />} />
+              <Route path="finance/statements" element={<Statements />} />
 
               {/*Logistic*/}
               <Route path="logistic/ctes" element={<LogisticCtes />} />

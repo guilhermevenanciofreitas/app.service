@@ -6,17 +6,22 @@ export class Statement {
     field: 'id',
     primaryKey: true,
     autoIncrement: true,
-    type: Sequelize.UUID
+    type: Sequelize.UUIDV4
+  }
+
+  companyId = {
+    field: 'companyId',
+    type: Sequelize.INTEGER,
   }
 
   bankAccountId = {
     field: 'bankAccountId',
-    type: Sequelize.UUID,
+    type: Sequelize.INTEGER,
   }
 
   sourceId = {
     field: 'sourceId',
-    type: Sequelize.STRING,
+    type: Sequelize.STRING(30),
   }
 
   createdAt = {

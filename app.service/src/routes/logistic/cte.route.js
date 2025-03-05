@@ -3,7 +3,7 @@ import { LogisticCteController } from '../../controllers/logistic/cte.controller
 import multer from 'multer'
 import path from 'path'
   
-export class CteRoute {
+export class LogisticCteRoute {
 
     router = Router()
     controller = new LogisticCteController()

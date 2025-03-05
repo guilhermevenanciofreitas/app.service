@@ -3,50 +3,51 @@ import Sequelize from 'sequelize';
 export class BankAccount {
 
   id = {
-    field: 'id',
+    field: 'codigo_conta_bancaria',
     primaryKey: true,
     autoIncrement: true,
-    type: Sequelize.UUID,
+    type: Sequelize.INTEGER,
   }
 
   companyId = {
-    field: 'companyId',
-    type: Sequelize.UUID,
+    field: 'CodigoEmpresaFilial',
+    type: Sequelize.TINYINT,
   }
 
+  /*
   name = {
     field: 'name',
     type: Sequelize.STRING(30),
   }
+  */
 
   bankId = {
     field: 'bankId',
-    type: Sequelize.UUID,
+    type: Sequelize.INTEGER,
   }
 
   agency = {
-    field: 'agency',
-    type: Sequelize.STRING(4)
+    field: 'agencia',
+    type: Sequelize.STRING(10)
   }
 
+  /*
   agencyDigit = {
     field: 'agencyDigit',
     type: Sequelize.STRING(1)
   }
+  */
 
   account = {
-    field: 'account',
-    type: Sequelize.STRING(10)
+    field: 'numero_conta_bancaria',
+    type: Sequelize.STRING(15)
   }
 
+  /*
   accountDigit = {
     field: 'accountDigit',
     type: Sequelize.STRING(1)
   }
-
-  integrationId = {
-    field: 'integrationId',
-    type: Sequelize.UUID
-  }
-
+  */
+ 
 }

@@ -1,154 +1,217 @@
-import React from 'react';
+import React from 'react'
+import { Badge, Button, Divider, Drawer, IconButton, List, Message, Nav, Panel, Popover, Row, Stack, toaster, Whisper } from 'rsuite'
 
-import _ from 'lodash'
+import PageContent from '../../../components/PageContent'
 
-import { Breadcrumb, Button, HStack, Nav, Pagination, Panel, Stack } from 'rsuite';
+import { AutoComplete, CustomBreadcrumb, CustomPagination, CustomSearch, DataTable } from '../../../controls'
+import { FaCheckCircle, FaEllipsisV, FaFileDownload, FaFilter, FaPlusCircle, FaPrint } from 'react-icons/fa'
+import { Service } from '../../../service'
 
-import { Divider } from 'rsuite';
-import PageContent from '../../../components/PageContent';
-
-import { CustomBreadcrumb, CustomDateRangePicker, CustomFilter, CustomSearch, DataTable } from '../../../controls';
-import { MdAddCircleOutline, MdCheckCircleOutline } from 'react-icons/md';
-
-import { Service } from '../../../service';
-import ViewAddStatement from './view.new-statement';
-//import ViewRole from './view.role';
+import { Exception } from '../../../utils/exception'
+import { ViewCalled } from './view.statement'
+import { Search } from '../../../search'
+import { ViewCalledResolution } from './view.called-resolution'
 
 import dayjs from 'dayjs'
+import _ from 'lodash'
 
 const fields = [
-  //{ label: 'Todos', value: undefined },
-  { label: 'Banco', value: 'name' },
+  { label: 'Número', value: 'number' },
+  { label: 'Assunto', value: 'subject' },
 ]
 
 class Filter extends React.Component {
 
   state = {
-    filter: {...this.props.filter}
+    filter: {
+      //company: this.props.filter.company,
+      responsible: this.props.filter.responsible
+    }
   }
-
-  data = [
-    { label: 'Ativo', value: 'active' },
-    { label: 'Inativo', value: 'inactive' },
-  ]
 
   onApply = () => {
-    this.props.onClose(this.props.onApply(this.state.filter))
+    this.setState({open: false}, () => this.props.onChange(this.state.filter))
   }
 
-  render = () => (
-    <CustomFilter>
-      <CustomFilter.Item label={'Situação'} data={this.data} filter={this.state.filter} field={'situation'} onChange={(filter) => this.setState({filter})} />
-        <hr />
-      <Button appearance={'primary'} color='green' onClick={this.onApply}><MdCheckCircleOutline />&nbsp;Aplicar</Button>
-    </CustomFilter>
-  )
+  render() {
 
-}
-
-class FinanceStatements extends React.Component {
-
-  viewNewStatement = React.createRef()
-
-  componentDidMount() {
-    this.onSearch()
-  }
-
-  onNewStatement = () => {
-    this.viewNewStatement.current.newStatement()
-  }
-
-  //onApplyFilter = (filter) => {
-  //  this.setState({request: {filter}}, () => this.onSearch())
-  //}
-
-  onSearch = () => {
-    this.setState({loading: true}, async() => {
-      try {
-        await new Service().Post('finance/statement/statements', this.state.request).then((result) => this.setState({...result.data})).finally(() => this.setState({loading: false}))
-      } catch (error) {
-        toast.error(error.message)
-      }
-    })
-  }
-
-  columns = [
-    //{ selector: (row) => row.id, sort: 'id', name: 'Id'},
-    { selector: (row) => <><img src={row.bankAccount?.bank?.image} style={{height: '20px'}} /> {row.bankAccount?.bank?.name} - Agência: {row.bankAccount?.agency}-{row.bankAccount?.agencyDigit} / Conta: {row.bankAccount?.account}-{row.bankAccount?.accountDigit}</>, name: 'Banco / Agência' },
-    { selector: (row) => dayjs(row.date_created).add(-4, 'hour').format('DD/MM/YYYY HH:mm'), name: 'Data' },
-    { selector: (row) => dayjs(row.begin_date).format('DD/MM/YYYY HH:mm'), name: 'Data Inicial' },
-    { selector: (row) => dayjs(row.end_date).format('DD/MM/YYYY HH:mm'), name: 'Data Final' },
-    { selector: (row) => row.status, name: 'Status' },
-    { selector: (row) => 
-    <>
-      <Button className='delete' size='sm' color='danger' variant='outline'>Excluir</Button>
-    </> },
-  ]
-
-  render = () => {
-
+    const appliedFiltersCount = _.size(Object.values(this.props.filter || {}).filter(Boolean))
+    
     return (
       <>
 
-        <ViewAddStatement ref={this.viewNewStatement} />
+        <Button appearance="subtle" onClick={() => this.setState({ open: true, filter: this.props.filter })}>
+          <FaFilter /> &nbsp; Filtro &nbsp; {appliedFiltersCount > 0 && <Badge content={appliedFiltersCount} />}
+        </Button>
 
-        <PageContent>
-          
-          <Stack spacing={'6px'} direction={'row'} alignItems={'flex-start'} justifyContent={'space-between'}>
-            
-            <HStack>
+        <Drawer open={this.state?.open} onClose={() => this.setState({open: false})} size="xs">
+          <Drawer.Header><Drawer.Title>Filtro</Drawer.Title></Drawer.Header>
+          <Drawer.Body style={{padding: '30px'}}>
+            <Row gutterWidth={0}>
+              <div className="form-control">
+                <AutoComplete label="Responsável" value={this.state?.filter?.responsible} text={(item) => `${item.userName}`} onChange={(responsible) => this.setState({ filter: {...this.state.filter, responsible} })} onSearch={async (search) => await Search.user(search)} autoFocus>
+                  <AutoComplete.Result>
+                    {(item) => <span>{item.userName}</span>}
+                  </AutoComplete.Result>
+                </AutoComplete>
+              </div>
+              <div className="form-control">
+                <AutoComplete label="Filial" value={this.state?.filter?.company} text={(item) => `${item.surname}`} onChange={(company) => this.setState({ filter: {...this.state.filter, company} })} onSearch={async (search) => await Search.company(search)}>
+                  <AutoComplete.Result>
+                    {(item) => <span>{item.surname}</span>}
+                  </AutoComplete.Result>
+                </AutoComplete>
+              </div>
+              <Divider />
+              <div className='form-control'>
+                  <Button appearance="primary" color='green' onClick={this.onApply}><FaCheckCircle /> &nbsp; Confirmar</Button>
+              </div>
+            </Row>
+          </Drawer.Body>
+        </Drawer>
 
-              <CustomSearch placeholder={'Banco'} loading={this.state?.loading} fields={fields} value={this.state?.request?.search} onChange={(search) => this.setState({request: {search}}, () => this.onSearch())} />
-              
-              <CustomFilter.Whisper badge={_.size(this.state?.request?.filter)}>
-                {(props) => <Filter filter={this.state?.request?.filter} onApply={this.onApplyFilter} {...props} />}
-              </CustomFilter.Whisper>
-
-            </HStack>
-
-          </Stack>
-
-          <hr></hr>
-
-          <Nav appearance="subtle">
-            <Nav.Item eventKey="all" active><center style={{width: 100}}>Todos<br></br>{this.state?.loading ? '-' : '339'}</center></Nav.Item>
-            <Nav.Item eventKey="active"><center style={{width: 100}}>Pendentes<br></br>{this.state?.loading ? '-' : '334'}</center></Nav.Item>
-            <Nav.Item eventKey="inactive"><center style={{width: 100}}>Conciliados<br></br>{this.state?.loading ? '-' : '5'}</center></Nav.Item>
-          </Nav>
-
-          <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEditRole} />
-
-          <hr></hr>
-
-          <Stack direction='row' alignItems='flexStart' justifyContent='space-between'>
-
-            <Button appearance='primary' color='blue' startIcon={<MdAddCircleOutline />} onClick={this.onNewStatement}>Novo extrato</Button>
-
-            <Pagination layout={['-', 'limit', '|', 'pager']} size={'md'} prev={true} next={true} first={true} last={true} ellipsis={false} boundaryLinks={false} total={200} limit={50} limitOptions={[30,50,100]} maxButtons={6} activePage={1}
-              //onChangePage={setActivePage}
-              //onChangeLimit={setLimit}
-            />
-
-          </Stack>
-
-
-        </PageContent>
       </>
     )
   }
-
 }
 
-class Page extends React.Component {
+export class Statements extends React.Component {
+
+  viewCalled = React.createRef()
+  viewCalledResolution = React.createRef()
+
+  constructor(props) {
+    super(props)
+
+    const Authorization = JSON.parse(localStorage.getItem("Authorization"))
+
+    this.state = {
+      request: {
+        filter: {
+          //company: Authorization.company,
+          responsible: Authorization.user
+        }
+      }
+    }
+  }
+
+  componentDidMount = () => {
+    this.onSearch()
+  }
+
+  onSearch = async () => {
+    try {
+      this.setState({loading: true})
+      const result = await new Service().Post('finance/statement/statements', this.state?.request)
+      this.setState({...result.data})
+    } catch (error) {
+      Exception.error(error)
+    } finally {
+      this.setState({loading: false})
+    }
+  }
+
+  onNew = async () => {
+    try {
+      
+      const called = await this.viewCalled.current.new()
+      
+      if (called) {
+        await this.viewCalledResolution.current.new({calledId: called.id, number: called.number, responsible: called.responsible})
+        await toaster.push(<Message showIcon type='success'>Salvo com sucesso!</Message>, {placement: 'topEnd', duration: 5000 })
+        await this.onSearch()
+      }
+
+    } catch (error) {
+      Exception.error(error)
+    }
+  }
+
+  onEdit = async ({id}) => {
+    try {
+      const called = await this.viewCalled.current.edit(id)
+      if (called) await this.onSearch()
+    } catch (error) {
+      Exception.error(error)
+    }
+  }
+
+  onResolution = async (row) => {
+    const resolution = await this.viewCalledResolution.current.new({calledId: row.id, number: row.number, resolutions: row.resolutions})
+    if (resolution) {
+      await toaster.push(<Message showIcon type='success'>Salvo com sucesso!</Message>, {placement: 'topEnd', duration: 5000 })
+      await this.onSearch()
+    }
+  }
+
+  columns = [
+ 
+    { selector: (row) => <Whisper
+      trigger="click"
+      placement={'bottomStart'}
+      speaker={(props, ref) => {
+        return (
+          <Popover ref={ref} className={props.className} style={{width: '200px'}}>
+            <List size={'md'} hover style={{cursor: 'pointer'}}>
+              <List.Item onClick={() => this.onDacte(row.id, row.chaveCT)}><FaPrint /> Imprimir dacte</List.Item>
+              <List.Item><FaFileDownload /> Arquivo xml</List.Item>
+            </List>
+          </Popover>
+        )
+      }}
+    >
+      <IconButton className='hover-blue' size='sm' circle icon={<FaEllipsisV />} appearance="default" />
+    </Whisper>, minWidth: '30px', maxWidth: '30px', center: true, style: {padding: '0px'}},
+    //{ selector: (row) => dayjs(row.createdAt).format('DD/MM/YYYY HH:mm'), name: 'Abertura', minWidth: '140px', maxWidth: '140px'},
+    { selector: (row) => row.company?.surname, name: 'Filial', minWidth: '120px', maxWidth: '120px'},
+    { selector: (row) => row.bankAccount?.agency, name: 'Conta', minWidth: '200px', maxWidth: '200px'},
+    { selector: (row) => dayjs(row.begin).format('DD/MM/YYYY HH:mm'), name: 'Inicio', minWidth: '140px', maxWidth: '140px'},
+    { selector: (row) => dayjs(row.end).format('DD/MM/YYYY HH:mm'), name: 'Final', minWidth: '140px', maxWidth: '140px'},
+    //{ selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onResolution(row)} content={_.size(row.resolutions)}></Badge>, center: true, minWidth: '35px', maxWidth: '35px', style: {padding: '0px'}},
+  ]
 
   render = () => {
+
     return (
       <Panel header={<CustomBreadcrumb menu={'Finanças'} title={'Extratos'} />}>
-        <FinanceStatements />
+
+        <ViewCalled ref={this.viewCalled} />
+
+        <ViewCalledResolution ref={this.viewCalledResolution} />
+
+        <PageContent>
+          
+          <Stack direction='row' alignItems='flexStart' justifyContent='space-between'>
+            <Stack spacing={5}>
+              <CustomSearch loading={this.state?.loading} fields={fields} defaultPicker={'number'} value={this.state?.request?.search} onChange={(search) => this.setState({request: {filter: this.state.request.filter, search}}, () => this.onSearch())} />
+            </Stack>
+            <Filter filter={this.state?.request?.filter} onChange={(filter) => this.setState({request: {...this.state?.request, filter}}, () => this.onSearch())} />
+          </Stack>
+
+          <hr></hr>
+          
+          <Nav appearance="subtle">
+            <Nav.Item active={!this.state?.request?.bankAccount} onClick={() => this.setState({request: {...this.state.request, bankAccount: undefined}}, () => this.onSearch())}><center style={{width: 140}}>Todos<br></br>{this.state?.loading ? "-" : this.state?.response?.count ?? '-'}</center></Nav.Item>
+            {_.map(this.state?.response?.bankAccounts, (bankAccount) => {
+              return <Nav.Item eventKey="home" active={this.state?.request?.bankAccount?.id == bankAccount.id} onClick={() => this.setState({request: {...this.state.request, bankAccount: bankAccount}}, () => this.onSearch())}><center style={{width: 160}}>{<><img src={bankAccount?.bank?.image} style={{height: '16px'}} />&nbsp;&nbsp;{bankAccount.name || <>{bankAccount?.agency}-{bankAccount?.agencyDigit} / {bankAccount?.account}-{bankAccount?.accountDigit}</>}</>}<br></br>{this.state?.loading ? '-' : <>R$ {bankAccount.balance}</>}</center></Nav.Item>
+            })}
+          </Nav>
+
+          <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEdit} selectedRows={true} onSelected={(selecteds) => this.setState({selecteds})} />
+      
+          <hr></hr>
+          
+          <Stack direction='row' alignItems='flexStart' justifyContent='space-between'>
+            <Stack spacing={5}>
+              {_.size(this.state?.selecteds) == 0 && <Button appearance='primary' color='blue' startIcon={<FaPlusCircle />} onClick={this.onNew}>&nbsp;Novo</Button>}
+            </Stack>
+            <CustomPagination isLoading={this.state?.loading} total={this.state?.response?.count} limit={this.state?.request?.limit} activePage={this.state?.request?.offset + 1} onChangePage={(offset) => this.setState({request: {...this.state.request, offset: offset - 1}}, () => this.onSearch())} onChangeLimit={(limit) => this.setState({request: {...this.state.request, limit}}, () => this.onSearch())} />
+          </Stack>
+          
+        </PageContent>
       </Panel>
     )
+
   }
 
 }
-
-export default Page;
