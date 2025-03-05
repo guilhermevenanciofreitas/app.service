@@ -30,6 +30,12 @@ const permissions = [
         { label: 'Editar', value: '6A417948-4AA0-43A7-AD13-50CE8BCDE59A' },
         { label: 'Excluir', value: 'BA6B05D7-C4BE-49AB-A8C2-34737EABF8E3' },
     ]},
+    { value: 'trips', children: [
+        { label: 'Visualizar', value: '0A4763CF-3D8F-4F4A-B83C-396494F38254' },
+        { label: 'Cadastrar', value: '8980D3FB-63F1-46F0-8A86-18F536E695BB' },
+        { label: 'Editar', value: '1EE07AA5-5B33-4F8F-9BE8-B13AEF3666B4' },
+        { label: 'Excluir', value: 'FBA6669F-ABFF-4406-9A86-D2A662667A9E' },
+    ]},
     { value: 'company', children: [
         { label: 'Editar', value: 'B77BA3E3-C830-40D7-9E7C-FE21C42BF014' },
     ]},
@@ -52,6 +58,7 @@ const checkTree = [
     { label: 'Logística', value: 'logistic', children: [
         { label: 'Conhecimentos', value: 'cte', children: permissions.find(p => p.value === 'cte')?.children },
         { label: 'Romaneios', value: 'shippiment', children: permissions.find(p => p.value === 'shippiment')?.children },
+        { label: 'Viagens', value: 'trips', children: permissions.find(p => p.value === 'trips')?.children },
     ]},
     { label: 'Configurações', value: 'settings', children: [
         { label: 'Empresa', value: 'company', children: permissions.find(p => p.value === 'company')?.children },
@@ -190,7 +197,7 @@ export class ViewRole extends React.Component {
     }
 
     render() {
-        const filteredCheckTree = this.filterCheckTree(); // Filtra as permissões com base no Authorization
+        const filteredCheckTree = checkTree //this.filterCheckTree(); // Filtra as permissões com base no Authorization
 
         return (
             <Form autoComplete="off" onSubmit={this.onSubmit}>
