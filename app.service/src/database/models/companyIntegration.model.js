@@ -5,22 +5,23 @@ export class CompanyIntegration {
   id = {
     field: 'id',
     primaryKey: true,
-    type: Sequelize.UUID
+    defaultValue: Sequelize.UUIDV4,
+    type: Sequelize.UUIDV4,
   }
 
   companyId = {
     field: 'companyId',
-    type: Sequelize.UUID
+    type: Sequelize.UUIDV4
   }
 
   integrationId = {
     field: 'integrationId',
-    type: Sequelize.UUID
+    type: Sequelize.UUIDV4
   }
 
   options = {
     field: 'options',
-    type: Sequelize.JSONB
+    type: Sequelize.UUIDV4
   }
 
 }

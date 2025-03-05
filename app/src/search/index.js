@@ -63,4 +63,8 @@ export const Search = {
         return (await new Service().Post("search/cfop", {search}, undefined, false))?.data
     },
 
+    integration: async (search) => {
+        return (await new Service().Post("search/integration", {search}, undefined, false))?.data
+    },
+
 }

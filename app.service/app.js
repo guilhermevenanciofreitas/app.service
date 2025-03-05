@@ -6,13 +6,13 @@ import { fileURLToPath } from "url"
 import { LoginRoute } from './src/routes/sigin/sigin.route.js'
 
 import { TaskRoute } from './src/routes/task/task.route.js'
-import { IntegrationRoute } from './src/routes/integration/integration.route.js'
 import { CteRoute } from './src/routes/logistic/cte.route.js'
 import { LogisticShippimentRoute } from './src/routes/logistic/shippiment.route.js'
 import { SearchRoute } from './src/routes/search.js'
 import { CalledRoute } from './src/routes/called.route.js'
 import { SettingRoleRoute } from './src/routes/setting/role.route.js'
 import { SettingUserRoute } from './src/routes/setting/user.route.js'
+import { IntegrationRoute } from './src/routes/integration.route.js'
 
 export class App {
 
@@ -49,6 +49,7 @@ export class App {
     this.express.use('/api/logistic/shippiment', new LogisticShippimentRoute().router)
 
     this.express.use('/api/task', new TaskRoute().router)
+
     this.express.use('/api/integration', new IntegrationRoute().router)
 
     //Setting
