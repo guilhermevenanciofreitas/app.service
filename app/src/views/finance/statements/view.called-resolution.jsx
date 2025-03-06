@@ -11,6 +11,7 @@ import _ from "lodash";
 import { Search } from "../../../search";
 import { Exception } from "../../../utils/exception";
 import { FaCheckCircle } from "react-icons/fa";
+import { ViewStatementMercadoPago } from "./banks/mercado-pago";
 
 export class ViewCalledResolution extends React.Component {
 
@@ -55,57 +56,25 @@ export class ViewCalledResolution extends React.Component {
             <Form autoComplete='off' onSubmit={this.onSubmit}>
                 <ViewDrawer ref={this.viewDrawer}>
                     <Drawer.Header>
-                        <Drawer.Title>Chamado #{this.state?.number}</Drawer.Title>
+                        <Drawer.Title>Importar</Drawer.Title>
                     </Drawer.Header>
                     <Drawer.Body style={{padding: '30px'}}>
                         <Row gutterWidth={0}>
                                 
                             <Col md={6}>
                                 <div className='form-control'>
-                                    <AutoComplete label='Responsável' value={this.state?.responsible} text={(item) => `${item.userName}`} onChange={(responsible) => this.setState({ responsible })} onSearch={async (search) => await Search.user(search)} autoFocus>
+                                    <AutoComplete label='Integração' value={this.state?.integration} text={(item) => `${item.name}`} onChange={(integration) => this.setState({ integration })} onSearch={async (search) => await Search.integration(search)} autoFocus>
                                         <AutoComplete.Result>
-                                        {(item) => <span>{item.userName}</span>}
+                                        {(item) => <span>{item.name}</span>}
                                         </AutoComplete.Result>
                                     </AutoComplete>
                                 </div>
                             </Col>
-                            <Col md={6}>
-                                <div className='form-control'>
-                                    <AutoComplete label='Status' value={this.state?.status} text={(item) => `${item.description}`} onChange={(status) => this.setState({ status })} onSearch={async (search) => await Search.calledStatus(search)}>
-                                        <AutoComplete.Result>
-                                        {(item) => <span>{item.description}</span>}
-                                        </AutoComplete.Result>
-                                    </AutoComplete>
-                                </div>
-                            </Col>
-                            <Col md={12}>
-                                <div className='form-control'>
-                                    <label className="textfield-filled">
-                                        <textarea rows="3" value={this.state?.detail} onChange={(event) => this.setState({ detail: event.target.value })} />
-                                        <span>Detalhes</span>
-                                    </label>
-                                </div>
-                            </Col>
-                            
                             <div className='form-control'>
                                 <Button appearance="primary" color='green' onClick={this.onSubmit} disabled={this.state?.submitting}>{this.state?.submitting ? <><Loader /> &nbsp; Confirmando...</> : <><FaCheckCircle /> &nbsp; Confirmar</>}</Button>
                             </div>
-                        
-                            {_.size(this.state?.resolutions) > 0 && (
-                                <Col md={12} style={{paddingTop: '30px'}}>
-                                    <Panel bordered header="Resoluções" style={{ width: '100%' }}>
-                                        <Timeline isItemActive={Timeline.ACTIVE_FIRST}>
-                                            {_.map(this.state?.resolutions, (resolution) => (
-                                                <Timeline.Item key={resolution.id}>
-                                                    <Tag color={'blue'}>{resolution.status?.description}</Tag>
-                                                    <div><strong>{resolution.user?.userName}:</strong> {resolution.detail}</div>
-                                                    <div style={{ fontSize: "0.8em", color: "gray" }}>{dayjs(resolution.createdAt).format('DD/MM/YYYY HH:mm')}</div>
-                                                </Timeline.Item>
-                                            ))}
-                                        </Timeline>
-                                    </Panel>
-                                </Col>
-                            )}
+
+                            <ViewStatementMercadoPago />
                             
                         </Row>
                     </Drawer.Body>

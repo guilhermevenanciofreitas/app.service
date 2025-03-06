@@ -20,7 +20,7 @@ export class FinanceStatementController {
         //if (filter['situation']) where.push({situation: filter['situation']})
 
         const statements = await db.Statement.findAndCountAll({
-          attributes: ['id', 'createdAt'],
+          attributes: ['id', 'createdAt', 'importedAt'],
           include: [
             {model: db.Company, as: 'company', attributes: ['id', 'surname']},
             {model: db.BankAccount, as: 'bankAccount', attributes: ['id', 'agency'],

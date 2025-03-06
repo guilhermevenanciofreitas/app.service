@@ -39,4 +39,9 @@ export class Statement {
     type: Sequelize.DATE
   }
 
+  importedAt = {
+    field: 'importedAt',
+    type: Sequelize.DATE
+  }
+
 }

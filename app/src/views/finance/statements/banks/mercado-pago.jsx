@@ -4,7 +4,7 @@ import { DataTable } from '../../../../controls'
 import dayjs from "dayjs"
 import _ from "lodash"
 
-class ViewNewStatementMercadoPago extends React.Component {
+export class ViewStatementMercadoPago extends React.Component {
 
     componentDidMount = async () => {
         this.setState({loading: true}, async () => {
@@ -31,5 +31,3 @@ class ViewNewStatementMercadoPago extends React.Component {
     }
 
 }
-
-export default ViewNewStatementMercadoPago

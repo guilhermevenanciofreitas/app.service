@@ -127,10 +127,18 @@ export class Statements extends React.Component {
     }
   }
 
-  onEdit = async ({id}) => {
+  onEdit = async ({id, importedAt}) => {
     try {
-      const called = await this.viewCalled.current.edit(id)
-      if (called) await this.onSearch()
+
+      if (importedAt) {
+
+        const called = await this.viewCalled.current.edit(id)
+        if (called) await this.onSearch()
+
+      } else {
+        this.viewCalledResolution.current.new()
+      }
+
     } catch (error) {
       Exception.error(error)
     }
