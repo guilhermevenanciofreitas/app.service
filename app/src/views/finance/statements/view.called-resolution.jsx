@@ -11,7 +11,7 @@ import _ from "lodash";
 import { Search } from "../../../search";
 import { Exception } from "../../../utils/exception";
 import { FaCheckCircle } from "react-icons/fa";
-import { ViewStatementMercadoPago } from "./banks/mercado-pago";
+import { ViewStatementMercadoPago } from "./bank-statements/mercado-pago";
 
 export class ViewCalledResolution extends React.Component {
 
