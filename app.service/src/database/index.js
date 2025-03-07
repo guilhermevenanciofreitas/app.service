@@ -43,6 +43,7 @@ import { CalledReason } from './models/calledReason.model.js'
 import { CalledOccurrence } from './models/calledOccurrence.model.js'
 import { CalledStatus } from './models/calledStatus.model.js'
 import { CalledResolution } from './models/calledResolution.model.js'
+import { StatementData } from './models/statementData.model.js'
 
 export class AppContext extends Sequelize {
   
@@ -117,6 +118,8 @@ export class AppContext extends Sequelize {
   State = this.define('state', new State(), { tableName: 'uf' })
 
   Statement = this.define('statement', new Statement(), { tableName: 'statement' })
+
+  StatementData = this.define('statementData', new StatementData(), { tableName: 'statementData' })
 
   Task = this.define('task', new Task(), { tableName: 'task' })
 

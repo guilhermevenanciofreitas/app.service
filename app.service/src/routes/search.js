@@ -24,6 +24,7 @@ export class SearchRoute {
         this.router.post('/recipient', async (req, res) => await this.controller.recipient(req, res))
         this.router.post('/cfop', async (req, res) => await this.controller.cfop(req, res))
         this.router.post('/integration', async (req, res) => await this.controller.integration(req, res))
+        this.router.post('/company-integration', async (req, res) => await this.controller.companyIntegration(req, res))
     }
 
 }

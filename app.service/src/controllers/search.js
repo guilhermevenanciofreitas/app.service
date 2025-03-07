@@ -580,5 +580,33 @@ export class SearchController {
             Exception.unauthorized(res, error);
         });
     }
+
+    companyIntegration = async (req, res) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
+            try {
+
+                const db = new AppContext()
+
+                const companyIntegrations = await db.CompanyIntegration.findAll({
+                    attributes: ['id'],
+                    include: [
+                        {model: db.Integration, as: 'integration', attributes: ['id', 'name']}
+                    ],
+                    where: [{'$integration.name$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}],
+                    order: [
+                        [{model: db.Integration, as: 'integration'}, 'name', 'asc']
+                    ],
+                    limit: 20
+                })
+
+                res.status(200).json(companyIntegrations)
+
+            } catch (error) {
+                Exception.error(res, error)
+            }
+        }).catch((error) => {
+            Exception.unauthorized(res, error);
+        });
+    }
   
 }

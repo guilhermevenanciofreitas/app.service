@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Drawer, Form, Loader, Message, Modal, Panel, Tag, Timeline, toaster } from 'rsuite';
+import { Button, Divider, Drawer, Form, Loader, Message, Modal, Panel, Tag, Timeline, toaster } from 'rsuite';
 import { Container, Row, Col } from 'react-grid-system';
 import { AutoComplete, ViewDrawer } from "../../../controls";
 import { MdCheckCircleOutline } from "react-icons/md";
@@ -63,18 +63,19 @@ export class ViewCalledResolution extends React.Component {
                                 
                             <Col md={6}>
                                 <div className='form-control'>
-                                    <AutoComplete label='Integração' value={this.state?.integration} text={(item) => `${item.name}`} onChange={(integration) => this.setState({ integration })} onSearch={async (search) => await Search.integration(search)} autoFocus>
+                                    <AutoComplete label='Integração' value={this.state?.companyIntegration} text={(item) => `${item.integration?.name}`} onChange={(companyIntegration) => this.setState({ companyIntegration })} onSearch={async (search) => await Search.companyIntegration(search)} autoFocus>
                                         <AutoComplete.Result>
-                                        {(item) => <span>{item.name}</span>}
+                                        {(item) => <span>{item.integration?.name}</span>}
                                         </AutoComplete.Result>
                                     </AutoComplete>
                                 </div>
                             </Col>
-                            <div className='form-control'>
-                                <Button appearance="primary" color='green' onClick={this.onSubmit} disabled={this.state?.submitting}>{this.state?.submitting ? <><Loader /> &nbsp; Confirmando...</> : <><FaCheckCircle /> &nbsp; Confirmar</>}</Button>
-                            </div>
 
-                            <ViewStatementMercadoPago />
+                            <Divider />
+
+                            {this.state?.companyIntegration?.integration?.id == 'BED7B5F2-8AC7-4DF6-8B2E-D0DA30FAB945' && (
+                                <ViewStatementMercadoPago />
+                            )}
                             
                         </Row>
                     </Drawer.Body>

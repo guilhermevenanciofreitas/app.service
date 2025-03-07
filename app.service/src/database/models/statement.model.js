@@ -31,17 +31,17 @@ export class Statement {
 
   begin = {
     field: 'begin',
-    type: Sequelize.DATE
+    type: Sequelize.STRING
   }
 
   end = {
     field: 'end',
-    type: Sequelize.DATE
+    type: Sequelize.STRING
   }
 
   importedAt = {
     field: 'importedAt',
-    type: Sequelize.DATE
+    type: Sequelize.STRING
   }
 
 }

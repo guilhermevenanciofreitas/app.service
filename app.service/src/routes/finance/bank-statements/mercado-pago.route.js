@@ -12,6 +12,7 @@ export class FinanceStatementBankStatementsMercadoPagoRoute {
 
     intializeRoutes() {
         this.router.post('/statements', async (req, res) => await this.controller.statements(req, res))
+        this.router.post('/statement', async (req, res) => await this.controller.statement(req, res))
     }
 
 }
