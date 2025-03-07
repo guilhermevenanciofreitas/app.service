@@ -16,9 +16,9 @@ export class ViewStatementMercadoPago extends React.Component {
 
     onSubmit = () => {
         this.setState({loading: true}, async () => {
-            await new Service().Post('finance/statement/bank-statements/mercago-pago/statement', {fileName: this.state?.selectedRows[0].file_name}).then((result) => {
+            await new Service().Post('finance/statement/bank-statements/mercago-pago/statement', {statementId: this.props.statementId, fileName: this.state?.selectedRows[0].file_name}).then((result) => {
 
-                console.log(result.data)
+                this.props.onSubmited()
 
             }).finally(() => this.setState({loading: false}))
         })

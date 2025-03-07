@@ -17,9 +17,9 @@ export class ViewCalledResolution extends React.Component {
 
     viewDrawer = React.createRef()
 
-    new = async (resolution) => {
+    new = async (statement) => {
         if (this.state) for (const prop of Object.getOwnPropertyNames(this.state)) delete this.state[prop]
-        this.setState({...resolution})
+        this.setState({...statement})
         return this.viewDrawer.current.show()
     }
 
@@ -74,7 +74,7 @@ export class ViewCalledResolution extends React.Component {
                             <Divider />
 
                             {this.state?.companyIntegration?.integration?.id == 'BED7B5F2-8AC7-4DF6-8B2E-D0DA30FAB945' && (
-                                <ViewStatementMercadoPago />
+                                <ViewStatementMercadoPago statementId={this.state?.statementId} onSubmited={() => this.close()} />
                             )}
                             
                         </Row>

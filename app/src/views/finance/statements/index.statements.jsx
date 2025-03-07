@@ -10,7 +10,7 @@ import { Service } from '../../../service'
 import { Exception } from '../../../utils/exception'
 import { ViewCalled } from './view.statement'
 import { Search } from '../../../search'
-import { ViewCalledResolution } from './view.called-resolution'
+import { ViewCalledResolution } from './view.bank-statements'
 
 import dayjs from 'dayjs'
 import _ from 'lodash'
@@ -114,10 +114,10 @@ export class Statements extends React.Component {
   onNew = async () => {
     try {
       
-      const called = await this.viewCalled.current.new()
+      const statement = await this.viewCalled.current.new()
       
-      if (called) {
-        await this.viewCalledResolution.current.new({calledId: called.id, number: called.number, responsible: called.responsible})
+      if (statement) {
+        await this.viewCalledResolution.current.new({statementId: statement.id})
         await toaster.push(<Message showIcon type='success'>Salvo com sucesso!</Message>, {placement: 'topEnd', duration: 5000 })
         await this.onSearch()
       }
@@ -136,7 +136,7 @@ export class Statements extends React.Component {
         if (called) await this.onSearch()
 
       } else {
-        this.viewCalledResolution.current.new()
+        await this.viewCalledResolution.current.new({statementId: id})
       }
 
     } catch (error) {
