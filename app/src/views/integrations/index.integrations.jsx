@@ -4,13 +4,13 @@ import { Badge, Button, Divider, Drawer, IconButton, List, Message, Nav, Panel, 
 import PageContent from '../../components/PageContent'
 
 import { AutoComplete, CustomBreadcrumb, CustomPagination, CustomSearch, DataTable } from '../../controls'
-import { FaCheckCircle, FaEllipsisV, FaFileDownload, FaFilter, FaPlusCircle, FaPrint } from 'react-icons/fa'
+import { FaCertificate, FaCheckCircle, FaEllipsisV, FaFileDownload, FaFilter, FaPlusCircle, FaPrint, FaRegSun } from 'react-icons/fa'
 import { Service } from '../../service'
 
 import { Exception } from '../../utils/exception'
 import { ViewIntegration } from './view.integration'
 import { Search } from '../../search'
-import { ViewCalledResolution } from './view.called-resolution'
+import { ViewCalledResolution } from './view.integration.setting'
 
 import dayjs from 'dayjs'
 import _ from 'lodash'
@@ -127,20 +127,11 @@ export class Integrations extends React.Component {
     }
   }
 
-  onEdit = async ({id}) => {
-    try {
-      const called = await this.viewCalled.current.edit(id)
-      if (called) await this.onSearch()
-    } catch (error) {
-      Exception.error(error)
-    }
-  }
-
-  onResolution = async (row) => {
-    const resolution = await this.viewCalledResolution.current.new({calledId: row.id, number: row.number, resolutions: row.resolutions})
-    if (resolution) {
+  onSetting = async (row) => {
+    const options = await this.viewCalledResolution.current.new(row)
+    if (options) {
+      row.options = JSON.stringify(options)
       await toaster.push(<Message showIcon type='success'>Salvo com sucesso!</Message>, {placement: 'topEnd', duration: 5000 })
-      await this.onSearch()
     }
   }
 
@@ -162,9 +153,8 @@ export class Integrations extends React.Component {
     >
       <IconButton className='hover-blue' size='sm' circle icon={<FaEllipsisV />} appearance="default" />
     </Whisper>, minWidth: '30px', maxWidth: '30px', center: true, style: {padding: '0px'}},
-    { selector: (row) => row.company?.surname, name: 'Filial', minWidth: '120px', maxWidth: '120px'},
-    { selector: (row) => row.integration.name, name: 'Integração', minWidth: '90px', maxWidth: '90px'},
-    { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onResolution(row)} content={_.size(row.resolutions)}></Badge>, center: true, minWidth: '35px', maxWidth: '35px', style: {padding: '0px'}},
+    { selector: (row) => row.integration.name, name: 'Integração'},
+    { selector: (row) => <div className='hidden'><FaRegSun size='16px' color='blue' style={{padding: '3px'}} onClick={() => this.onSetting(row)} /></div>, center: true, minWidth: '50px', maxWidth: '50px', style: {padding: '0px'}},
   ]
 
   render = () => {
@@ -194,7 +184,7 @@ export class Integrations extends React.Component {
             })}
           </Nav>
 
-          <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEdit} selectedRows={true} onSelected={(selecteds) => this.setState({selecteds})} />
+          <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} selectedRows={true} onSelected={(selecteds) => this.setState({selecteds})} />
       
           <hr></hr>
           

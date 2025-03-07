@@ -13,7 +13,6 @@ export class IntegrationRoute {
     intializeRoutes() {
         this.router.post('/integrations', async (req, res) => await this.controller.integrations(req, res))
         this.router.post('/submit', async (req, res) => await this.controller.submit(req, res))
-        this.router.post('/detail', async (req, res) => await this.controller.detail(req, res))
     }
 
 }
