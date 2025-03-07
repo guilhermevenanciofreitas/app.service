@@ -14,6 +14,8 @@ import { SettingRoleRoute } from './src/routes/setting/role.route.js'
 import { SettingUserRoute } from './src/routes/setting/user.route.js'
 import { IntegrationRoute } from './src/routes/integration.route.js'
 import { FinanceStatementRoute } from './src/routes/finance/statement.route.js'
+import { FinanceStatementMercadoPagoController } from './src/controllers/finance/bank-statements/mercado-pago.js'
+import { FinanceStatementBankStatementsMercadoPagoRoute } from './src/routes/finance/bank-statements/mercado-pago.route.js'
 
 export class App {
 
@@ -47,6 +49,8 @@ export class App {
 
     //Finance
     this.express.use('/api/finance/statement', new FinanceStatementRoute().router)
+    
+    this.express.use('/api/finance/statement/bank-statements/mercago-pago', new FinanceStatementBankStatementsMercadoPagoRoute().router)
 
     //Logistic
     this.express.use('/api/logistic/cte', new LogisticCteRoute().router)

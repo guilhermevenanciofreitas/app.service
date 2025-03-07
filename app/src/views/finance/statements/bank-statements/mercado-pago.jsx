@@ -8,7 +8,7 @@ export class ViewStatementMercadoPago extends React.Component {
 
     componentDidMount = async () => {
         this.setState({loading: true}, async () => {
-            await new Service().Post('integration/mercado-livre/statement', this.props.bankAccountId).then((result) => this.setState({rows: result.data.response})).finally(() => this.setState({loading: false}))
+            await new Service().Post('finance/statement/bank-statements/mercago-pago/statements').then((result) => this.setState({rows: result.data.response})).finally(() => this.setState({loading: false}))
         })
     }
 
