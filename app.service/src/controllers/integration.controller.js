@@ -54,7 +54,7 @@ export class IntegrationController {
         }
 
         const integrations = await db.CompanyIntegration.findAndCountAll({
-          attributes: ['id'],
+          attributes: ['id', 'options'],
           include: [
             {model: db.Company, as: 'company', attributes: ['id', 'surname']},
             {model: db.Integration, as: 'integration', attributes: ['id', 'name']},
@@ -83,46 +83,11 @@ export class IntegrationController {
     })
   }
 
-  detail = async (req, res) => {
-    await Authorization.verify(req, res).then(async ({companyId, userId}) => {
-      try {
-
-        const { id } = req.body
-
-        const db = new AppContext()
-
-        await db.transaction(async (transaction) => {
-
-          const called = await db.Called.findOne({
-            attributes: ['id', 'number', 'subject'],
-            include: [
-              {model: db.Company, as: 'company', attributes: ['id', 'surname']},
-              {model: db.Partner, as: 'requested', attributes: ['id', 'surname']},
-              {model: db.CalledStatus, as: 'status', attributes: ['id', 'description']},
-              {model: db.User, as: 'responsible', attributes: ['id', 'userName']},
-              {model: db.Partner, as: 'requested', attributes: ['id', 'cpfCnpj', 'surname']},
-              {model: db.CalledReason, as: 'reason', attributes: ['id', 'description']},
-              {model: db.CalledOccurrence, as: 'occurrence', attributes: ['id', 'description']}
-            ],
-            where: [{id: id}],
-            transaction
-          })
-
-          res.status(200).json(called)
-
-        })
-
-      } catch (error) {
-        Exception.error(res, error)
-      }
-    }).catch((error) => {
-      Exception.unauthorized(res, error)
-    })
-  }
-
   submit = async (req, res) => {
     await Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
       try {
+
+        res.status(200).json(req.body)
 
         let integration = {
           id: req.body.id,
@@ -137,7 +102,7 @@ export class IntegrationController {
           if (_.isEmpty(integration.id)) {
             integration = await db.CompanyIntegration.create(integration, {transaction})
           } else {
-            await db.CompanyIntegration.update(integration, {where: [{id: integration.id}], transaction})
+            await db.CompanyIntegration.update({options: JSON.stringify(req.body.options)}, {where: [{id: req.body.id}], transaction})
           }
 
           res.status(200).json(integration)
