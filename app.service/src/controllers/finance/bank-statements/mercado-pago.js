@@ -65,8 +65,7 @@ export class FinanceStatementMercadoPagoController {
                 method: 'get',
                 url: 'https://api.mercadopago.com/v1/account/release_report/list',
                 headers: { 
-                  'Content-Type': 'application/json', 
-                  //'Authorization': `Bearer ${access_token}`
+                  'Content-Type': 'application/json',
                   'Authorization': `Bearer ${access_token}`
                 }
               };
@@ -102,9 +101,10 @@ export class FinanceStatementMercadoPagoController {
 
             await db.transaction(async (transaction) => {
 
+              db.Statement.update({importedAt: dayjs().format('YYYY-MM-DD HH:mm')}, {where: [{id: req.body.statementId}], transaction})
+
               for(var item of json) {
 
-              
                 let statementData = new StatementData();
   
                 statementData.id = undefined;

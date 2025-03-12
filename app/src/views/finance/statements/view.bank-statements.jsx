@@ -13,7 +13,7 @@ import { Exception } from "../../../utils/exception";
 import { FaCheckCircle } from "react-icons/fa";
 import { ViewStatementMercadoPago } from "./bank-statements/mercado-pago";
 
-export class ViewCalledResolution extends React.Component {
+export class ViewBankStatement extends React.Component {
 
     viewDrawer = React.createRef()
 
@@ -60,7 +60,7 @@ export class ViewCalledResolution extends React.Component {
                     </Drawer.Header>
                     <Drawer.Body style={{padding: '30px'}}>
                         <Row gutterWidth={0}>
-                                
+
                             <Col md={6}>
                                 <div className='form-control'>
                                     <AutoComplete label='Integração' value={this.state?.companyIntegration} text={(item) => `${item.integration?.name}`} onChange={(companyIntegration) => this.setState({ companyIntegration })} onSearch={async (search) => await Search.companyIntegration(search)} autoFocus>
@@ -76,7 +76,7 @@ export class ViewCalledResolution extends React.Component {
                             {this.state?.companyIntegration?.integration?.id == 'BED7B5F2-8AC7-4DF6-8B2E-D0DA30FAB945' && (
                                 <ViewStatementMercadoPago statementId={this.state?.statementId} onSubmited={() => this.close()} />
                             )}
-                            
+
                         </Row>
                     </Drawer.Body>
                 </ViewDrawer>
