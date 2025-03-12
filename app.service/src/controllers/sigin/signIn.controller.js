@@ -74,7 +74,7 @@ export class LoginController {
   
         } else {
 
-          if (user.userMember.password != password) {
+          if (user.dataValues.userMember.dataValues.password != password) {
             res.status(202).json({message: '🤨 Senha incorreta!'})
             return
           }
