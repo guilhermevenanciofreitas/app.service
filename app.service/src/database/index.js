@@ -173,7 +173,6 @@ export class AppContext extends Sequelize {
     this.Company.hasMany(this.CompanyUser, {as: 'companyUsers', foreignKey: 'companyId'})
     this.Company.belongsTo(this.CompanyBusiness, {as: 'companyBusiness', foreignKey: 'companyBusinessId', targetKey: 'id'})
 
-
     this.CompanyIntegration.belongsTo(this.Company, {as: 'company', foreignKey: 'companyId', targetKey: 'id'})
     this.CompanyIntegration.belongsTo(this.Integration, {as: 'integration', foreignKey: 'integrationId', targetKey: 'id'})
 
@@ -183,7 +182,6 @@ export class AppContext extends Sequelize {
     this.CompanyUser.belongsTo(this.User, {as: 'user', foreignKey: 'userId', targetKey: 'id'})
     this.CompanyUser.belongsTo(this.Role, {as: 'role', foreignKey: 'roleId', targetKey: 'id'})
 
-    
     this.Cte.belongsTo(this.Partner, {as: 'sender', foreignKey: 'senderId', targetKey: 'id'})
     this.Cte.belongsTo(this.Partner, {as: 'recipient', foreignKey: 'recipientId', targetKey: 'id'})
     this.Cte.belongsTo(this.Partner, {as: 'dispatcher', foreignKey: 'dispatcherId', targetKey: 'id'})
