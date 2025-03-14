@@ -8,12 +8,13 @@ import { FaCheckCircle, FaEllipsisV, FaFileDownload, FaFilter, FaPlusCircle, FaP
 import { Service } from '../../../service'
 
 import { Exception } from '../../../utils/exception'
-import { ViewCalled } from './view.statement'
+import { ViewStatement } from './view.statement'
 import { Search } from '../../../search'
-import { ViewCalledResolution } from './view.bank-statements'
+import { ViewBankStatement } from './view.bank-statements'
 
 import dayjs from 'dayjs'
 import _ from 'lodash'
+import { ViewStatementData } from './view.statement-data'
 
 const fields = [
   { label: 'Número', value: 'number' },
@@ -77,8 +78,9 @@ class Filter extends React.Component {
 
 export class Statements extends React.Component {
 
-  viewCalled = React.createRef()
-  viewCalledResolution = React.createRef()
+  viewStatement = React.createRef()
+  viewStatementData = React.createRef()
+  viewBankStatement = React.createRef()
 
   constructor(props) {
     super(props)
@@ -114,10 +116,10 @@ export class Statements extends React.Component {
   onNew = async () => {
     try {
       
-      const statement = await this.viewCalled.current.new()
+      const statement = await this.viewStatement.current.new()
       
       if (statement) {
-        await this.viewCalledResolution.current.new({statementId: statement.id})
+        await this.ViewBankStatement.current.new({statementId: statement.id})
         await toaster.push(<Message showIcon type='success'>Salvo com sucesso!</Message>, {placement: 'topEnd', duration: 5000 })
         await this.onSearch()
       }
@@ -132,11 +134,11 @@ export class Statements extends React.Component {
 
       if (importedAt) {
 
-        const called = await this.viewCalled.current.edit(id)
-        if (called) await this.onSearch()
+        await this.viewStatementData.current.edit(id)
+        //if (called) await this.onSearch()
 
       } else {
-        await this.viewCalledResolution.current.new({statementId: id})
+        await this.viewBankStatement.current.new({statementId: id})
       }
 
     } catch (error) {
@@ -145,7 +147,7 @@ export class Statements extends React.Component {
   }
 
   onResolution = async (row) => {
-    const resolution = await this.viewCalledResolution.current.new({calledId: row.id, number: row.number, resolutions: row.resolutions})
+    const resolution = await this.viewBankStatement.current.new({calledId: row.id, number: row.number, resolutions: row.resolutions})
     if (resolution) {
       await toaster.push(<Message showIcon type='success'>Salvo com sucesso!</Message>, {placement: 'topEnd', duration: 5000 })
       await this.onSearch()
@@ -183,9 +185,10 @@ export class Statements extends React.Component {
     return (
       <Panel header={<CustomBreadcrumb menu={'Finanças'} title={'Extratos'} />}>
 
-        <ViewCalled ref={this.viewCalled} />
+        <ViewStatement ref={this.viewStatement} />
+        <ViewStatementData ref={this.viewStatementData} />
 
-        <ViewCalledResolution ref={this.viewCalledResolution} />
+        <ViewBankStatement ref={this.viewBankStatement} />
 
         <PageContent>
           

@@ -12,7 +12,7 @@ import _ from "lodash";
 import { Search } from "../../../search";
 import { Exception } from "../../../utils/exception";
 
-export class ViewCalled extends React.Component {
+export class ViewStatement extends React.Component {
 
     viewModal = React.createRef()
 

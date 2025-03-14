@@ -52,7 +52,6 @@ export class FinanceStatementController {
     })
   }
 
-  
   async detail(req, res) {
     await Authorization.verify(req, res).then(async ({companyId, userId}) => {
       try {
@@ -84,6 +83,40 @@ export class FinanceStatementController {
     })
   }
 
+  statementData = async (req, res) => {
+    await Authorization.verify(req, res).then(async ({companyId, userId}) => {
+      try {
+
+        const { id } = req.body
+
+        const db = new AppContext()
+
+        await db.transaction(async (transaction) => {
+            
+          const statementData = await db.StatementData.findAll({
+            attributes: ['id', 'date', 'sourceId', 'orderId', 'gross', 'fee', 'debit', 'credit', 'balance'],
+            //include: [
+            //  {model: db.BankAccount, as: 'bankAccount', attributes: ['id', 'agency']},
+            //],
+            where: [{statementId: id}],
+            order: [['date', 'asc']],
+            transaction
+          })
+
+          console.log(statementData)
+
+          res.status(200).json({statementData})
+
+        })
+
+      } catch (error) {
+        Exception.error(res, error)
+      }
+    }).catch((error) => {
+      Exception.unauthorized(res, error)
+    })
+  }
+
   submit = async (req, res) => {
     await Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
       try {
@@ -101,11 +134,9 @@ export class FinanceStatementController {
         await db.transaction(async (transaction) => {
 
           if (_.isEmpty(statement.id)) {
-
             statement = await db.Statement.create(statement, {transaction})
-
-          } else {
-            await db.Statement.update(statement, {where: [{id: statement.id}], transaction})
+          //} else {
+          //  await db.Statement.update(statement, {where: [{id: statement.id}], transaction})
           }
 
           res.status(200).json(statement)
@@ -119,6 +150,5 @@ export class FinanceStatementController {
       Exception.unauthorized(res, error)
     })
   }
-
 
 }

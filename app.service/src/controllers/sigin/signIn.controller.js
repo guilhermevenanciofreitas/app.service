@@ -9,6 +9,9 @@ import { Exception } from "../../utils/exception.js"
 
 import _ from 'lodash'
 
+import 'dotenv/config'
+
+
 export class LoginController {
 
   signIn = async (req, res) => {
@@ -30,11 +33,10 @@ export class LoginController {
 
       await db.transaction(async (transaction) => {
 
-        
         const user = await db.User.findOne({
           attributes: ['id', 'userName'],
           include: [
-            {model: db.UserMember, as: 'userMember', attributes: ['id', 'email']},
+            {model: db.UserMember, as: 'userMember', attributes: ['id', 'email', 'password']},
           ],
           where: Sequelize.literal(`"user"."userName" = :email OR "userMember"."email" = :email`),
           replacements: { email },
@@ -46,26 +48,37 @@ export class LoginController {
           return
         }
 
-        const data = JSON.stringify({
-          username: user.userName,
-          password: password
-        })
-      
-        const config = {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: data
-        }
+        if (process.env.AUTH == 'MEMBERSHIP') {
 
-        const response = await fetch('http://170.254.135.108:7077/Pesquisas/wsPesquisa.asmx/ValidateUser', config)
+          const data = JSON.stringify({
+            username: user.userName,
+            password: password
+          })
+        
+          const config = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: data
+          }
+  
+          const response = await fetch('http://170.254.135.108:7077/Pesquisas/wsPesquisa.asmx/ValidateUser', config)
+  
+          const result = await response.json()
+  
+          if (!result.d) {
+            res.status(202).json({message: '🤨 Senha incorreta!'})
+            return
+          }
+  
+        } else {
 
-        const result = await response.json()
+          if (user.dataValues.userMember.dataValues.password != password) {
+            res.status(202).json({message: '🤨 Senha incorreta!'})
+            return
+          }
 
-        if (!result.d) {
-          res.status(202).json({message: '🤨 Senha incorreta!'})
-          return
         }
 
         //if (user.status == 'inactived') {

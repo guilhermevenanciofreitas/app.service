@@ -1,7 +1,7 @@
 import { App } from './app.js'
 import serverless from 'serverless-http'
 
-const PORT = process.env.PORT || 7078
+const PORT = process.env.PORT
 
 const app = new App()
 
