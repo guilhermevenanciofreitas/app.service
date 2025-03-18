@@ -7,7 +7,7 @@ import { Breadcrumb, Button, HStack, Nav, Pagination, Panel, Stack } from 'rsuit
 import { Divider } from 'rsuite';
 import PageContent from '../../components/PageContent';
 
-import { CustomBreadcrumb, CustomDateRangePicker, CustomFilter, CustomSearch, DataTable } from '../../controls';
+import { CustomBreadcrumb, CustomDateRangePicker, CustomFilter, CustomPagination, CustomSearch, DataTable } from '../../controls';
 import { MdAddCircleOutline, MdCheckCircleOutline } from 'react-icons/md';
 
 import Link from '../../components/NavLink'
@@ -16,35 +16,11 @@ import { ViewRole } from './view.role';
 
 const fields = [
   //{ label: 'Todos', value: undefined },
-  { label: 'Banco', value: 'name' },
+  { label: 'Conta', value: 'account' },
+  { label: 'Agência', value: 'agency' },
 ]
 
-class Filter extends React.Component {
-
-  state = {
-    filter: {...this.props.filter}
-  }
-
-  data = [
-    { label: 'Ativo', value: 'active' },
-    { label: 'Inativo', value: 'inactive' },
-  ]
-
-  onApply = () => {
-    this.props.onClose(this.props.onApply(this.state.filter))
-  }
-
-  render = () => (
-    <CustomFilter>
-      <CustomFilter.Item label={'Situação'} data={this.data} filter={this.state.filter} field={'situation'} onChange={(filter) => this.setState({filter})} />
-        <hr />
-      <Button appearance={'primary'} color='green' onClick={this.onApply}><MdCheckCircleOutline />&nbsp;Aplicar</Button>
-    </CustomFilter>
-  )
-
-}
-
-class SettingBankAccounts extends React.Component {
+export class SettingBankAccounts extends React.Component {
 
   viewRole = React.createRef()
 
@@ -60,10 +36,6 @@ class SettingBankAccounts extends React.Component {
     this.viewRole.current.editRole(role.id)
   }
 
-  onApplyFilter = (filter) => {
-    this.setState({request: {filter}}, () => this.onSearch())
-  }
-
   onSearch = () => {
     this.setState({loading: true}, async() => {
       try {
@@ -74,34 +46,30 @@ class SettingBankAccounts extends React.Component {
     })
   }
 
+  onMenuClick = () => {
+    this.setState({redirect: '/settings'})
+  }
+
   columns = [
     //{ selector: (row) => row.id, name: 'Id' },
     { selector: (row) => <><img src={row.bank?.image} style={{height: '20px'}} /> {row.bank?.name}</>, name: 'Banco' },
-    { selector: (row) => `${row.agency} - ${row.agencyDigit}`, name: 'Agência' },
-    { selector: (row) => `${row.account} - ${row.accountDigit}`, name: 'Conta' },
+    { selector: (row) => `${row.agency}`, name: 'Agência' },
+    { selector: (row) => `${row.account}`, name: 'Conta' },
   ]
 
   render = () => {
 
     return (
-      <>
+      <Panel header={<CustomBreadcrumb menu={'Configurações'} title={'Bancos'} onMenuClick={this.onMenuClick} />}>
 
         <ViewRole ref={this.viewRole} />
 
         <PageContent>
           
           <Stack spacing={'6px'} direction={'row'} alignItems={'flex-start'} justifyContent={'space-between'}>
-            
             <HStack>
-
-              <CustomSearch placeholder={'Banco'} loading={this.state?.loading} fields={fields} value={this.state?.request?.search} onChange={(search) => this.setState({request: {search}}, () => this.onSearch())} />
-              
-              <CustomFilter.Whisper badge={_.size(this.state?.request?.filter)}>
-                {(props) => <Filter filter={this.state?.request?.filter} onApply={this.onApplyFilter} {...props} />}
-              </CustomFilter.Whisper>
-
+              <CustomSearch placeholder={'Conta'} loading={this.state?.loading} fields={fields} value={this.state?.request?.search} onChange={(search) => this.setState({request: {search}}, () => this.onSearch())} />
             </HStack>
-
           </Stack>
 
           <hr></hr>
@@ -117,34 +85,15 @@ class SettingBankAccounts extends React.Component {
           <hr></hr>
 
           <Stack direction='row' alignItems='flexStart' justifyContent='space-between'>
-
-            <Button appearance='primary' color='blue' startIcon={<MdAddCircleOutline />} onClick={this.onNewRole}>Novo banco</Button>
-
-            <Pagination layout={['-', 'limit', '|', 'pager']} size={'md'} prev={true} next={true} first={true} last={true} ellipsis={false} boundaryLinks={false} total={200} limit={50} limitOptions={[30,50,100]} maxButtons={6} activePage={1}
-              //onChangePage={setActivePage}
-              //onChangeLimit={setLimit}
-            />
-
+            <Stack spacing={5}>
+              <Button appearance='primary' color='blue' startIcon={<MdAddCircleOutline />} onClick={this.onNewRole}>Novo banco</Button>
+            </Stack>            
+            <CustomPagination isLoading={this.state?.loading} total={this.state?.response?.count} limit={this.state?.request?.limit} activePage={this.state?.request?.offset + 1} onChangePage={(offset) => this.setState({request: {...this.state.request, offset: offset - 1}}, () => this.onSearch())} onChangeLimit={(limit) => this.setState({request: {...this.state.request, limit}}, () => this.onSearch())} />
           </Stack>
 
-
         </PageContent>
-      </>
-    )
-  }
-
-}
-
-class Page extends React.Component {
-
-  render = () => {
-    return (
-      <Panel header={<CustomBreadcrumb menu={'Configurações'} title={'Bancos'} />}>
-        <SettingBankAccounts />
       </Panel>
     )
   }
 
 }
-
-export default Page;

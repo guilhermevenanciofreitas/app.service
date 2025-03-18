@@ -16,7 +16,6 @@ import { IntegrationRoute } from './src/routes/integration.route.js'
 import { FinanceStatementRoute } from './src/routes/finance/statement.route.js'
 import { FinanceStatementMercadoPagoController } from './src/controllers/finance/bank-statements/mercado-pago.js'
 import { FinanceStatementBankStatementsMercadoPagoRoute } from './src/routes/finance/bank-statements/mercado-pago.route.js'
-import { LogisticTripRoute } from './src/routes/logistic/trip.route.js'
 
 export class App {
 
@@ -65,6 +64,7 @@ export class App {
     //Setting
     this.express.use('/api/setting/role', new SettingRoleRoute().router)
     this.express.use('/api/setting/user', new SettingUserRoute().router)
+    this.express.use('/api/setting/bank-account', new SettingBankAccountRoute().router)
 
     
     this.express.use('/api/search', new SearchRoute().router)

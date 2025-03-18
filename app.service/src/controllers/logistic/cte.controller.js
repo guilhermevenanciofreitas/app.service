@@ -26,6 +26,7 @@ export class LogisticCteController {
         const limit = req.body.limit || 50
         const offset = req.body.offset || 0
         const search = req.body.search
+        const cStat = req.body.cStat
 
         const where = []
 
@@ -44,37 +45,69 @@ export class LogisticCteController {
           }
 
         }
+
+        const wherePending = {
+          [Sequelize.Op.or]: [
+            { cStat: { [Sequelize.Op.notIn]: [100, 101, 135] } },
+            { cStat: { [Sequelize.Op.eq]: null } }
+          ]
+        }
+        const whereAutorized = {cStat: [100]}
+        const whereCanceled = {cStat: [101, 135]}
         
-        //where.push({cStat: 100})
+        if (cStat == 'pending') {
+          where.push(wherePending)
+        }
+        
+        if (cStat == 'autorized') {
+          where.push(whereAutorized)
+        }
 
-        where.push({IDCarga: {[Sequelize.Op.eq]: null}})
+        if (cStat == 'canceled') {
+          where.push(whereCanceled)
+        }
 
-        const ctes = await db.Cte.findAndCountAll({
-          attributes: ['id', 'dhEmi', 'nCT', 'serie', 'chCTe', 'cStat', 'baseCalculo'],
-          include: [
-            {model: db.Partner, as: 'sender', attributes: ['id', 'cpfCnpj', 'name', 'surname']},
-            {model: db.Partner, as: 'recipient', attributes: ['id', 'surname']},
-            {model: db.Shippiment, as: 'shippiment', attributes: ['id'], include: [
-              {model: db.Partner, as: 'sender', attributes: ['id', 'surname']}
-            ]},
-            {model: db.CteNfe, as: 'cteNfes', attributes: ['id', 'nfeId'], include: [
-              {model: db.Nfe, as: 'nfe', attributes: ['id', 'chNFe']},
-            ]},
-          ],
-          limit: limit,
-          offset: offset * limit,
-          order: [['dhEmi', 'desc']],
-          where,
-          subQuery: false
-        })
+        await db.transaction(async (transaction) => {
 
-        res.status(200).json({
-          request: {
-            limit, offset
-          },
-          response: {
-            rows: ctes.rows, count: ctes.count
+          const ctes = await db.Cte.findAndCountAll({
+            attributes: ['id', 'dhEmi', 'nCT', 'serie', 'chCTe', 'cStat', 'baseCalculo'],
+            include: [
+              {model: db.Partner, as: 'sender', attributes: ['id', 'cpfCnpj', 'name', 'surname']},
+              {model: db.Partner, as: 'recipient', attributes: ['id', 'surname']},
+              {model: db.Shippiment, as: 'shippiment', attributes: ['id'], include: [
+                {model: db.Partner, as: 'sender', attributes: ['id', 'surname']}
+              ]},
+              {model: db.CteNfe, as: 'cteNfes', attributes: ['id', 'nfeId'], include: [
+                {model: db.Nfe, as: 'nfe', attributes: ['id', 'chNFe']},
+              ]},
+            ],
+            limit: limit,
+            offset: offset * limit,
+            order: [['dhEmi', 'desc']],
+            where,
+            subQuery: false,
+            distinct: true,
+            transaction
+          })
+  
+          const all = await db.Cte.count({transaction})
+          const pending = await db.Cte.count({where: wherePending, transaction})
+          const autorized = await db.Cte.count({where: whereAutorized, transaction})
+          const canceled = await db.Cte.count({where: whereCanceled, transaction})
+  
+          const status = {
+            all, pending, autorized, canceled
           }
+  
+          res.status(200).json({
+            request: {
+              cStat, limit, offset
+            },
+            response: {
+              status, rows: ctes.rows, count: ctes.count
+            }
+          })
+  
         })
 
       } catch (error) {
@@ -164,7 +197,7 @@ export class LogisticCteController {
   }
 
   upload = async (req, res) => {
-    await Authorization.verify(req, res).then(async ({companyId, userId}) => {
+    await Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
       try {
 
         const db = new AppContext()
@@ -200,6 +233,7 @@ export class LogisticCteController {
             if (!recipient) {
 
               recipient = {
+                companyBusinessId: companyBusinessId,
                 cpfCnpj: json.cteProc.CTe.infCte.dest.CNPJ || json.cteProc.CTe.infCte.dest.CPF,
                 name: json.cteProc.CTe.infCte.dest.xNome,
                 surname: json.cteProc.CTe.infCte.dest.xNome,

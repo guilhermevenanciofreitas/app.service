@@ -154,7 +154,7 @@ export class Integrations extends React.Component {
       <IconButton className='hover-blue' size='sm' circle icon={<FaEllipsisV />} appearance="default" />
     </Whisper>, minWidth: '30px', maxWidth: '30px', center: true, style: {padding: '0px'}},
     { selector: (row) => row.integration.name, name: 'Integração'},
-    { selector: (row) => <div className='hidden'><FaRegSun size='16px' color='blue' style={{padding: '3px'}} onClick={() => this.onSetting(row)} /></div>, center: true, minWidth: '50px', maxWidth: '50px', style: {padding: '0px'}},
+    { selector: (row) => <div className='hidden'><FaRegSun size='16px' color='#2196f3' style={{padding: '3px'}} onClick={() => this.onSetting(row)} /></div>, center: true, minWidth: '50px', maxWidth: '50px', style: {padding: '0px'}},
   ]
 
   render = () => {

@@ -67,8 +67,8 @@ export const Search = {
         return (await new Service().Post("search/integration", {search}, undefined, false))?.data
     },
 
-    companyIntegration: async (search) => {
-        return (await new Service().Post("search/company-integration", {search}, undefined, false))?.data
+    companyIntegration: async (search, scope) => {
+        return (await new Service().Post("search/company-integration", {search, scope}, undefined, false))?.data
     },
 
 }

@@ -223,12 +223,12 @@ export const appNavs = [
         to: '/logistic/shippiments',
         ruleId: '6F1F9996-C17B-470A-93B7-A2491DFDF20F'
       },
-      /*{
+      {
         eventKey: 'trips',
         title: 'Viagens',
-        to: '/logistic/trips'
+        to: '/logistic/trips',
+        ruleId: '0A4763CF-3D8F-4F4A-B83C-396494F38254'
       },
-      */
     ]
   },/*
   {

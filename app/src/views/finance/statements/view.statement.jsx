@@ -86,9 +86,9 @@ export class ViewStatement extends React.Component {
                             </Col>
                             <Col md={12}>
                                 <div className='form-control'>
-                                    <AutoComplete label='Conta' value={this.state?.bankAccount} text={(item) => `${item.agency}`} onChange={(bankAccount) => this.setState({bankAccount})} onSearch={async (search) => await Search.bankAccount(search)}>
+                                    <AutoComplete label='Conta' value={this.state?.bankAccount} text={(item) => `${item.bank?.name} - ${item.agency}`} onChange={(bankAccount) => this.setState({bankAccount})} onSearch={async (search) => await Search.bankAccount(search)}>
                                         <AutoComplete.Result>
-                                            {(item) => <span>{item.agency}</span>}
+                                            {(item) => <span>{item.bank?.name} - {item.agency}</span>}
                                         </AutoComplete.Result>
                                     </AutoComplete>
                                 </div>
