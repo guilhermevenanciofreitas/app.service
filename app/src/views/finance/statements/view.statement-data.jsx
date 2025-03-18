@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Form, Loader, Message, Modal, toaster } from 'rsuite';
+import { Button, Divider, Form, Loader, Message, Modal, toaster } from 'rsuite';
 import { Container, Row, Col } from 'react-grid-system';
 import { AutoComplete, ViewModal } from "../../../controls";
 import { MdCheckCircleOutline } from "react-icons/md";
@@ -86,6 +86,7 @@ export class ViewStatementData extends React.Component {
                 <ViewModal ref={this.viewModal} size={950}>
                     <Modal.Header><Modal.Title><Container>Conciliação</Container></Modal.Title></Modal.Header>
                     <Modal.Body>
+
                         <div style={{height: '100%'}}>
                             <DataTable
                                 fixedHeader
@@ -95,6 +96,7 @@ export class ViewStatementData extends React.Component {
                                 data={this.state?.statementData}
                             />
                         </div>
+
                     </Modal.Body>
                     <Modal.Footer>
                         <Button appearance="primary" color='green' onClick={this.onSubmit} disabled={this.state?.submting}>{this.state?.submting ? <><Loader /> &nbsp; Conciliando...</> : <><MdCheckCircleOutline /> &nbsp; Conciliar</>}</Button>

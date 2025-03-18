@@ -16,6 +16,7 @@ import { IntegrationRoute } from './src/routes/integration.route.js'
 import { FinanceStatementRoute } from './src/routes/finance/statement.route.js'
 import { FinanceStatementMercadoPagoController } from './src/controllers/finance/bank-statements/mercado-pago.js'
 import { FinanceStatementBankStatementsMercadoPagoRoute } from './src/routes/finance/bank-statements/mercado-pago.route.js'
+import { LogisticTripRoute } from './src/routes/logistic/trip.route.js'
 
 export class App {
 
@@ -55,6 +56,7 @@ export class App {
     //Logistic
     this.express.use('/api/logistic/cte', new LogisticCteRoute().router)
     this.express.use('/api/logistic/shippiment', new LogisticShippimentRoute().router)
+    this.express.use('/api/logistic/trip', new LogisticTripRoute().router)
 
     this.express.use('/api/task', new TaskRoute().router)
 

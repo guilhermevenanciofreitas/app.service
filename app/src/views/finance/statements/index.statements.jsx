@@ -4,7 +4,7 @@ import { Badge, Button, Divider, Drawer, IconButton, List, Message, Nav, Panel, 
 import PageContent from '../../../components/PageContent'
 
 import { AutoComplete, CustomBreadcrumb, CustomPagination, CustomSearch, DataTable } from '../../../controls'
-import { FaCheckCircle, FaEllipsisV, FaFileDownload, FaFilter, FaPlusCircle, FaPrint } from 'react-icons/fa'
+import { FaCheckCircle, FaEllipsisV, FaFileDownload, FaFilter, FaPlusCircle, FaPrint, FaTrash } from 'react-icons/fa'
 import { Service } from '../../../service'
 
 import { Exception } from '../../../utils/exception'
@@ -15,6 +15,8 @@ import { ViewBankStatement } from './view.bank-statements'
 import dayjs from 'dayjs'
 import _ from 'lodash'
 import { ViewStatementData } from './view.statement-data'
+import { Loading } from '../../../App'
+import Swal from 'sweetalert2'
 
 const fields = [
   { label: 'Número', value: 'number' },
@@ -154,6 +156,29 @@ export class Statements extends React.Component {
     }
   }
 
+  onDelete = async (id) => {
+    try {
+
+      const r = await Swal.fire({text: 'Tem certeza que deseja excluir ?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Sim', cancelButtonText: 'Não'})
+      if (!r.isConfirmed) return
+
+      const id = _.map(this.state.selecteds, (item) => item.id)
+
+      Loading.Show('Excluindo...')
+      await new Service().Post('finance/statement/delete', {id})
+      Loading.Hide()
+
+      this.setState({selecteds: []})
+
+      await this.onSearch()
+
+    } catch (error) {
+      Exception.error(error)
+    } finally {
+      Loading.Hide()
+    }
+  }
+
   columns = [
  
     { selector: (row) => <Whisper
@@ -215,6 +240,7 @@ export class Statements extends React.Component {
           <Stack direction='row' alignItems='flexStart' justifyContent='space-between'>
             <Stack spacing={5}>
               {_.size(this.state?.selecteds) == 0 && <Button appearance='primary' color='blue' startIcon={<FaPlusCircle />} onClick={this.onNew}>&nbsp;Novo</Button>}
+              {_.size(this.state?.selecteds) > 0 && <Button appearance='primary' color='red' startIcon={<FaTrash />} onClick={this.onDelete}>&nbsp;Excluir</Button>}
             </Stack>
             <CustomPagination isLoading={this.state?.loading} total={this.state?.response?.count} limit={this.state?.request?.limit} activePage={this.state?.request?.offset + 1} onChangePage={(offset) => this.setState({request: {...this.state.request, offset: offset - 1}}, () => this.onSearch())} onChangeLimit={(limit) => this.setState({request: {...this.state.request, limit}}, () => this.onSearch())} />
           </Stack>

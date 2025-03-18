@@ -44,6 +44,7 @@ import { CalledOccurrence } from './models/calledOccurrence.model.js'
 import { CalledStatus } from './models/calledStatus.model.js'
 import { CalledResolution } from './models/calledResolution.model.js'
 import { StatementData } from './models/statementData.model.js'
+import { Trip } from './models/trip.model.js'
 
 export class AppContext extends Sequelize {
   
@@ -126,6 +127,8 @@ export class AppContext extends Sequelize {
   TaskMethod = this.define('taskMethod', new TaskMethod(), { tableName: 'taskMethod' })
 
   TaskHistory = this.define('taskHistory', new TaskHistory(), { tableName: 'taskHistory' })
+
+  Trip = this.define('task', new Trip(), { tableName: 'ViagemGrupo' })
 
   User = this.define('user', new User(), { tableName: 'aspnet_Users' })
 
@@ -235,6 +238,8 @@ export class AppContext extends Sequelize {
 
     this.Task.belongsTo(this.TaskMethod, {as: 'method', foreignKey: 'methodId', targetKey: 'id'})
     this.Task.hasMany(this.TaskHistory, {as: 'taskHistories', foreignKey: 'taskId'})
+
+    this.Trip.belongsTo(this.Partner, {as: 'driver', foreignKey: 'driverId', targetKey: 'id'})
 
     this.User.hasMany(this.CompanyUser, {as: 'companyUsers', foreignKey: 'userId'})
 
