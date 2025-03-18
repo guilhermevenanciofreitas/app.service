@@ -85,8 +85,63 @@ export class LogisticCtes extends React.Component {
     }
   }
 
+  customCheckbox = React.forwardRef((props, ref) => {
+    console.log(props.row)
+    return (
+      <div style={{display: 'flex', alignItems: 'center', height: '100%', padding: 0, margin: 0}}>
+        <div style={{width: '4px', alignSelf: 'stretch', backgroundColor: props.name == 'select-all-rows' ? 'transparent' : 'springgreen', margin: '2px'}} />
+        <span style={{fontWeight: 'bold', marginLeft: '10px' }}><input type="checkbox" ref={ref} {...props} /></span>
+      </div>
+    )
+  })
+
   columns = [
     //
+    {
+      name: 'Seleção',
+      cell: (row) => {
+
+        let color = ''
+
+        switch (row.cStat) {
+          case 100:
+            color = 'springgreen'
+            break;
+          case 135:
+            color = 'tomato'
+            break;
+          default:
+            color = 'silver'
+            break;
+        }
+
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', width: '100%', height: '100%', padding: 0, margin: 0 }}>
+            {/* Caixinha de status com a cor definida pelo registro */}
+            <div
+              style={{
+                width: '4px',
+                alignSelf: 'stretch',
+                backgroundColor: color,
+                margin: '2px'
+              }}
+            />
+            <span style={{ fontWeight: 'bold', marginLeft: '10px' }}>
+              <input 
+                type="checkbox" 
+                checked={this.state.selectedIds?.includes(row.id) || false}
+                onChange={() => this.handleToggle(row.id)}
+              />
+            </span>
+          </div>
+        )
+      },
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      minWidth: '35px',
+      maxWidth: '35px'
+    },
     { selector: (row) => <Whisper
       trigger="click"
       placement={'bottomStart'}
@@ -102,16 +157,16 @@ export class LogisticCtes extends React.Component {
       }}
     >
       <IconButton className='hover-blue' size='sm' circle icon={<FaEllipsisV />} appearance="default" />
-    </Whisper>, minWidth: '30px', maxWidth: '30px', center: true, style: {padding: '0px'}},
-    { selector: (row) => dayjs(row.dhEmi).format('DD/MM/YYYY HH:mm'), name: 'Emissão', minWidth: '140px', maxWidth: '140px'},
-    { selector: (row) => row.nCT, name: 'Número', minWidth: '80px', maxWidth: '80px'},
-    { selector: (row) => row.serie, name: 'Série', minWidth: '60px', maxWidth: '60px'},
-    { selector: (row) => row.chCTe, name: 'Chave de acesso', minWidth: '350px', maxWidth: '350px'},
+    </Whisper>, minWidth: '45px', maxWidth: '45px', center: true},
+    { selector: (row) => dayjs(row.dhEmi).format('DD/MM/YYYY HH:mm'), name: 'Emissão', minWidth: '120px', maxWidth: '120px'},
+    { selector: (row) => row.nCT, name: 'Número', minWidth: '75px', maxWidth: '75px'},
+    { selector: (row) => row.serie, name: 'Série', minWidth: '50px', maxWidth: '50px'},
+    { selector: (row) => row.chCTe, name: 'Chave de acesso', minWidth: '325px', maxWidth: '325px'},
     { selector: (row) => row.sender?.surname, name: 'Remetente'},
     { selector: (row) => row.recipient?.surname, name: 'Destinatário', minWidth: '350px', maxWidth: '350px'},
     { selector: (row) => new Intl.NumberFormat('pt-BR', {style: 'decimal', minimumFractionDigits: 2}).format(parseFloat(row.baseCalculo)), name: 'Valor', minWidth: '100px', maxWidth: '100px', right: true},
-    { selector: (row) => <div className='hidden'><FaPrint size='16px' color='tomato' style={{padding: '3px'}} onClick={() => this.onDacte(row)} /><FaFileCode size='16px' color='steelblue' style={{padding: '3px'}} /></div>, center: true, minWidth: '50px', maxWidth: '50px', style: {padding: '0px'}},
-    { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onViewNfe(row)} content={_.size(row.cteNfes)}></Badge>, center: true, minWidth: '35px', maxWidth: '35px', style: {padding: '0px'}},
+    { selector: (row) => <div className='hidden'><FaPrint size='16px' color='tomato' style={{padding: '3px'}} onClick={() => this.onDacte(row)} /><FaFileCode size='16px' color='steelblue' style={{padding: '3px'}} /></div>, center: true, minWidth: '60px', maxWidth: '60px'},
+    { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onViewNfe(row)} content={_.size(row.cteNfes)}></Badge>, center: true, minWidth: '30px', maxWidth: '30px'},
   ]
 
   render = () => {
@@ -138,13 +193,13 @@ export class LogisticCtes extends React.Component {
           <hr></hr>
           
           <Nav appearance="subtle">
-            <Nav.Item active={!this.state?.request?.bankAccount} onClick={() => this.setState({request: {...this.state.request, bankAccount: undefined}}, () => this.onSearch())}><center style={{width: 140}}>Todos<br></br>{this.state?.loading ? "-" : this.state?.response?.count ?? '-'}</center></Nav.Item>
-            {_.map(this.state?.response?.bankAccounts, (bankAccount) => {
-              return <Nav.Item eventKey="home" active={this.state?.request?.bankAccount?.id == bankAccount.id} onClick={() => this.setState({request: {...this.state.request, bankAccount: bankAccount}}, () => this.onSearch())}><center style={{width: 160}}>{<><img src={bankAccount?.bank?.image} style={{height: '16px'}} />&nbsp;&nbsp;{bankAccount.name || <>{bankAccount?.agency}-{bankAccount?.agencyDigit} / {bankAccount?.account}-{bankAccount?.accountDigit}</>}</>}<br></br>{this.state?.loading ? '-' : <>R$ {bankAccount.balance}</>}</center></Nav.Item>
-            })}
+            <Nav.Item active={!this.state?.request?.cStat} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: undefined}}, () => this.onSearch())}><center style={{width: 140}}>Todos<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status.all) ?? '-'}</center></Nav.Item>
+            <Nav.Item active={this.state?.request?.cStat == 'pending'} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'pending'}}, () => this.onSearch())}><center style={{width: 140}}>Pendentes<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.pending) ?? '-'}</center></Nav.Item>
+            <Nav.Item active={this.state?.request?.cStat == 'autorized'} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'autorized'}}, () => this.onSearch())}><center style={{width: 140}}>Autorizados<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.autorized) ?? '-'}</center></Nav.Item>
+            <Nav.Item active={this.state?.request?.cStat == 'canceled'} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'canceled'}}, () => this.onSearch())}><center style={{width: 140}}>Cancelados<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.canceled) ?? '-'}</center></Nav.Item>
           </Nav>
 
-          <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEdit} selectedRows={true} onSelected={(selecteds) => this.setState({selecteds})} />
+          <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEdit} />
       
           <hr></hr>
           

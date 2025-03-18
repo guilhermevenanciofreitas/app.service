@@ -19,4 +19,9 @@ export class Integration {
     type: Sequelize.STRING(200)
   }
 
+  scope = {
+    field: 'scope',
+    type: Sequelize.STRING(300)
+  }
+
 }

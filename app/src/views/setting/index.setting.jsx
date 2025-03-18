@@ -11,12 +11,12 @@ const sections = {
     { name: 'Usuários', icon: <FaUsers />, path: '/settings/users' },
     { name: 'Cargos', icon: <FaBriefcase />, path: '/settings/roles' }
   ],
-  /*
   Finanças: [
-    { name: 'Faturamento', icon: <FaDollarSign />, path: '/faturamento' },
-    { name: 'Despesas', icon: <FaChartLine />, path: '/despesas' },
-    { name: 'Impostos', icon: <FaUserTie />, path: '/impostos' }
+    { name: 'Contas bancárias', icon: <FaDollarSign />, path: '/settings/bank-accounts' },
+    //{ name: 'Despesas', icon: <FaChartLine />, path: '/despesas' },
+    //{ name: 'Impostos', icon: <FaUserTie />, path: '/impostos' }
   ],
+  /*
   Vendas: [
     { name: 'Clientes', icon: <FaShoppingCart />, path: '/clientes' },
     { name: 'Produtos', icon: <FaBox />, path: '/produtos' },

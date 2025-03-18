@@ -63,7 +63,7 @@ export class ViewBankStatement extends React.Component {
 
                             <Col md={6}>
                                 <div className='form-control'>
-                                    <AutoComplete label='Integração' value={this.state?.companyIntegration} text={(item) => `${item.integration?.name}`} onChange={(companyIntegration) => this.setState({ companyIntegration })} onSearch={async (search) => await Search.companyIntegration(search)} autoFocus>
+                                    <AutoComplete label='Integração' value={this.state?.companyIntegration} text={(item) => `${item.integration?.name}`} onChange={(companyIntegration) => this.setState({ companyIntegration })} onSearch={async (search) => await Search.companyIntegration(search, 'bank-statement')} autoFocus>
                                         <AutoComplete.Result>
                                         {(item) => <span>{item.integration?.name}</span>}
                                         </AutoComplete.Result>

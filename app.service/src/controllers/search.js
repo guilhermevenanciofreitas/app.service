@@ -366,7 +366,7 @@ export class SearchController {
                 const bankAccounts = await db.BankAccount.findAll({
                     attributes: ['id', 'agency', 'account'],
                     include: [
-                        //{model: db.Bank, as: 'bank', attributes: ['id', 'name']}
+                        {model: db.Bank, as: 'bank', attributes: ['id', 'name']}
                     ],
                     where: [{
                         /*
@@ -587,12 +587,18 @@ export class SearchController {
 
                 const db = new AppContext()
 
+                const where = [{'$integration.name$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}]
+
+                if (req.body.scope) {
+                    where.push({'$integration.scope$': {[Sequelize.Op.like]: `%${req.body?.scope}%`}})
+                }
+
                 const companyIntegrations = await db.CompanyIntegration.findAll({
                     attributes: ['id'],
                     include: [
                         {model: db.Integration, as: 'integration', attributes: ['id', 'name']}
                     ],
-                    where: [{'$integration.name$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}],
+                    where,
                     order: [
                         [{model: db.Integration, as: 'integration'}, 'name', 'asc']
                     ],

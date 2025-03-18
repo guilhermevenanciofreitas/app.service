@@ -8,7 +8,7 @@ import { Loader, Placeholder } from 'rsuite';
 //import './DataTable.css';
 
 
-const ControlDataTable = ({height, dense = true, loading, columns, rows, noDataComponent, style, selectedRows, onItem, OnSort, onSelected, placeholder = 8}) => {
+const ControlDataTable = ({height, dense = true, loading, columns, rows, noDataComponent, style, selectedRows, customCheckbox, onItem, OnSort, onSelected, placeholder = 8}) => {
 
   return (
     <div style={style || {cursor: 'pointer', width: '100%', marginTop: '15px', maxHeight: '100%', height: height || 'calc(100vh - 370px)', overflow: loading ? 'hidden' : 'auto'}}>
@@ -33,6 +33,7 @@ const ControlDataTable = ({height, dense = true, loading, columns, rows, noDataC
           dense={dense}
           selectableRows={selectedRows}
           onSelectedRowsChange={(args) => onSelected(args.selectedRows)}
+          selectableRowsComponent={customCheckbox}
           onSort={(column, direction) => {
             if (!column?.sort) return;
             OnSort({column: column.sort, direction})
@@ -49,9 +50,9 @@ const ControlDataTable = ({height, dense = true, loading, columns, rows, noDataC
 
 }
 
-const RowColor = ({children, color, width = '4px', height = '22px'}) => {
+const RowColor = ({children, color, width = '4px', height = '12px'}) => {
   return (
-    <div style={{display: 'flex'}}>
+    <div style={{display: 'flex', alignItems: 'center'}}>
       <div style={{backgroundColor: color, width, height}}></div>
       <div style={{marginLeft: '10px'}}>{children}</div>
     </div>
