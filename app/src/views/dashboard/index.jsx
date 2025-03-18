@@ -7,7 +7,7 @@ import { CustomBreadcrumb } from '../../controls';
 
 const Page = () => {
   return (
-    <Panel header={<CustomBreadcrumb title={'TCL Transporte'} />}>
+    <Panel header={<CustomBreadcrumb title={'Dashboard'} />}>
       {/*
       <PageToolbar />
       <Dashboard />

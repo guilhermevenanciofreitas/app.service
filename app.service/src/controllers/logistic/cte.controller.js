@@ -47,7 +47,7 @@ export class LogisticCteController {
         
         //where.push({cStat: 100})
 
-        where.push({IDCarga: {[Sequelize.Op.eq]: null}})
+        //where.push({IDCarga: {[Sequelize.Op.eq]: null}})
 
         const ctes = await db.Cte.findAndCountAll({
           attributes: ['id', 'dhEmi', 'nCT', 'serie', 'chCTe', 'cStat', 'baseCalculo'],
@@ -164,7 +164,7 @@ export class LogisticCteController {
   }
 
   upload = async (req, res) => {
-    await Authorization.verify(req, res).then(async ({companyId, userId}) => {
+    await Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
       try {
 
         const db = new AppContext()
@@ -200,6 +200,7 @@ export class LogisticCteController {
             if (!recipient) {
 
               recipient = {
+                companyBusinessId: companyBusinessId,
                 cpfCnpj: json.cteProc.CTe.infCte.dest.CNPJ || json.cteProc.CTe.infCte.dest.CPF,
                 name: json.cteProc.CTe.infCte.dest.xNome,
                 surname: json.cteProc.CTe.infCte.dest.xNome,
