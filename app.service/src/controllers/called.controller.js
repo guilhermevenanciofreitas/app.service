@@ -70,7 +70,8 @@ export class CalledController {
           offset: offset * limit,
           order: [['createdAt', 'desc'], [{model: db.CalledResolution, as: 'resolutions'}, 'createdAt', 'desc']],
           where,
-          subQuery: false
+          subQuery: false,
+          distinct: true,
         })
 
         res.status(200).json({
