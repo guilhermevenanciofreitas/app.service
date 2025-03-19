@@ -121,7 +121,7 @@ export class Statements extends React.Component {
       const statement = await this.viewStatement.current.new()
       
       if (statement) {
-        await this.ViewBankStatement.current.new({statementId: statement.id})
+        await this.viewBankStatement.current.new({statementId: statement.id})
         await toaster.push(<Message showIcon type='success'>Salvo com sucesso!</Message>, {placement: 'topEnd', duration: 5000 })
         await this.onSearch()
       }
@@ -227,10 +227,9 @@ export class Statements extends React.Component {
           <hr></hr>
           
           <Nav appearance="subtle">
-            <Nav.Item active={!this.state?.request?.bankAccount} onClick={() => this.setState({request: {...this.state.request, bankAccount: undefined}}, () => this.onSearch())}><center style={{width: 140}}>Todos<br></br>{this.state?.loading ? "-" : this.state?.response?.count ?? '-'}</center></Nav.Item>
-            {_.map(this.state?.response?.bankAccounts, (bankAccount) => {
-              return <Nav.Item eventKey="home" active={this.state?.request?.bankAccount?.id == bankAccount.id} onClick={() => this.setState({request: {...this.state.request, bankAccount: bankAccount}}, () => this.onSearch())}><center style={{width: 160}}>{<><img src={bankAccount?.bank?.image} style={{height: '16px'}} />&nbsp;&nbsp;{bankAccount.name || <>{bankAccount?.agency}-{bankAccount?.agencyDigit} / {bankAccount?.account}-{bankAccount?.accountDigit}</>}</>}<br></br>{this.state?.loading ? '-' : <>R$ {bankAccount.balance}</>}</center></Nav.Item>
-            })}
+            <Nav.Item active={!this.state?.request?.status} onClick={() => this.setState({request: {...this.state.request, bankAccount: undefined}}, () => this.onSearch())}><center style={{width: 120}}>Todos<br></br>{this.state?.loading ? "-" : this.state?.response?.count ?? '-'}</center></Nav.Item>
+            <Nav.Item active={this.state?.request?.status == 'pending'} onClick={() => this.setState({request: {...this.state.request, bankAccount: undefined}}, () => this.onSearch())}><center style={{width: 120}}>Pendentes<br></br>{this.state?.loading ? "-" : this.state?.response?.count ?? '-'}</center></Nav.Item>
+            <Nav.Item active={this.state?.request?.status == 'conciled'} onClick={() => this.setState({request: {...this.state.request, bankAccount: undefined}}, () => this.onSearch())}><center style={{width: 120}}>Conciliados<br></br>{this.state?.loading ? "-" : this.state?.response?.count ?? '-'}</center></Nav.Item>
           </Nav>
 
           <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEdit} selectedRows={true} onSelected={(selecteds) => this.setState({selecteds})} />

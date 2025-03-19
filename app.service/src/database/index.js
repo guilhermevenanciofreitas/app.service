@@ -45,6 +45,7 @@ import { CalledStatus } from './models/calledStatus.model.js'
 import { CalledResolution } from './models/calledResolution.model.js'
 import { StatementData } from './models/statementData.model.js'
 import { Trip } from './models/trip.model.js'
+import { StatementDataConciled } from './models/statementDataConciled.model.js'
 
 export class AppContext extends Sequelize {
   
@@ -121,6 +122,8 @@ export class AppContext extends Sequelize {
   Statement = this.define('statement', new Statement(), { tableName: 'statement' })
 
   StatementData = this.define('statementData', new StatementData(), { tableName: 'statementData' })
+  
+  StatementDataConciled = this.define('statementDataConciled', new StatementDataConciled(), { tableName: 'statementDataConciled' })
 
   Task = this.define('task', new Task(), { tableName: 'task' })
 
@@ -235,6 +238,10 @@ export class AppContext extends Sequelize {
     
     this.Statement.belongsTo(this.Company, {as: 'company', foreignKey: 'companyId', targetKey: 'id'})
     this.Statement.belongsTo(this.BankAccount, {as: 'bankAccount', foreignKey: 'bankAccountId', targetKey: 'id'})
+
+    
+    this.StatementData.hasMany(this.StatementDataConciled, {as: 'concileds', foreignKey: 'statementDataId'})
+
 
     this.Task.belongsTo(this.TaskMethod, {as: 'method', foreignKey: 'methodId', targetKey: 'id'})
     this.Task.hasMany(this.TaskHistory, {as: 'taskHistories', foreignKey: 'taskId'})

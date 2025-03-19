@@ -99,10 +99,18 @@ export class FinanceStatementController {
             
           const statementData = await db.StatementData.findAll({
             attributes: ['id', 'date', 'sourceId', 'orderId', 'gross', 'fee', 'debit', 'credit', 'balance'],
-            //include: [
-            //  {model: db.BankAccount, as: 'bankAccount', attributes: ['id', 'agency']},
-            //],
-            where: [{statementId: id}],
+            include: [
+              {model: db.StatementDataConciled, as: 'concileds', attributes: ['id']},
+            ],
+            where: [{
+              statementId: id,
+              date: { [Sequelize.Op.ne]: null },
+              description: { [Sequelize.Op.notIn]: ['reserve_for_debt_payment', 'reserve_for_payout'] },
+              [Sequelize.Op.or]: [
+                { credit: { [Sequelize.Op.gt]: 0 } },
+                { debit: { [Sequelize.Op.lt]: 0 } }
+              ]
+            }],
             order: [['date', 'asc']],
             transaction
           })
