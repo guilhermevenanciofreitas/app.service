@@ -14,6 +14,7 @@ import { ViewCalledResolution } from './view.called-resolution'
 
 import dayjs from 'dayjs'
 import _ from 'lodash'
+import { CustomNavItem } from '../../controls/custom/CustomNavItem'
 
 const fields = [
   { label: 'Número', value: 'number' },
@@ -231,9 +232,9 @@ export class Calleds extends React.Component {
           <hr></hr>
           
           <Nav appearance="subtle">
-            <Nav.Item active={this.state?.request?.status == 'opened'} onClick={() => this.setState({request: {...this.state.request, status: 'opened'}}, () => this.onSearch())}><center style={{width: 120}}>Abertos<br></br>{this.state?.loading ? "-" : this.state?.response?.count ?? '-'}</center></Nav.Item>
-            <Nav.Item active={this.state?.request?.status == 'delayed'} onClick={() => this.setState({request: {...this.state.request, offset: 0, status: 'delayed'}}, () => this.onSearch())}><center style={{width: 120}}>Atrasados<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.canceled) ?? '-'}</center></Nav.Item>
-            <Nav.Item active={this.state?.request?.status == 'closed'} onClick={() => this.setState({request: {...this.state.request, offset: 0, status: 'closed'}}, () => this.onSearch())}><center style={{width: 120}}>Fechados<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.statusCount?.closed) ?? '-'}</center></Nav.Item>
+            <CustomNavItem active={this.state?.request?.status == 'opened'} loading={this.state?.loading} color='SpringGreen' text='Abertos' count={this.state?.response?.statusCount?.closed} onClick={() => this.setState({request: {...this.state.request, offset: 0, status: 'opened'}}, () => this.onSearch())} />
+            <CustomNavItem active={this.state?.request?.status == 'delayed'} loading={this.state?.loading} color='Tomato' text='Atrasados' count={this.state?.response?.statusCount?.closed} onClick={() => this.setState({request: {...this.state.request, offset: 0, status: 'delayed'}}, () => this.onSearch())} />
+            <CustomNavItem active={this.state?.request?.status == 'closed'} loading={this.state?.loading} color='DodgerBlue' text='Fechados' count={this.state?.response?.statusCount?.closed} onClick={() => this.setState({request: {...this.state.request, offset: 0, status: 'closed'}}, () => this.onSearch())} />
           </Nav>
 
           <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEdit} />

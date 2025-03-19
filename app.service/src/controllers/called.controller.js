@@ -53,14 +53,16 @@ export class CalledController {
         }
 
 
+        const whereOpened = {previsionAt: {[Sequelize.Op.gt]: Sequelize.fn('GETDATE')}}
+        const whereDelayed = {previsionAt: {[Sequelize.Op.lt]: Sequelize.fn('GETDATE')}}
         const whereClosed = {closedAt: {[Sequelize.Op.not]: null}}
 
         if (status == 'opened') {
-          where.push({})
+          where.push(whereOpened)
         }
         
         if (status == 'delayed') {
-          where.push({})
+          where.push(whereDelayed)
         }
 
         if (status == 'closed') {
@@ -88,12 +90,12 @@ export class CalledController {
           distinct: true,
         })
 
-        //const opened = await db.Called.count({where: whereOpened})
-        //const delayed = await db.Called.count({where: whereDelayed})
-        const closed = await db.Called.count({include: [{model: db.Company, as: 'company', attributes: ['id', 'surname']}], where})
+        const opened = await db.Called.count({include: [{model: db.Company, as: 'company', attributes: ['id', 'surname']}], where: [whereOpened]})
+        const delayed = await db.Called.count({include: [{model: db.Company, as: 'company', attributes: ['id', 'surname']}], where: [whereDelayed]})
+        const closed = await db.Called.count({include: [{model: db.Company, as: 'company', attributes: ['id', 'surname']}], where: [whereClosed]})
 
         const statusCount = {
-          closed
+          opened, delayed, closed
         }
 
         res.status(200).json({
