@@ -4,7 +4,7 @@ import { Badge, Button, Divider, Drawer, IconButton, List, Message, Nav, Panel, 
 import PageContent from '../../../components/PageContent'
 
 import { AutoComplete, CustomBreadcrumb, CustomPagination, CustomSearch, DataTable } from '../../../controls'
-import { FaCheckCircle, FaEllipsisV, FaFileDownload, FaFilter, FaPlusCircle, FaPrint } from 'react-icons/fa'
+import { FaCheckCircle, FaEllipsisV, FaFileDownload, FaFilter, FaPlusCircle, FaPrint, FaTrash } from 'react-icons/fa'
 import { Service } from '../../../service'
 
 import { Exception } from '../../../utils/exception'
@@ -15,6 +15,8 @@ import { ViewBankStatement } from './view.bank-statements'
 import dayjs from 'dayjs'
 import _ from 'lodash'
 import { ViewStatementData } from './view.statement-data'
+import { Loading } from '../../../App'
+import Swal from 'sweetalert2'
 
 const fields = [
   { label: 'Número', value: 'number' },
@@ -119,7 +121,7 @@ export class Statements extends React.Component {
       const statement = await this.viewStatement.current.new()
       
       if (statement) {
-        await this.ViewBankStatement.current.new({statementId: statement.id})
+        await this.viewBankStatement.current.new({statementId: statement.id})
         await toaster.push(<Message showIcon type='success'>Salvo com sucesso!</Message>, {placement: 'topEnd', duration: 5000 })
         await this.onSearch()
       }
@@ -151,6 +153,29 @@ export class Statements extends React.Component {
     if (resolution) {
       await toaster.push(<Message showIcon type='success'>Salvo com sucesso!</Message>, {placement: 'topEnd', duration: 5000 })
       await this.onSearch()
+    }
+  }
+
+  onDelete = async (id) => {
+    try {
+
+      const r = await Swal.fire({text: 'Tem certeza que deseja excluir ?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Sim', cancelButtonText: 'Não'})
+      if (!r.isConfirmed) return
+
+      const id = _.map(this.state.selecteds, (item) => item.id)
+
+      Loading.Show('Excluindo...')
+      await new Service().Post('finance/statement/delete', {id})
+      Loading.Hide()
+
+      this.setState({selecteds: []})
+
+      await this.onSearch()
+
+    } catch (error) {
+      Exception.error(error)
+    } finally {
+      Loading.Hide()
     }
   }
 
@@ -202,10 +227,9 @@ export class Statements extends React.Component {
           <hr></hr>
           
           <Nav appearance="subtle">
-            <Nav.Item active={!this.state?.request?.bankAccount} onClick={() => this.setState({request: {...this.state.request, bankAccount: undefined}}, () => this.onSearch())}><center style={{width: 140}}>Todos<br></br>{this.state?.loading ? "-" : this.state?.response?.count ?? '-'}</center></Nav.Item>
-            {_.map(this.state?.response?.bankAccounts, (bankAccount) => {
-              return <Nav.Item eventKey="home" active={this.state?.request?.bankAccount?.id == bankAccount.id} onClick={() => this.setState({request: {...this.state.request, bankAccount: bankAccount}}, () => this.onSearch())}><center style={{width: 160}}>{<><img src={bankAccount?.bank?.image} style={{height: '16px'}} />&nbsp;&nbsp;{bankAccount.name || <>{bankAccount?.agency}-{bankAccount?.agencyDigit} / {bankAccount?.account}-{bankAccount?.accountDigit}</>}</>}<br></br>{this.state?.loading ? '-' : <>R$ {bankAccount.balance}</>}</center></Nav.Item>
-            })}
+            <Nav.Item active={!this.state?.request?.status} onClick={() => this.setState({request: {...this.state.request, bankAccount: undefined}}, () => this.onSearch())}><center style={{width: 120}}>Todos<br></br>{this.state?.loading ? "-" : this.state?.response?.count ?? '-'}</center></Nav.Item>
+            <Nav.Item active={this.state?.request?.status == 'pending'} onClick={() => this.setState({request: {...this.state.request, bankAccount: undefined}}, () => this.onSearch())}><center style={{width: 120}}>Pendentes<br></br>{this.state?.loading ? "-" : this.state?.response?.count ?? '-'}</center></Nav.Item>
+            <Nav.Item active={this.state?.request?.status == 'conciled'} onClick={() => this.setState({request: {...this.state.request, bankAccount: undefined}}, () => this.onSearch())}><center style={{width: 120}}>Conciliados<br></br>{this.state?.loading ? "-" : this.state?.response?.count ?? '-'}</center></Nav.Item>
           </Nav>
 
           <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEdit} selectedRows={true} onSelected={(selecteds) => this.setState({selecteds})} />
@@ -215,6 +239,7 @@ export class Statements extends React.Component {
           <Stack direction='row' alignItems='flexStart' justifyContent='space-between'>
             <Stack spacing={5}>
               {_.size(this.state?.selecteds) == 0 && <Button appearance='primary' color='blue' startIcon={<FaPlusCircle />} onClick={this.onNew}>&nbsp;Novo</Button>}
+              {_.size(this.state?.selecteds) > 0 && <Button appearance='primary' color='red' startIcon={<FaTrash />} onClick={this.onDelete}>&nbsp;Excluir</Button>}
             </Stack>
             <CustomPagination isLoading={this.state?.loading} total={this.state?.response?.count} limit={this.state?.request?.limit} activePage={this.state?.request?.offset + 1} onChangePage={(offset) => this.setState({request: {...this.state.request, offset: offset - 1}}, () => this.onSearch())} onChangeLimit={(limit) => this.setState({request: {...this.state.request, limit}}, () => this.onSearch())} />
           </Stack>

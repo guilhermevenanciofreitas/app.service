@@ -1,7 +1,9 @@
+import dayjs from "dayjs"
 import { AppContext } from "../../database/index.js"
 import { Exception } from "../../utils/exception.js"
 import { Authorization } from "../authorization.js"
 import _ from 'lodash'
+import Sequelize from "sequelize"
 
 export class FinanceStatementController {
 
@@ -15,7 +17,9 @@ export class FinanceStatementController {
         const offset = req.body.offset || 0
         //const filter = req.body.filter || { situation: ['active'] }
 
-        //const where = [{'$bankAccount.companyId$': company.id}]
+        const where = []
+
+        where.push({deletedAt: { [Sequelize.Op.is]: null }})
 
         //if (filter['situation']) where.push({situation: filter['situation']})
 
@@ -31,7 +35,7 @@ export class FinanceStatementController {
           ],
           limit: limit,
           offset: offset * limit,
-          //where,
+          where,
           order: [['createdAt', 'desc']],
         });
 
@@ -95,10 +99,18 @@ export class FinanceStatementController {
             
           const statementData = await db.StatementData.findAll({
             attributes: ['id', 'date', 'sourceId', 'orderId', 'gross', 'fee', 'debit', 'credit', 'balance'],
-            //include: [
-            //  {model: db.BankAccount, as: 'bankAccount', attributes: ['id', 'agency']},
-            //],
-            where: [{statementId: id}],
+            include: [
+              {model: db.StatementDataConciled, as: 'concileds', attributes: ['id']},
+            ],
+            where: [{
+              statementId: id,
+              date: { [Sequelize.Op.ne]: null },
+              description: { [Sequelize.Op.notIn]: ['reserve_for_debt_payment', 'reserve_for_payout'] },
+              [Sequelize.Op.or]: [
+                { credit: { [Sequelize.Op.gt]: 0 } },
+                { debit: { [Sequelize.Op.lt]: 0 } }
+              ]
+            }],
             order: [['date', 'asc']],
             transaction
           })
@@ -140,6 +152,28 @@ export class FinanceStatementController {
           }
 
           res.status(200).json(statement)
+
+        })
+
+      } catch (error) {
+        Exception.error(res, error)
+      }
+    }).catch((error) => {
+      Exception.unauthorized(res, error)
+    })
+  }
+
+  delete = async (req, res) => {
+    await Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
+      try {
+
+        const db = new AppContext()
+
+        await db.transaction(async (transaction) => {
+
+          await db.Statement.update({deletedAt: dayjs().format('YYYY-MM-DD HH:mm')}, {where: [{id: req.body.id}], transaction})
+
+          res.status(200).json({message: 'Excluído com sucesso!'})
 
         })
 

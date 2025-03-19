@@ -123,8 +123,106 @@ export class FinanceStatementMercadoPagoController {
                 statementData.balance = parseFloat(item.BALANCE_AMOUNT);
                 //statementData.data = undefined;
   
-                statementData = await db.StatementData.create(statementData, {transaction});
-  
+                statementData = await db.StatementData.create(statementData, {transaction})
+
+                //if (statementData.data?.status == 'paid') {
+                
+                if (parseFloat(statementData.gross) > 0) {
+
+                  await db.StatementDataConciled.create({
+                      //name: receivement?.name,
+                      statementDataId: statementData.id,
+                      //receivementId: receivement?.id,
+                      action: 'receivement',
+                      type: 'receipt',
+                      //paymentCategorieId: 'ea7090fb-4861-495a-9f6d-ae1b32dfc6f8', //1.01 - Venda no Mercado Livre
+                      amount: parseFloat(statementData.gross)
+                    },
+                    {transaction}
+                  )
+
+                }
+            
+                if (parseFloat(statementData.coupon) > 0) {
+                  await db.StatementDataConciled.create({
+                    //name: 'MERCADO LIVRE',
+                    statementDataId: statementData.id,
+                    action: 'receivement',
+                    type: 'coupon',
+                    //paymentCategorieId: '605a2641-fe34-4020-aa2c-ed674f733d56', //1.02 - Crédito - Reembolso Mercado Livre
+                    amount: parseFloat(statementData.coupon)},
+                    {transaction}
+                  )
+                }
+            
+                if (parseFloat(statementData.fee) < 0) {
+                  await db.StatementDataConciled.create({
+                    //name: 'MERCADO LIVRE',
+                    statementDataId: statementData.id,
+                    action: 'payment',
+                    type: 'fee',
+                    //paymentCategorieId: '8e00db9e-9228-43b8-b53c-5ed9c37b7440', //'2.05 - Taxas e Tarifas ecommerce
+                    amount: parseFloat(statementData.fee)},
+                    {transaction}
+                  )
+                }
+            
+                if (parseFloat(statementData.shipping) < 0) {
+                  await db.StatementDataConciled.create({
+                    //name: 'MERCADO LIVRE',
+                    statementDataId: statementData.id,
+                    action: 'payment',
+                    type: 'shipping',
+                    //paymentCategorieId: '9396efce-2bf1-447f-bcc4-0bfb6f07637b', //'4.3 - Fretes
+                    amount: parseFloat(statementData.shipping)}, 
+                    {transaction}
+                  )
+                }
+            
+                if (parseFloat(statementData.shippingCost) > 0) {
+                    await db.StatementDataConciled.create({
+                      statementDataId: statementData.id,
+                      action: 'payment',
+                      type: 'shippingCost',
+                      //paymentCategorieId: 'fb94a2db-6663-4ac9-8f57-42a16e6f58a5', //'4.4 - Frete pago pelo cliente direto ao Mercado Li
+                      amount: (parseFloat(statementData.shippingCost) * -1)},
+                      {transaction}
+                    )
+                }
+
+                /*
+                if (statementData.data?.status == 'cancelled') {
+
+                  let originId = undefined;
+                  let destinationId = undefined;
+                  let amount = 0;
+
+                  if (parseFloat(statementData.debit) < 0) {
+                    originId = '8112d70d-da04-4efe-a2c7-b0d482ed0835';
+                    destinationId = '7b881ac5-20c4-46af-a6d5-823d4c511431';
+                    amount = parseFloat(statementData.debit);
+                  }
+
+                  if (parseFloat(statementData.credit) > 0) {
+                    originId = '7b881ac5-20c4-46af-a6d5-823d4c511431';
+                    destinationId = '8112d70d-da04-4efe-a2c7-b0d482ed0835';
+                    amount = parseFloat(statementData.credit);
+                  }
+
+                  await db.StatementDataConciled.create({
+                    statementDataId: statementData.id,
+                    action: 'transfer',
+                    type: 'transfer',
+                    originId,
+                    destinationId,
+                    amount: amount}, {transaction}
+                  );
+                    
+                }
+                */
+
+              
+    
               }
   
             })

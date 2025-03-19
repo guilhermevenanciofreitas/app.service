@@ -117,21 +117,9 @@ export class LogisticCtes extends React.Component {
 
         return (
           <div style={{ display: 'flex', alignItems: 'center', width: '100%', height: '100%', padding: 0, margin: 0 }}>
-            {/* Caixinha de status com a cor definida pelo registro */}
-            <div
-              style={{
-                width: '4px',
-                alignSelf: 'stretch',
-                backgroundColor: color,
-                margin: '2px'
-              }}
-            />
+            <div style={{ width: '4px', alignSelf: 'stretch', backgroundColor: color, margin: '2px' }} />
             <span style={{ fontWeight: 'bold', marginLeft: '10px' }}>
-              <input 
-                type="checkbox" 
-                checked={this.state.selectedIds?.includes(row.id) || false}
-                onChange={() => this.handleToggle(row.id)}
-              />
+              <input type="checkbox" checked={this.state.selectedIds?.includes(row.id) || false} onChange={() => this.handleToggle(row.id)} />
             </span>
           </div>
         )
@@ -193,10 +181,10 @@ export class LogisticCtes extends React.Component {
           <hr></hr>
           
           <Nav appearance="subtle">
-            <Nav.Item active={!this.state?.request?.cStat} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: undefined}}, () => this.onSearch())}><center style={{width: 140}}>Todos<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status.all) ?? '-'}</center></Nav.Item>
-            <Nav.Item active={this.state?.request?.cStat == 'pending'} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'pending'}}, () => this.onSearch())}><center style={{width: 140}}>Pendentes<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.pending) ?? '-'}</center></Nav.Item>
-            <Nav.Item active={this.state?.request?.cStat == 'autorized'} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'autorized'}}, () => this.onSearch())}><center style={{width: 140}}>Autorizados<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.autorized) ?? '-'}</center></Nav.Item>
-            <Nav.Item active={this.state?.request?.cStat == 'canceled'} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'canceled'}}, () => this.onSearch())}><center style={{width: 140}}>Cancelados<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.canceled) ?? '-'}</center></Nav.Item>
+            <Nav.Item active={!this.state?.request?.cStat} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: undefined}}, () => this.onSearch())}><center style={{width: 120}}>Todos<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status.all) ?? '-'}</center></Nav.Item>
+            <Nav.Item active={this.state?.request?.cStat == 'pending'} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'pending'}}, () => this.onSearch())}><center style={{width: 120}}>Pendentes<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.pending) ?? '-'}</center></Nav.Item>
+            <Nav.Item active={this.state?.request?.cStat == 'autorized'} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'autorized'}}, () => this.onSearch())}><center style={{width: 120}}>Autorizados<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.autorized) ?? '-'}</center></Nav.Item>
+            <Nav.Item active={this.state?.request?.cStat == 'canceled'} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'canceled'}}, () => this.onSearch())}><center style={{width: 120}}>Cancelados<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.canceled) ?? '-'}</center></Nav.Item>
           </Nav>
 
           <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEdit} />

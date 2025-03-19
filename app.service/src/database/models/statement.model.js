@@ -44,4 +44,9 @@ export class Statement {
     type: Sequelize.STRING
   }
 
+  deletedAt = {
+    field: 'deletedAt',
+    type: Sequelize.STRING
+  }
+
 }

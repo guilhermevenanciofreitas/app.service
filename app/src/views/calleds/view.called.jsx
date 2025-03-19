@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Form, Loader, Message, Modal, toaster } from 'rsuite';
+import { Button, Divider, Form, Loader, Message, Modal, toaster } from 'rsuite';
 import { Container, Row, Col } from 'react-grid-system';
 import { AutoComplete, ViewModal } from "../../controls";
 import { MdCheckCircleOutline } from "react-icons/md";
@@ -155,11 +155,37 @@ export class ViewCalled extends React.Component {
                                     </AutoComplete>
                                 </div>
                             </Col>
+                            <Col md={2}>
+                                <div className='form-control'>
+                                    <AutoComplete label='Prioridade' value={this.state?.priority} text={(item) => `${item.userName}`} onChange={(priority) => this.setState({priority})} onSearch={async (search) => await Search.user(search)}>
+                                        <AutoComplete.Result>
+                                            {(item) => <span>{item.userName}</span>}
+                                        </AutoComplete.Result>
+                                    </AutoComplete>
+                                </div>
+                            </Col>
+                            <Col md={3}>
+                                <div className='form-control'>
+                                    <label class="textfield-filled">
+                                        <input type='text' value={this.state?.protocol} />
+                                        <span>Protocolo</span>
+                                    </label>
+                                </div>
+                            </Col>
+                            <Divider />
                             <Col md={12}>
                                 <div className='form-control'>
                                     <label className="textfield-filled">
                                         <input type='text' value={this.state?.subject} onChange={(event) => this.setState({subject: event.target.value.toUpperCase()})} />
                                         <span>Assunto</span>
+                                    </label>
+                                </div>
+                            </Col>
+                            <Col md={12}>
+                                <div className='form-control'>
+                                    <label className="textfield-filled">
+                                        <textarea value={this.state?.obs} onChange={(event) => this.setState({obs: event.target.value})} rows={4} />
+                                        <span>Observações</span>
                                     </label>
                                 </div>
                             </Col>

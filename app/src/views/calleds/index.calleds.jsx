@@ -145,7 +145,39 @@ export class Calleds extends React.Component {
   }
 
   columns = [
- 
+    {
+      name: 'Seleção',
+      cell: (row) => {
+
+        let color = ''
+
+        switch (row.cStat) {
+          case 100:
+            color = 'springgreen'
+            break;
+          case 135:
+            color = 'tomato'
+            break;
+          default:
+            color = 'silver'
+            break;
+        }
+
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', width: '100%', height: '100%', padding: 0, margin: 0 }}>
+            <div style={{ width: '4px', alignSelf: 'stretch', backgroundColor: color, margin: '2px' }} />
+            <span style={{ fontWeight: 'bold', marginLeft: '10px' }}>
+              <input type="checkbox" checked={this.state.selectedIds?.includes(row.id) || false} onChange={() => this.handleToggle(row.id)} />
+            </span>
+          </div>
+        )
+      },
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      minWidth: '35px',
+      maxWidth: '35px'
+    },
     { selector: (row) => <Whisper
       trigger="click"
       placement={'bottomStart'}
@@ -161,8 +193,8 @@ export class Calleds extends React.Component {
       }}
     >
       <IconButton className='hover-blue' size='sm' circle icon={<FaEllipsisV />} appearance="default" />
-    </Whisper>, minWidth: '30px', maxWidth: '30px', center: true, style: {padding: '0px'}},
-    { selector: (row) => dayjs(row.createdAt).format('DD/MM/YYYY HH:mm'), name: 'Abertura', minWidth: '140px', maxWidth: '140px'},
+    </Whisper>, minWidth: '45px', maxWidth: '45px', center: true},
+    { selector: (row) => dayjs(row.createdAt).format('DD/MM/YYYY HH:mm'), name: 'Abertura', minWidth: '120px', maxWidth: '120px'},
     { selector: (row) => row.company?.surname, name: 'Filial', minWidth: '120px', maxWidth: '120px'},
     { selector: (row) => row.number, name: 'Número', minWidth: '90px', maxWidth: '90px'},
     { selector: (row) => row.responsible?.userName, name: 'Responsável', minWidth: '160px', maxWidth: '160px'},
@@ -171,7 +203,7 @@ export class Calleds extends React.Component {
     { selector: (row) => row.occurrence?.description, name: 'Ocorrência', minWidth: '170px', maxWidth: '170px'},
     { selector: (row) => row.subject, name: 'Assunto'},
     { selector: (row) => dayjs(row.openedDate).format('DD/MM/YYYY HH:mm'), name: 'Fechamento', minWidth: '140px', maxWidth: '140px'},
-    { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onResolution(row)} content={_.size(row.resolutions)}></Badge>, center: true, minWidth: '35px', maxWidth: '35px', style: {padding: '0px'}},
+    { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onResolution(row)} content={_.size(row.resolutions)}></Badge>, center: true, minWidth: '35px', maxWidth: '35px'},
   ]
 
   render = () => {
@@ -195,13 +227,12 @@ export class Calleds extends React.Component {
           <hr></hr>
           
           <Nav appearance="subtle">
-            <Nav.Item active={!this.state?.request?.bankAccount} onClick={() => this.setState({request: {...this.state.request, bankAccount: undefined}}, () => this.onSearch())}><center style={{width: 140}}>Todos<br></br>{this.state?.loading ? "-" : this.state?.response?.count ?? '-'}</center></Nav.Item>
-            {_.map(this.state?.response?.bankAccounts, (bankAccount) => {
-              return <Nav.Item eventKey="home" active={this.state?.request?.bankAccount?.id == bankAccount.id} onClick={() => this.setState({request: {...this.state.request, bankAccount: bankAccount}}, () => this.onSearch())}><center style={{width: 160}}>{<><img src={bankAccount?.bank?.image} style={{height: '16px'}} />&nbsp;&nbsp;{bankAccount.name || <>{bankAccount?.agency}-{bankAccount?.agencyDigit} / {bankAccount?.account}-{bankAccount?.accountDigit}</>}</>}<br></br>{this.state?.loading ? '-' : <>R$ {bankAccount.balance}</>}</center></Nav.Item>
-            })}
+            <Nav.Item active={!this.state?.request?.bankAccount} onClick={() => this.setState({request: {...this.state.request, bankAccount: undefined}}, () => this.onSearch())}><center style={{width: 120}}>Abertos<br></br>{this.state?.loading ? "-" : this.state?.response?.count ?? '-'}</center></Nav.Item>
+            <Nav.Item active={this.state?.request?.cStat == 'canceled'} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'canceled'}}, () => this.onSearch())}><center style={{width: 120}}>Atrasados<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.canceled) ?? '-'}</center></Nav.Item>
+            <Nav.Item active={this.state?.request?.cStat == 'canceled'} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'canceled'}}, () => this.onSearch())}><center style={{width: 120}}>Fechados<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.canceled) ?? '-'}</center></Nav.Item>
           </Nav>
 
-          <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEdit} selectedRows={true} onSelected={(selecteds) => this.setState({selecteds})} />
+          <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEdit} />
       
           <hr></hr>
           

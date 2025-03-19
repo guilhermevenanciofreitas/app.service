@@ -87,6 +87,7 @@ export class LogisticCteController {
             where,
             subQuery: false,
             distinct: true,
+            raw: true,
             transaction
           })
   
@@ -98,6 +99,8 @@ export class LogisticCteController {
           const status = {
             all, pending, autorized, canceled
           }
+
+          console.log(_.size(ctes.rows))
   
           res.status(200).json({
             request: {
