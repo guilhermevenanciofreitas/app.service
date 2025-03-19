@@ -26,6 +26,7 @@ export class CalledController {
         const filter = req.body.filter
         const limit = req.body.limit || 50
         const offset = req.body.offset || 0
+        const status = req.body.status || 'opened'
 
         const where = []
 
@@ -41,8 +42,6 @@ export class CalledController {
 
         }
 
-        console.log(companyBusinessId)
-
         where.push({'$company.codigo_empresa$': companyBusinessId})
 
         if (filter?.company) {
@@ -53,8 +52,23 @@ export class CalledController {
           where.push({'$responsibleId$': filter.responsible.id})
         }
 
+
+        const whereClosed = {closedAt: {[Sequelize.Op.not]: null}}
+
+        if (status == 'opened') {
+          where.push({})
+        }
+        
+        if (status == 'delayed') {
+          where.push({})
+        }
+
+        if (status == 'closed') {
+          where.push(whereClosed)
+        }
+
         const calleds = await db.Called.findAndCountAll({
-          attributes: ['id', 'number', 'createdAt', 'subject'],
+          attributes: ['id', 'number', 'createdAt', 'previsionAt', 'closedAt', [Sequelize.literal(`CASE WHEN [called].[closedAt] IS NOT NULL THEN 'closed' WHEN [called].[previsionAt] > GETDATE() THEN 'opened' ELSE 'delayed' END`), 'status'], 'subject'],
           include: [
             {model: db.Company, as: 'company', attributes: ['id', 'surname']},
             {model: db.User, as: 'responsible', attributes: ['id', 'userName']},
@@ -74,12 +88,20 @@ export class CalledController {
           distinct: true,
         })
 
+        //const opened = await db.Called.count({where: whereOpened})
+        //const delayed = await db.Called.count({where: whereDelayed})
+        const closed = await db.Called.count({include: [{model: db.Company, as: 'company', attributes: ['id', 'surname']}], where})
+
+        const statusCount = {
+          closed
+        }
+
         res.status(200).json({
           request: {
-            filter, limit, offset
+            status, filter, limit, offset
           },
           response: {
-            rows: calleds.rows, count: calleds.count
+            statusCount, rows: calleds.rows, count: calleds.count
           }
         })
 
@@ -102,7 +124,7 @@ export class CalledController {
         await db.transaction(async (transaction) => {
 
           const called = await db.Called.findOne({
-            attributes: ['id', 'number', 'subject'],
+            attributes: ['id', 'number', 'priority', 'step', 'externalProtocol', 'subject', 'observation'],
             include: [
               {model: db.Company, as: 'company', attributes: ['id', 'surname']},
               {model: db.Partner, as: 'requested', attributes: ['id', 'surname']},
@@ -139,7 +161,11 @@ export class CalledController {
           responsibleId: req.body.responsible?.id || null,
           reasonId: req.body.reason?.id || null,
           occurrenceId: req.body.occurrence?.id || null,
-          subject: req.body.subject
+          priority: req.body.priority,
+          step: req.body.step,
+          externalProtocol: req.body.externalProtocol,
+          subject: req.body.subject,
+          observation: req.body.observation
         }
 
         const db = new AppContext()

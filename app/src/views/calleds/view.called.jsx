@@ -17,14 +17,15 @@ export class ViewCalled extends React.Component {
     viewModal = React.createRef()
 
     new = async (called) => {
-        const Authorization = JSON.parse(localStorage.getItem("Authorization"))
-        if (this.state) for (const prop of Object.getOwnPropertyNames(this.state)) delete this.state[prop]
-        this.setState({...called, company: Authorization.company})
+        this.clear()
+        this.setState({...called})
         return this.viewModal.current.show()
     }
 
     edit = async (id) => {
         try {
+
+            this.clear()
 
             Loading.Show()
             const result = await new Service().Post('called/detail', {id})
@@ -39,6 +40,10 @@ export class ViewCalled extends React.Component {
         }
     }
 
+    clear = () => {
+        if (this.state) for (const prop of Object.getOwnPropertyNames(this.state)) delete this.state[prop]
+    }
+
     onSubmit = async () => {
         try {
             
@@ -51,8 +56,11 @@ export class ViewCalled extends React.Component {
                 'responsible.id',
                 'reason.id',
                 'occurrence.id',
+                'priority',
+                'step',
+                'externalProtocol',
                 'subject',
-                'detail'
+                'observation'
             ])
 
             const result = await new Service().Post('called/submit', called)
@@ -86,7 +94,7 @@ export class ViewCalled extends React.Component {
                                     </label>
                                 </div>
                             </Col>
-                            <Col md={5}>
+                            <Col md={4}>
                                 <div className='form-control'>
                                     <AutoComplete label='Filial' value={this.state?.company} text={(item) => `${item.surname}`} onChange={(company) => this.setState({company})} onSearch={async (search) => await Search.company(search)}>
                                         <AutoComplete.Result>
@@ -103,7 +111,7 @@ export class ViewCalled extends React.Component {
                                     </label>
                                 </div>
                             </Col>
-                            <Col md={3}>
+                            <Col md={4}>
                                 <div className='form-control'>
                                     <label class="textfield-filled">
                                         <input type='text' value={this.state?.status?.description} readOnly tabIndex={-1} />
@@ -120,30 +128,22 @@ export class ViewCalled extends React.Component {
                                     </AutoComplete>
                                 </div>
                             </Col>
-                            <Col md={3}>
+                            <Col md={4}>
                                 <div className='form-control'>
-                                    <AutoComplete label='Motivo' value={this.state?.reason} text={(item) => `${item.description}`} onChange={(reason) => this.setState({reason})} onSearch={async (search) => await Search.calledReason(search)}>
+                                    <AutoComplete label='Motivo abertura' value={this.state?.reason} text={(item) => `${item.description}`} onChange={(reason) => this.setState({reason})} onSearch={async (search) => await Search.calledReason(search)}>
                                         <AutoComplete.Result>
                                             {(item) => <span>{item.description}</span>}
                                         </AutoComplete.Result>
                                     </AutoComplete>
                                 </div>
                             </Col>
-                            <Col md={3}>
+                            <Col md={4}>
                                 <div className='form-control'>
                                     <AutoComplete label='Ocorrência' value={this.state?.occurrence} text={(item) => `${item.description}`} onChange={(occurrence) => this.setState({occurrence})} onSearch={async (search) => await Search.calledOccurrence(search)}>
                                         <AutoComplete.Result>
                                             {(item) => <span>{item.description}</span>}
                                         </AutoComplete.Result>
                                     </AutoComplete>
-                                </div>
-                            </Col>
-                            <Col md={2}>
-                                <div className='form-control'>
-                                    <label class="textfield-filled">
-                                        <input type='text' value={dayjs(this.state?.prevision).format('DD/MM/YYYY HH:mm')} readOnly tabIndex={-1} />
-                                        <span>Previsão</span>
-                                    </label>
                                 </div>
                             </Col>
                             <Col md={3}>
@@ -157,18 +157,45 @@ export class ViewCalled extends React.Component {
                             </Col>
                             <Col md={2}>
                                 <div className='form-control'>
-                                    <AutoComplete label='Prioridade' value={this.state?.priority} text={(item) => `${item.userName}`} onChange={(priority) => this.setState({priority})} onSearch={async (search) => await Search.user(search)}>
-                                        <AutoComplete.Result>
-                                            {(item) => <span>{item.userName}</span>}
-                                        </AutoComplete.Result>
-                                    </AutoComplete>
+                                    <label className="textfield-filled">
+                                        <select value={this.state?.priority} onChange={(event) => this.setState({ priority: event.target.value })}>
+                                            <option value="">[Selecione]</option>
+                                            <option value="1">Baixa</option>
+                                            <option value="2">Normal</option>
+                                            <option value="3">Alta</option>
+                                        </select>
+                                        <span>Prioridade</span>
+                                    </label>
+                                </div>
+                            </Col>
+                            <Col md={2}>
+                                <div className='form-control'>
+                                    <label className="textfield-filled">
+                                        <select value={this.state?.step} onChange={(event) => this.setState({ step: event.target.value })}>
+                                            <option value="">[Selecione]</option>
+                                            <option value="0">0%</option>
+                                            <option value="25">25%</option>
+                                            <option value="50">50%</option>
+                                            <option value="75">75%</option>
+                                            <option value="100">100%</option>
+                                        </select>
+                                        <span>Andamento</span>
+                                    </label>
+                                </div>
+                            </Col>
+                            <Col md={2}>
+                                <div className='form-control'>
+                                    <label class="textfield-filled">
+                                        <input type='text' value={dayjs(this.state?.previsionAt).format('DD/MM/YYYY HH:mm')} readOnly tabIndex={-1} />
+                                        <span>Previsão</span>
+                                    </label>
                                 </div>
                             </Col>
                             <Col md={3}>
                                 <div className='form-control'>
                                     <label class="textfield-filled">
-                                        <input type='text' value={this.state?.protocol} />
-                                        <span>Protocolo</span>
+                                        <input type='text' value={this.state?.externalProtocol} onChange={(event) => this.setState({ externalProtocol: event.target.value })} />
+                                        <span>Protocolo externo</span>
                                     </label>
                                 </div>
                             </Col>
@@ -184,7 +211,7 @@ export class ViewCalled extends React.Component {
                             <Col md={12}>
                                 <div className='form-control'>
                                     <label className="textfield-filled">
-                                        <textarea value={this.state?.obs} onChange={(event) => this.setState({obs: event.target.value})} rows={4} />
+                                        <textarea value={this.state?.observation} onChange={(event) => this.setState({observation: event.target.value})} rows={4} />
                                         <span>Observações</span>
                                     </label>
                                 </div>

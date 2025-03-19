@@ -39,6 +39,31 @@ export class Called {
     type: Sequelize.STRING,
   }
 
+  priority = {
+    field: 'priority',
+    type: Sequelize.SMALLINT,
+  }
+
+  step = {
+    field: 'step',
+    type: Sequelize.SMALLINT,
+  }
+
+  previsionAt = {
+    field: 'previsionAt',
+    type: Sequelize.STRING,
+  }
+
+  closedAt = {
+    field: 'closedAt',
+    type: Sequelize.STRING,
+  }
+
+  externalProtocol = {
+    field: 'externalProtocol',
+    type: Sequelize.STRING(25),
+  }
+
   requestedId = {
     field: 'requestedId',
     type: Sequelize.BIGINT,
@@ -57,6 +82,11 @@ export class Called {
   statusId = {
     field: 'statusId',
     type: Sequelize.UUIDV4,
+  }
+
+  observation = {
+    field: 'observation',
+    type: Sequelize.STRING(500),
   }
 
 }

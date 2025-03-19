@@ -87,7 +87,6 @@ export class LogisticCteController {
             where,
             subQuery: false,
             distinct: true,
-            raw: true,
             transaction
           })
   

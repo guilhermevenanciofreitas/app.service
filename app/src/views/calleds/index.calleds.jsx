@@ -114,7 +114,9 @@ export class Calleds extends React.Component {
   onNew = async () => {
     try {
       
-      const called = await this.viewCalled.current.new()
+      const Authorization = JSON.parse(localStorage.getItem("Authorization"))
+      
+      const called = await this.viewCalled.current.new({company: Authorization.company})
       
       if (called) {
         await this.viewCalledResolution.current.new({calledId: called.id, number: called.number, responsible: called.responsible})
@@ -151,15 +153,17 @@ export class Calleds extends React.Component {
 
         let color = ''
 
-        switch (row.cStat) {
-          case 100:
-            color = 'springgreen'
+        console.log(row.status)
+
+        switch (row.status) {
+          case 'opened':
+            color = 'SpringGreen'
             break;
-          case 135:
-            color = 'tomato'
+          case 'closed':
+            color = 'DodgerBlue'
             break;
           default:
-            color = 'silver'
+            color = 'Tomato'
             break;
         }
 
@@ -202,7 +206,7 @@ export class Calleds extends React.Component {
     { selector: (row) => row.reason?.description, name: 'Motivo', minWidth: '140px', maxWidth: '140px'},
     { selector: (row) => row.occurrence?.description, name: 'Ocorrência', minWidth: '170px', maxWidth: '170px'},
     { selector: (row) => row.subject, name: 'Assunto'},
-    { selector: (row) => dayjs(row.openedDate).format('DD/MM/YYYY HH:mm'), name: 'Fechamento', minWidth: '140px', maxWidth: '140px'},
+    { selector: (row) => row.status == 'closed' ? (row.closedAt ? dayjs(row.closedAt).format('DD/MM/YYYY HH:mm') : '') : (row.previsionAt ? dayjs(row.previsionAt).format('DD/MM/YYYY HH:mm') : ''), name: 'Prev./Fechamento', minWidth: '140px', maxWidth: '140px'},
     { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onResolution(row)} content={_.size(row.resolutions)}></Badge>, center: true, minWidth: '35px', maxWidth: '35px'},
   ]
 
@@ -227,9 +231,9 @@ export class Calleds extends React.Component {
           <hr></hr>
           
           <Nav appearance="subtle">
-            <Nav.Item active={!this.state?.request?.bankAccount} onClick={() => this.setState({request: {...this.state.request, bankAccount: undefined}}, () => this.onSearch())}><center style={{width: 120}}>Abertos<br></br>{this.state?.loading ? "-" : this.state?.response?.count ?? '-'}</center></Nav.Item>
-            <Nav.Item active={this.state?.request?.cStat == 'canceled'} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'canceled'}}, () => this.onSearch())}><center style={{width: 120}}>Atrasados<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.canceled) ?? '-'}</center></Nav.Item>
-            <Nav.Item active={this.state?.request?.cStat == 'canceled'} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'canceled'}}, () => this.onSearch())}><center style={{width: 120}}>Fechados<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.canceled) ?? '-'}</center></Nav.Item>
+            <Nav.Item active={this.state?.request?.status == 'opened'} onClick={() => this.setState({request: {...this.state.request, status: 'opened'}}, () => this.onSearch())}><center style={{width: 120}}>Abertos<br></br>{this.state?.loading ? "-" : this.state?.response?.count ?? '-'}</center></Nav.Item>
+            <Nav.Item active={this.state?.request?.status == 'delayed'} onClick={() => this.setState({request: {...this.state.request, offset: 0, status: 'delayed'}}, () => this.onSearch())}><center style={{width: 120}}>Atrasados<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.canceled) ?? '-'}</center></Nav.Item>
+            <Nav.Item active={this.state?.request?.status == 'closed'} onClick={() => this.setState({request: {...this.state.request, offset: 0, status: 'closed'}}, () => this.onSearch())}><center style={{width: 120}}>Fechados<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.statusCount?.closed) ?? '-'}</center></Nav.Item>
           </Nav>
 
           <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEdit} />
