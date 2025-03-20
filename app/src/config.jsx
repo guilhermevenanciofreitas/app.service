@@ -4,7 +4,7 @@ import { VscTable, VscCalendar } from 'react-icons/vsc';
 import { MdFingerprint, MdDashboard, MdModeEditOutline, Md10K, MdSupport, MdSettings } from 'react-icons/md';
 import CubesIcon from '@rsuite/icons/legacy/Cubes';
 import { Badge } from 'rsuite';
-import { FaArchive, FaCalendar, FaCalendarDay, FaCalendarTimes, FaCalendarWeek, FaCartPlus, FaDropbox, FaInfo, FaInfoCircle, FaLifeRing, FaMoneyBill, FaMoneyCheck, FaSupple, FaTasks, FaTruck, FaUserPlus, FaVirusSlash } from 'react-icons/fa';
+import { FaArchive, FaCalendar, FaCalendarDay, FaCalendarTimes, FaCalendarWeek, FaCartPlus, FaCashRegister, FaDiaspora, FaDropbox, FaInfo, FaInfoCircle, FaLifeRing, FaMoneyBill, FaMoneyCheck, FaSupple, FaTasks, FaTruck, FaTruckLoading, FaUserPlus, FaVirusSlash } from 'react-icons/fa';
 
 export const appNavs = [
   {
@@ -207,16 +207,17 @@ export const appNavs = [
     ]
   },*/
   {
-    eventKey: 'logistic',
-    title: 'Logística',
-    icon: <Icon as={FaTruck} />,
+    eventKey: 'expedition',
+    title: 'Expedição',
+    icon: <Icon as={FaTruckLoading} />,
     children: [
+      /*
       {
-        eventKey: 'ctes',
-        title: 'Conhecimentos',
-        to: '/logistic/ctes',
+        eventKey: 'ctes1',
+        title: 'Ordens de carga',
+        to: '/logistic/ctes1',
         ruleId: 'FC9DE921-1B87-4BDE-85CC-2D5FD0CDDD6C'
-      },
+      },*/
       {
         eventKey: 'shippiments',
         title: 'Romaneios',
@@ -224,13 +225,52 @@ export const appNavs = [
         ruleId: '6F1F9996-C17B-470A-93B7-A2491DFDF20F'
       },
       {
+        eventKey: 'dispatch',
+        title: 'Despacho',
+        to: '/expedition/dispatch',
+        ruleId: '6F1F9996-C17B-470A-93B7-A2491DFDF20F'
+      },
+    ]
+  },
+  {
+    eventKey: 'logistic',
+    title: 'Logística',
+    icon: <Icon as={FaTruck} />,
+    children: [
+      /*{
+        eventKey: 'ctes1',
+        title: 'Ordem de cargas',
+        to: '/logistic/ctes1',
+        ruleId: 'FC9DE921-1B87-4BDE-85CC-2D5FD0CDDD6C'
+      },*/
+      {
         eventKey: 'trips',
         title: 'Viagens',
         to: '/logistic/trips',
         ruleId: '0A4763CF-3D8F-4F4A-B83C-396494F38254'
       },
+      {
+        eventKey: 'follow-up',
+        title: 'Acompanhamento',
+        to: '/logistic/follow-up',
+        ruleId: 'A'
+      },
     ]
-  },/*
+  },
+  {
+    eventKey: 'fiscal',
+    title: 'Fiscal',
+    icon: <Icon as={FaCashRegister} />,
+    children: [
+      {
+        eventKey: 'ctes',
+        title: 'Conhecimentos',
+        to: '/logistic/ctes',
+        ruleId: 'FC9DE921-1B87-4BDE-85CC-2D5FD0CDDD6C'
+      },
+    ]
+  },
+  /*
   {
     eventKey: 'service',
     title: 'Serviço',

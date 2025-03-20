@@ -55,7 +55,7 @@ class ViewShippiment extends React.Component {
         
         return (
             <Form autoComplete='off' onSubmit={this.submit}>
-                <ViewModal ref={this.viewModal} size={1000}>
+                <ViewModal ref={this.viewModal} size={800}>
                     <Modal.Header><Modal.Title><Container>Romaneio</Container></Modal.Title></Modal.Header>
                     <Modal.Body>
                         <Row gutterWidth={0}>

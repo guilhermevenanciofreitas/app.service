@@ -2,21 +2,19 @@ import React from 'react';
 
 import _ from 'lodash'
 
-import dayjs from 'dayjs'
-
 import { Exception } from '../../../utils/exception'
 
-import { Badge, Breadcrumb, Button, HStack, Nav, Panel, Stack } from 'rsuite';
+import { Badge, Button, HStack, Nav, Panel, Placeholder, Stack } from 'rsuite';
 
-import { Divider } from 'rsuite';
 import PageContent from '../../../components/PageContent';
 
-import { CustomBreadcrumb, CustomDateRangePicker, CustomFilter, CustomPagination, CustomSearch, DataTable } from '../../../controls';
-import { MdAddCircleOutline, MdCheckCircleOutline } from 'react-icons/md';
-import { FaFileImport, FaTransgender, FaUpload } from 'react-icons/fa';
+import { CustomBreadcrumb, CustomPagination, CustomSearch, DataTable } from '../../../controls';
+import { MdAddCircleOutline } from 'react-icons/md';
 import { Service } from '../../../service';
 import ViewShippiment from './view.shippiment';
 import ViewCtes from './view.ctes';
+import { CustomNavItem } from '../../../controls/custom/CustomNavItem';
+import { Row } from 'react-grid-system';
 
 const fields = [
   { label: 'Número', value: 'code' },
@@ -32,21 +30,13 @@ export class LogisticShippiments extends React.Component {
     this.onSearch()
   }
 
-  onApplyDate = (date) => {
-    //this.setState({request: {date}})
-  }
-
-  onApplyFilter = (filter) => {
-    this.setState({request: {filter}}, () => this.onSearch())
-  }
-
   onSearch = () => {
     this.setState({loading: true}, async () => {
       try {
-        
+
         const result = await new Service().Post('logistic/shippiment/shippiments', this.state.request)
         this.setState({...result.data})
-        
+
       } catch (error) {
         Exception.error(error)
       } finally {
@@ -73,16 +63,19 @@ export class LogisticShippiments extends React.Component {
   }
 
   columns = [
-    { selector: (row) => row.id, name: 'Id'},
-    { selector: (row) => row.documentNumber, name: 'Documento transporte'},
+    { selector: (row) => row.id, name: 'Id', minWidth: '100px', maxWidth: '100px'},
+    { selector: (row) => row.documentNumber, name: 'Doc. transporte', minWidth: '120px', maxWidth: '120px'},
     { selector: (row) => row.sender?.surname, name: 'Remetente'},
+    { selector: (row) => '', name: 'Destinatário'},
+    { selector: (row) => '', name: 'Exepedidor'},
+    { selector: (row) => '', name: 'Recebedor'},
     { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onViewCtes(row)} content={_.size(row.ctes)}></Badge>, center: true, minWidth: '35px', maxWidth: '35px', style: {padding: '0px'}},
   ]
 
   render = () => {
 
     return (
-      <Panel header={<CustomBreadcrumb menu={'Logística'} title={'Romaneios'} />}>
+      <Panel header={<CustomBreadcrumb menu={'Expedição'} title={'Romaneios'} />}>
 
         <ViewShippiment ref={this.viewShippiment} />
         <ViewCtes ref={this.viewCtes} />
@@ -98,10 +91,9 @@ export class LogisticShippiments extends React.Component {
           <hr></hr>
           
           <Nav appearance="subtle">
-            <Nav.Item active={!this.state?.request?.bankAccount} onClick={() => this.setState({request: {...this.state.request, bankAccount: undefined}}, () => this.onSearch())}><center style={{width: 140}}>Todos<br></br>{this.state?.loading ? "-" : <>{this.state?.response?.count}</>}</center></Nav.Item>
-            {_.map(this.state?.response?.bankAccounts, (bankAccount) => {
-              return <Nav.Item eventKey="home" active={this.state?.request?.bankAccount?.id == bankAccount.id} onClick={() => this.setState({request: {...this.state.request, bankAccount: bankAccount}}, () => this.onSearch())}><center style={{width: 160}}>{<><img src={bankAccount?.bank?.image} style={{height: '16px'}} />&nbsp;&nbsp;{bankAccount.name || <>{bankAccount?.agency}-{bankAccount?.agencyDigit} / {bankAccount?.account}-{bankAccount?.accountDigit}</>}</>}<br></br>{this.state?.loading ? '-' : <>R$ {bankAccount.balance}</>}</center></Nav.Item>
-            })}
+            
+            <CustomNavItem active={true} loading={this.state?.loading} text='Todos' count={this.state?.response?.count} onClick={() => this.setState({request: {...this.state.request, offset: 0}}, () => this.onSearch())} />
+
           </Nav>
 
           <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEditShippiment} />
@@ -116,7 +108,7 @@ export class LogisticShippiments extends React.Component {
           </Stack>
 
         </PageContent>
-        </Panel>
+      </Panel>
     )
   }
 }

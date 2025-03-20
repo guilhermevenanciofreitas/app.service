@@ -247,6 +247,7 @@ export class AppContext extends Sequelize {
     this.Task.hasMany(this.TaskHistory, {as: 'taskHistories', foreignKey: 'taskId'})
 
     this.Trip.belongsTo(this.Partner, {as: 'driver', foreignKey: 'driverId', targetKey: 'id'})
+    this.Trip.hasMany(this.Shippiment, {as: 'shippiments', foreignKey: 'tripId'})
 
     this.User.hasMany(this.CompanyUser, {as: 'companyUsers', foreignKey: 'userId'})
 

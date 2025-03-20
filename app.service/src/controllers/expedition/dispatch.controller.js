@@ -14,9 +14,9 @@ import fetch from 'node-fetch';
 import { Buffer } from 'buffer';
 import { Exception } from "../../utils/exception.js"
 
-export class LogisticCteController {
+export class ExpeditionDispatchController {
 
-  ctes = async (req, res) => {
+  dispatches = async (req, res) => {
     await Authorization.verify(req, res).then(async ({companyId, userId}) => {
 
       try {
@@ -69,42 +69,29 @@ export class LogisticCteController {
 
         await db.transaction(async (transaction) => {
 
-          const ctes = await db.Cte.findAndCountAll({
-            attributes: ['id', 'dhEmi', 'nCT', 'serie', 'chCTe', 'cStat', 'baseCalculo'],
+          const shippiments = await db.Shippiment.findAll({attributes: ['id'], where: [{idViagemGrupo: { [Sequelize.Op.eq]: null }}], transaction})
+
+          const trips = await db.Trip.findAndCountAll({
+            attributes: ['id'],
             include: [
-              {model: db.Partner, as: 'sender', attributes: ['id', 'cpfCnpj', 'name', 'surname']},
-              {model: db.Partner, as: 'recipient', attributes: ['id', 'surname']},
-              {model: db.Shippiment, as: 'shippiment', attributes: ['id'], include: [
-                {model: db.Partner, as: 'sender', attributes: ['id', 'surname']}
-              ]},
-              {model: db.CteNfe, as: 'cteNfes', attributes: ['id', 'nfeId'], include: [
-                {model: db.Nfe, as: 'nfe', attributes: ['id', 'chNFe']},
-              ]},
+              {model: db.Partner, as: 'driver', attributes: ['id', 'surname']},
+              {model: db.Shippiment, as: 'shippiments', attributes: ['id']}
             ],
             limit: limit,
             offset: offset * limit,
-            order: [['dhEmi', 'desc']],
+            order: [['id', 'desc']],
             where,
             subQuery: false,
             distinct: true,
             transaction
           })
   
-          const all = await db.Cte.count({transaction})
-          const pending = await db.Cte.count({where: wherePending, transaction})
-          const autorized = await db.Cte.count({where: whereAutorized, transaction})
-          const canceled = await db.Cte.count({where: whereCanceled, transaction})
-  
-          const statusCount = {
-            all, pending, autorized, canceled
-          }
-
           res.status(200).json({
             request: {
-              cStat, limit, offset
+              limit, offset
             },
             response: {
-              statusCount, rows: ctes.rows, count: ctes.count
+              shippiments, rows: trips.rows, count: trips.count
             }
           })
   

@@ -54,7 +54,7 @@ export class CustomNavItem extends React.Component {
         onClick={this.props.onClick}
       >
         <center style={{ width: 100 }}>
-          <StatusIndicator color={this.props.color} />
+          {this.props.color && (<StatusIndicator color={this.props.color} />)}
           {this.props.text}
           <br />
           {this.props.loading

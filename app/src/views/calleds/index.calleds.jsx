@@ -1,5 +1,5 @@
 import React from 'react'
-import { Badge, Button, Divider, Drawer, IconButton, List, Message, Nav, Panel, Popover, Row, Stack, toaster, Whisper } from 'rsuite'
+import { Badge, Button, Divider, Drawer, Dropdown, IconButton, List, Message, Nav, Panel, Popover, Row, Stack, toaster, Whisper } from 'rsuite'
 
 import PageContent from '../../components/PageContent'
 
@@ -15,6 +15,8 @@ import { ViewCalledResolution } from './view.called-resolution'
 import dayjs from 'dayjs'
 import _ from 'lodash'
 import { CustomNavItem } from '../../controls/custom/CustomNavItem'
+import { Loading } from '../../App'
+import Swal from 'sweetalert2'
 
 const fields = [
   { label: 'Número', value: 'number' },
@@ -147,14 +149,30 @@ export class Calleds extends React.Component {
     }
   }
 
+  onClose = async (row) => {
+    try {
+
+      const r = await Swal.fire({text: 'Tem certeza que deseja fechar ?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Sim', cancelButtonText: 'Não'})
+      if (!r.isConfirmed) return
+
+      Loading.Show('Fechando chamado...')
+      await new Service().Post('called/close', [row.id])
+      Loading.Hide()
+      await this.onSearch()
+
+    } catch (error) {
+      Exception.error(error)
+    } finally {
+      Loading.Hide()
+    }
+  }
+
   columns = [
     {
       name: 'Seleção',
       cell: (row) => {
 
         let color = ''
-
-        console.log(row.status)
 
         switch (row.status) {
           case 'opened':
@@ -189,10 +207,20 @@ export class Calleds extends React.Component {
       speaker={(props, ref) => {
         return (
           <Popover ref={ref} className={props.className} style={{width: '200px'}}>
+            <Dropdown.Menu onSelect={(eventKey) => {
+              switch(eventKey) {
+                case 'close':
+                  this.onClose(row)
+                  break
+              }
+            }}>
+              {!row.closedAt && (<Dropdown.Item eventKey={'close'}><FaCheckCircle /> Fechar</Dropdown.Item>)}
+            </Dropdown.Menu>
+            {/*
             <List size={'md'} hover style={{cursor: 'pointer'}}>
-              <List.Item onClick={() => this.onDacte(row.id, row.chaveCT)}><FaPrint /> Imprimir dacte</List.Item>
-              <List.Item><FaFileDownload /> Arquivo xml</List.Item>
+              {!row.closedAt && (<List.Item onClick={() => this.onDacte(row.id, row.chaveCT)}><FaCheckCircle /> Fechar</List.Item>)}
             </List>
+            */}
           </Popover>
         )
       }}

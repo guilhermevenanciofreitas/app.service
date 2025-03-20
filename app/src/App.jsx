@@ -29,7 +29,7 @@ import { Statements } from './views/finance/statements/index.statements';
 
 //Logistic
 import { LogisticCtes } from './views/logistic/ctes/index.ctes';
-import { LogisticShippiments } from './views/logistic/shippiments/index.shippiments'
+import { LogisticShippiments } from './views/expedition/shippiments/index.shippiments'
 import { LogisticTrips } from './views/logistic/trips/index.trips'
 
 //Integrations
@@ -48,6 +48,7 @@ import Tasks from './views/task/index.tasks'
 
 import ptBR from 'rsuite/locales/pt_BR';
 import { IntlProvider } from 'react-intl';
+import { ExpeditionDispatch } from './views/expedition/dispatch/index.dispatch';
 
 export class Loading extends React.Component {
 
@@ -169,6 +170,9 @@ const App = () => {
               <Route path="finance/payments" element={<FinancePayments />} />
               <Route path="finance/receivements" element={<FinanceReceivements />} />
               <Route path="finance/statements" element={<Statements />} />
+
+              {/*Expedition */}
+              <Route path="expedition/dispatch" element={<ExpeditionDispatch />} />
 
               {/*Logistic*/}
               <Route path="logistic/ctes" element={<LogisticCtes />} />

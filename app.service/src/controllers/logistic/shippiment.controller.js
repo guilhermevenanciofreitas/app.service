@@ -31,38 +31,33 @@ export class LogisticShippimentController {
 
         }
 
-        const shippiments = await db.Shippiment.findAndCountAll({
-          attributes: ['id', 'documentNumber'],
-          include: [
-            {model: db.Partner, as: 'sender', attributes: ['id', 'surname']},
-            {model: db.Cte, as: 'ctes', attributes: ['id', 'chCTe']},
-          ],
-          limit: limit,
-          offset: offset * limit,
-          order: [['departureDate', 'desc']],
-          where,
-          subQuery: false
-        })
+        await db.transaction(async (transaction) => {
 
-        /*
-        const bankAccounts = await db.BankAccount.findAll({
-          attributes: ['id', 'name', 'agency', 'agencyDigit', 'account', 'accountDigit', [Sequelize.literal(`(SELECT COALESCE(SUM("amount"), 0) FROM "bankAccountStatement" WHERE "bankAccountStatement"."bankAccountId" = "bankAccount"."id")`), 'balance']],
-          include: [
-            {model: db.Bank, as: 'bank', attributes: ['id', 'name', 'image']}
-          ],
-          where: [whereCompany]
+          const shippiments = await db.Shippiment.findAndCountAll({
+            attributes: ['id', 'documentNumber'],
+            include: [
+              {model: db.Partner, as: 'sender', attributes: ['id', 'surname']},
+              {model: db.Cte, as: 'ctes', attributes: ['id', 'chCTe']},
+            ],
+            limit: limit,
+            offset: offset * limit,
+            order: [['departureDate', 'desc']],
+            where,
+            subQuery: false,
+            transaction
+          })
+  
+          res.status(200).json({
+            request: {
+              limit, offset
+            },
+            response: {
+              rows: shippiments.rows, count: shippiments.count
+            }
+          })
+  
         })
-        */
-
-        res.status(200).json({
-          request: {
-            limit, offset
-          },
-          response: {
-            rows: shippiments.rows, count: shippiments.count
-          }
-        })
-
+      
       } catch (error) {
         Exception.error(res, error)
       }

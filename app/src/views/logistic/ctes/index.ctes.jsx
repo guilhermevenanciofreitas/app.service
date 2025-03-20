@@ -18,6 +18,7 @@ import _ from 'lodash'
 import { Exception } from '../../../utils/exception'
 import { ReportViewer } from '../../../controls/components/ReportViewer'
 import { Loading } from '../../../App'
+import { CustomNavItem } from '../../../controls/custom/CustomNavItem'
 
 const fields = [
   { label: 'Número', value: 'nCT' },
@@ -105,13 +106,13 @@ export class LogisticCtes extends React.Component {
 
         switch (row.cStat) {
           case 100:
-            color = 'springgreen'
+            color = 'SpringGreen'
             break;
-          case 135:
-            color = 'tomato'
+          case 101, 135:
+            color = 'Tomato'
             break;
           default:
-            color = 'silver'
+            color = 'Silver'
             break;
         }
 
@@ -181,10 +182,13 @@ export class LogisticCtes extends React.Component {
           <hr></hr>
           
           <Nav appearance="subtle">
-            <Nav.Item active={!this.state?.request?.cStat} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: undefined}}, () => this.onSearch())}><center style={{width: 120}}>Todos<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status.all) ?? '-'}</center></Nav.Item>
-            <Nav.Item active={this.state?.request?.cStat == 'pending'} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'pending'}}, () => this.onSearch())}><center style={{width: 120}}>Pendentes<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.pending) ?? '-'}</center></Nav.Item>
-            <Nav.Item active={this.state?.request?.cStat == 'autorized'} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'autorized'}}, () => this.onSearch())}><center style={{width: 120}}>Autorizados<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.autorized) ?? '-'}</center></Nav.Item>
-            <Nav.Item active={this.state?.request?.cStat == 'canceled'} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'canceled'}}, () => this.onSearch())}><center style={{width: 120}}>Cancelados<br></br>{this.state?.loading ? "-" : new Intl.NumberFormat('pt-BR', {style: 'decimal'}).format(this.state?.response?.status?.canceled) ?? '-'}</center></Nav.Item>
+            
+            <CustomNavItem active={this.state?.request?.cStat == undefined} loading={this.state?.loading} text='Todos' count={this.state?.response?.statusCount?.all} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: undefined}}, () => this.onSearch())} />
+            
+            <CustomNavItem active={this.state?.request?.cStat == 'pending'} loading={this.state?.loading} color='Silver' text='Pendentes' count={this.state?.response?.statusCount?.pending} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'pending'}}, () => this.onSearch())} />
+            <CustomNavItem active={this.state?.request?.cStat == 'autorized'} loading={this.state?.loading} color='SpringGreen' text='Autorizados' count={this.state?.response?.statusCount?.autorized} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'autorized'}}, () => this.onSearch())} />
+            <CustomNavItem active={this.state?.request?.cStat == 'canceled'} loading={this.state?.loading} color='Tomato' text='Cancelados' count={this.state?.response?.statusCount?.canceled} onClick={() => this.setState({request: {...this.state.request, offset: 0, cStat: 'canceled'}}, () => this.onSearch())} />
+
           </Nav>
 
           <DataTable columns={this.columns} rows={this.state?.response?.rows} loading={this.state?.loading} onItem={this.onEdit} />

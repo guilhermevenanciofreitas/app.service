@@ -29,25 +29,30 @@ export class LogisticTripController {
 
         const where = []
 
-        const trips = await db.Trip.findAndCountAll({
-          attributes: ['id'],
-          include: [
-            {model: db.Partner, as: 'driver', attributes: ['id', 'surname']}
-          ],
-          limit: limit,
-          offset: offset * limit,
-          //order: [['dhEmi', 'desc']],
-          where,
-          subQuery: false
-        })
+        await db.transaction(async (transaction) => {
 
-        res.status(200).json({
-          request: {
-            limit, offset
-          },
-          response: {
-            rows: trips.rows, count: trips.count
-          }
+          const trips = await db.Trip.findAndCountAll({
+            attributes: ['id'],
+            include: [
+              {model: db.Partner, as: 'driver', attributes: ['id', 'surname']}
+            ],
+            limit: limit,
+            offset: offset * limit,
+            //order: [['dhEmi', 'desc']],
+            where,
+            subQuery: false,
+            transaction
+          })
+  
+          res.status(200).json({
+            request: {
+              limit, offset
+            },
+            response: {
+              rows: trips.rows, count: trips.count
+            }
+          })
+  
         })
 
       } catch (error) {

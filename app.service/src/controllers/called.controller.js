@@ -69,42 +69,47 @@ export class CalledController {
           where.push(whereClosed)
         }
 
-        const calleds = await db.Called.findAndCountAll({
-          attributes: ['id', 'number', 'createdAt', 'previsionAt', 'closedAt', [Sequelize.literal(`CASE WHEN [called].[closedAt] IS NOT NULL THEN 'closed' WHEN [called].[previsionAt] > GETDATE() THEN 'opened' ELSE 'delayed' END`), 'status'], 'subject'],
-          include: [
-            {model: db.Company, as: 'company', attributes: ['id', 'surname']},
-            {model: db.User, as: 'responsible', attributes: ['id', 'userName']},
-            {model: db.Partner, as: 'requested', attributes: ['id', 'surname']},
-            {model: db.CalledReason, as: 'reason', attributes: ['id', 'description']},
-            {model: db.CalledOccurrence, as: 'occurrence', attributes: ['id', 'description']},
-            {model: db.CalledResolution, as: 'resolutions', attributes: ['id', 'createdAt', 'detail'], include: [
-              {model: db.User, as: 'user', attributes: ['id', 'userName']},
-              {model: db.CalledStatus, as: 'status', attributes: ['id', 'description']},
-            ]}
-          ],
-          limit: limit,
-          offset: offset * limit,
-          order: [['createdAt', 'desc'], [{model: db.CalledResolution, as: 'resolutions'}, 'createdAt', 'desc']],
-          where,
-          subQuery: false,
-          distinct: true,
-        })
+        await db.transaction(async (transaction) => {
 
-        const opened = await db.Called.count({include: [{model: db.Company, as: 'company', attributes: ['id', 'surname']}], where: [whereOpened]})
-        const delayed = await db.Called.count({include: [{model: db.Company, as: 'company', attributes: ['id', 'surname']}], where: [whereDelayed]})
-        const closed = await db.Called.count({include: [{model: db.Company, as: 'company', attributes: ['id', 'surname']}], where: [whereClosed]})
-
-        const statusCount = {
-          opened, delayed, closed
-        }
-
-        res.status(200).json({
-          request: {
-            status, filter, limit, offset
-          },
-          response: {
-            statusCount, rows: calleds.rows, count: calleds.count
+          const calleds = await db.Called.findAndCountAll({
+            attributes: ['id', 'number', 'createdAt', 'previsionAt', 'closedAt', [Sequelize.literal(`CASE WHEN [called].[closedAt] IS NOT NULL THEN 'closed' WHEN [called].[previsionAt] > GETDATE() THEN 'opened' ELSE 'delayed' END`), 'status'], 'subject'],
+            include: [
+              {model: db.Company, as: 'company', attributes: ['id', 'surname']},
+              {model: db.User, as: 'responsible', attributes: ['id', 'userName']},
+              {model: db.Partner, as: 'requested', attributes: ['id', 'surname']},
+              {model: db.CalledReason, as: 'reason', attributes: ['id', 'description']},
+              {model: db.CalledOccurrence, as: 'occurrence', attributes: ['id', 'description']},
+              {model: db.CalledResolution, as: 'resolutions', attributes: ['id', 'createdAt', 'detail'], include: [
+                {model: db.User, as: 'user', attributes: ['id', 'userName']},
+                {model: db.CalledStatus, as: 'status', attributes: ['id', 'description']},
+              ]}
+            ],
+            limit: limit,
+            offset: offset * limit,
+            order: [['createdAt', 'desc'], [{model: db.CalledResolution, as: 'resolutions'}, 'createdAt', 'desc']],
+            where,
+            subQuery: false,
+            distinct: true,
+            transaction
+          })
+  
+          const opened = await db.Called.count({include: [{model: db.Company, as: 'company', attributes: ['id', 'surname']}], where: [whereOpened], transaction})
+          const delayed = await db.Called.count({include: [{model: db.Company, as: 'company', attributes: ['id', 'surname']}], where: [whereDelayed], transaction})
+          const closed = await db.Called.count({include: [{model: db.Company, as: 'company', attributes: ['id', 'surname']}], where: [whereClosed], transaction})
+  
+          const statusCount = {
+            opened, delayed, closed
           }
+  
+          res.status(200).json({
+            request: {
+              status, filter, limit, offset
+            },
+            response: {
+              statusCount, rows: calleds.rows, count: calleds.count
+            }
+          })
+  
         })
 
       } catch (error) {
@@ -227,6 +232,29 @@ export class CalledController {
           await db.Called.update({responsibleId: req.body.responsible.id || null, statusId: resolution.statusId}, {where: [{id: req.body.calledId}], transaction})
 
           res.status(200).json(resolution)
+
+        })
+
+      } catch (error) {
+        Exception.error(res, error)
+      }
+    }).catch((error) => {
+      Exception.unauthorized(res, error)
+    })
+  }
+
+  
+  close = async (req, res) => {
+    await Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
+      try {
+
+        const db = new AppContext()
+
+        await db.transaction(async (transaction) => {
+
+          await db.Called.update({closedAt: dayjs().format('YYYY-MM-DD HH:mm')}, {where: [{id: req.body}], transaction})
+
+          res.status(200).json({message: 'Fechado com sucesso!'})
 
         })
 
