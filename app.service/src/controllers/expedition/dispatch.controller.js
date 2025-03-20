@@ -69,10 +69,18 @@ export class ExpeditionDispatchController {
 
         await db.transaction(async (transaction) => {
 
-          const shippiments = await db.Shippiment.findAll({attributes: ['id'], where: [{idViagemGrupo: { [Sequelize.Op.eq]: null }}], transaction})
+          const shippiments = await db.Shippiment.findAll({
+            attributes: ['id', 'documentNumber'],
+            include: [
+              {model: db.Partner, as: 'sender', attributes: ['surname']}
+            ],
+            where: [{idViagemGrupo: { [Sequelize.Op.eq]: null }}],
+            limit: 10,
+            transaction
+          })
 
           const trips = await db.Trip.findAndCountAll({
-            attributes: ['id'],
+            attributes: ['id', 'tripTravelId'],
             include: [
               {model: db.Partner, as: 'driver', attributes: ['id', 'surname']},
               {model: db.Shippiment, as: 'shippiments', attributes: ['id']}

@@ -4,7 +4,7 @@ import _ from 'lodash'
 
 import { Exception } from '../../../utils/exception'
 
-import { Badge, Button, Divider, Drawer, Nav, Panel, Placeholder, Stack, Text } from 'rsuite';
+import { Card, Badge, Button, Divider, Drawer, Nav, Panel, Placeholder, Stack, Text } from 'rsuite';
 
 import PageContent from '../../../components/PageContent';
 
@@ -131,7 +131,22 @@ export class ExpeditionDispatch extends React.Component {
 
   onViewCtes = async (cteNfes) => {
     await this.viewCtes.current.show(cteNfes)
-    await this.onSearch()
+    this.onSearch()
+  }
+
+  onDragStart = (event) => {
+    console.log(event.target.id)
+    event.dataTransfer.setData("text", event.target.id)
+  }
+
+  onDragOver(event) {
+    event.preventDefault();
+  }
+
+  onDrop = (event) => {
+    event.preventDefault()
+    const data = event.dataTransfer.getData("text")
+    //event.target.appendChild(document.getElementById(data));
   }
 
   columns = [
@@ -168,29 +183,40 @@ export class ExpeditionDispatch extends React.Component {
 
           <Row style={{display: 'flex', flexDirection: 'column', overflowX: 'auto', height: 'calc(100vh - 370px)'}} >
             
-            <Panel bordered header="[Sem viagem]" style={{minWidth: '280px', maxWidth: '280px', height: '100%', margin: '5px'}}>
-
-              {/*
-              <Card width={'100%'} shaded>
-                <Card.Header as="h5">John Doe</Card.Header>
-                <Card.Body>
-                  A passionate developer with a love for learning new technologies. Enjoys building innovative
-                  solutions and solving problems.
-                </Card.Body>
-                <Card.Footer>
-                  <Text muted>Joined in January 2023</Text>
-                </Card.Footer>
-              </Card>
-              */}
-
+            <Panel bordered header="[Sem viagem]" style={{minWidth: '280px', maxWidth: '280px', height: '100%', margin: '5px', overflowY: 'auto'}}>
+              {_.map(this.state?.response?.shippiments, (shippiment) => {
+                return (
+                  <div id={shippiment.id} draggable onDragStart={this.onDragStart}>
+                    <Card width={'100%'} style={{margin: '4px'}} shaded>
+                      <Card.Header as="b">#{shippiment.documentNumber}</Card.Header>
+                      <Card.Body>
+                        <b>Rem.:</b> {shippiment.sender?.surname}
+                        <br></br>
+                        <b>Dest.:</b> {shippiment.sender?.surname}
+                      </Card.Body>
+                    </Card>
+                  </div>
+                )
+              })}
             </Panel>
 
             {_.map(this.state?.response?.rows, (trip) => {
               return (
-                <Panel bordered header={
-                  <div style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{trip.driver?.surname ? trip.driver.surname.charAt(0).toUpperCase() + trip.driver.surname.slice(1).toLowerCase() : ''}</div>
-                } style={{minWidth: '280px', maxWidth: '280px', height: '100%', margin: '5px'}}>
-                  <Placeholder.Paragraph />
+                <Panel bordered header={<div style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{trip.tripTravelId} - {trip.driver?.surname ? trip.driver.surname.charAt(0).toUpperCase() + trip.driver.surname.slice(1).toLowerCase() : ''}</div>} style={{minWidth: '280px', maxWidth: '280px', height: '100%', margin: '5px'}} onDrop={this.onDrop} onDragOver={this.onDragOver}>
+                  {_.map(trip.shippiments, (shippiment) => {
+                    return (
+                      <div>
+                        <Card width={'100%'} style={{margin: '4px'}} shaded>
+                          <Card.Header as="b">#{shippiment.documentNumber}</Card.Header>
+                          <Card.Body>
+                            <b>Rem.:</b> {shippiment.sender?.surname}
+                            <br></br>
+                            <b>Dest.:</b> {shippiment.sender?.surname}
+                          </Card.Body>
+                        </Card>
+                      </div>
+                    )
+                  })}
                 </Panel>
               )
             })}

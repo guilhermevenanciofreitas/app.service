@@ -9,6 +9,11 @@ export class Trip {
     type: Sequelize.BIGINT,
   }
 
+  tripTravelId = {
+    field: 'IDViagem',
+    type: Sequelize.BIGINT,
+  }
+
   driverId = {
     field: 'IDMotorista',
     type: Sequelize.BIGINT,
