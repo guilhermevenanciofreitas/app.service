@@ -17,6 +17,8 @@ import { CustomNavItem } from '../../../controls/custom/CustomNavItem';
 import { Row } from 'react-grid-system';
 import { FaCheckCircle, FaFilter } from 'react-icons/fa';
 import { Search } from '../../../search';
+import DragDropContainer from './DragAndDrop';
+//import DragAndDrop from './DragAndDrop';
 
 const fields = [
   { label: 'Nº Viagem', value: 'codeTrip' },
@@ -102,19 +104,18 @@ export class ExpeditionDispatch extends React.Component {
     this.onSearch()
   }
 
-  onSearch = () => {
-    this.setState({loading: true}, async () => {
-      try {
+  onSearch = async () => {
+    try {
 
-        const result = await new Service().Post('expedition/dispatch/dispatches', this.state.request)
-        this.setState({...result.data})
+      this.setState({loading: true})
+      const result = await new Service().Post('expedition/dispatch/dispatches', this.state.request)
+      this.setState({...result.data})
 
-      } catch (error) {
-        Exception.error(error)
-      } finally {
-        this.setState({loading: false})
-      }
-    })
+    } catch (error) {
+      Exception.error(error)
+    } finally {
+      this.setState({loading: false})
+    }
   }
 
   onEditShippiment = async (shippiment) => {
@@ -134,21 +135,6 @@ export class ExpeditionDispatch extends React.Component {
     this.onSearch()
   }
 
-  onDragStart = (event) => {
-    console.log(event.target.id)
-    event.dataTransfer.setData("text", event.target.id)
-  }
-
-  onDragOver(event) {
-    event.preventDefault();
-  }
-
-  onDrop = (event) => {
-    event.preventDefault()
-    const data = event.dataTransfer.getData("text")
-    //event.target.appendChild(document.getElementById(data));
-  }
-
   columns = [
     { selector: (row) => row.id, name: 'Id'},
     { selector: (row) => row.documentNumber, name: 'Documento de transporte'},
@@ -158,6 +144,12 @@ export class ExpeditionDispatch extends React.Component {
 
   render = () => {
 
+    const trips1 = _.map(this.state?.response?.rows, (trip) => ({
+      id: trip.id,
+      title: trip.title || "Teste",
+      items: [{ id: "drag3", text: <h5>Arraste-me 3</h5> }],
+    }));
+    
     return (
       <Panel header={<CustomBreadcrumb menu={'Expedição'} title={'Despacho'} />}>
 
@@ -183,43 +175,33 @@ export class ExpeditionDispatch extends React.Component {
 
           <Row style={{display: 'flex', flexDirection: 'column', overflowX: 'auto', height: 'calc(100vh - 370px)'}} >
             
-            <Panel bordered header="[Sem viagem]" style={{minWidth: '280px', maxWidth: '280px', height: '100%', margin: '5px', overflowY: 'auto'}}>
-              {_.map(this.state?.response?.shippiments, (shippiment) => {
-                return (
-                  <div id={shippiment.id} draggable onDragStart={this.onDragStart}>
-                    <Card width={'100%'} style={{margin: '4px'}} shaded>
-                      <Card.Header as="b">#{shippiment.documentNumber}</Card.Header>
-                      <Card.Body>
-                        <b>Rem.:</b> {shippiment.sender?.surname}
-                        <br></br>
-                        <b>Dest.:</b> {shippiment.sender?.surname}
-                      </Card.Body>
-                    </Card>
-                  </div>
-                )
-              })}
-            </Panel>
+            {/*
+            <DragDropContainer values={
+              [
+                {
+                  id: "card1",
+                  title: <b>[Sem viagem]</b>,
+                  items: [
+                    { id: "drag1", text: <h5>Arraste-me 1</h5> },
+                    { id: "drag2", text: <h5>Arraste-me 2</h5> },
+                  ],
+                },
+                {
+                  id: "card2",
+                  items: [{ id: "drag3", text: <h5>Arraste-me 3</h5> }],
+                },
+                {
+                  id: "card3",
+                  items: [{ id: "drag4", text: <h5>Arraste-me 4</h5> }],
+                },
+              ]
+            }
+            />
+            */}
 
-            {_.map(this.state?.response?.rows, (trip) => {
-              return (
-                <Panel bordered header={<div style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{trip.tripTravelId} - {trip.driver?.surname ? trip.driver.surname.charAt(0).toUpperCase() + trip.driver.surname.slice(1).toLowerCase() : ''}</div>} style={{minWidth: '280px', maxWidth: '280px', height: '100%', margin: '5px'}} onDrop={this.onDrop} onDragOver={this.onDragOver}>
-                  {_.map(trip.shippiments, (shippiment) => {
-                    return (
-                      <div>
-                        <Card width={'100%'} style={{margin: '4px'}} shaded>
-                          <Card.Header as="b">#{shippiment.documentNumber}</Card.Header>
-                          <Card.Body>
-                            <b>Rem.:</b> {shippiment.sender?.surname}
-                            <br></br>
-                            <b>Dest.:</b> {shippiment.sender?.surname}
-                          </Card.Body>
-                        </Card>
-                      </div>
-                    )
-                  })}
-                </Panel>
-              )
-            })}
+            {_.size(trips1)}
+            <DragDropContainer cards={trips1} onChange={(args) => console.log(args)} />
+
           </Row>
 
           <hr></hr>

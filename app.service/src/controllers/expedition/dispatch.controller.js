@@ -85,21 +85,23 @@ export class ExpeditionDispatchController {
               {model: db.Partner, as: 'driver', attributes: ['id', 'surname']},
               {model: db.Shippiment, as: 'shippiments', attributes: ['id']}
             ],
-            limit: limit,
-            offset: offset * limit,
+            limit: 2,
+            offset: offset * 2,
             order: [['id', 'desc']],
             where,
             subQuery: false,
             distinct: true,
             transaction
           })
+
+          trips.rows.unshift({id: '0', shippiments})
   
           res.status(200).json({
             request: {
               limit, offset
             },
             response: {
-              shippiments, rows: trips.rows, count: trips.count
+              rows: trips.rows, count: trips.count
             }
           })
   
