@@ -72,15 +72,12 @@ export class ExpeditionDispatchController {
           trips.rows.unshift({id: null, shippiments})
 
           trips.rows = _.map(trips.rows, (trip) => ({
-            id: trip.id,
-            title: !trip.id ? `[Sem viagem]` : `${trip.tripTravelId} - ${trip.driver?.surname ? trip.driver.surname.charAt(0).toUpperCase() + trip.driver.surname.slice(1).toLowerCase() : ''}`,
-            /*items: _.map(trip.shippiments, (shippiment) => ({
-              id: shippiment.id,
-              content: shippiment
-            }))*/
+            //id: trip.id,
+            tripTravelId: trip.tripTravelId,
+            driver: trip.driver,
             items: trip.shippiments
           }))
-  
+        
           res.status(200).json({
             request: {
               limit, offset

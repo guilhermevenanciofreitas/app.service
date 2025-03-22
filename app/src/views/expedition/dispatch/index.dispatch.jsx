@@ -167,21 +167,29 @@ export class ExpeditionDispatches extends React.Component {
           <Row style={{display: 'flex', flexDirection: 'column', overflowX: 'auto', height: 'calc(100vh - 370px)'}} >
             
             <div style={{height: '100%', padding: '10px', overflow: 'hidden'}}>
-              <CustomDragAndDrop values={this.state?.response?.trips || []} onChange={(tripId, shippimentId, values) => {
-                console.log(tripId)
-                console.log(shippimentId)
+              <CustomDragAndDrop values={this.state?.response?.trips || []} items={(trip) => trip.items} onChange={(values, {item, target}) => {
+                console.log(item)
+                console.log(target)
                 this.setState({response: {...this.state?.response, trips: values}})
               }}>
-                <CustomDragAndDrop.Result>
-                  {(item) => <span>
-                    #{item.documentNumber}
-                    <br></br>
-                    Rem.: {item.sender?.surname}
-                    <br></br>
-                    Dest.: {item.sender?.surname}
-                    {/*JSON.stringify(item)*/}
-                    </span>}
-                </CustomDragAndDrop.Result>
+                {{
+                  renderHeader: (trip) => {
+                    return (
+                      <span style={{fontSize: 14, fontWeight: "bold", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"}}>
+                        {!trip?.tripTravelId ? `[Sem viagem]` : `${trip.tripTravelId} - ${trip.driver?.surname ? trip.driver.surname.charAt(0).toUpperCase() + trip.driver.surname.slice(1).toLowerCase() : ''}`}
+                      </span>
+                    )
+                  },
+                  renderItem: (item) => (
+                    <span>
+                      #{item.documentNumber}
+                      <br></br>
+                      Rem.: {item.sender?.surname}
+                      <br></br>
+                      Dest.: {item.sender?.surname}
+                    </span>
+                  ),
+                }}
               </CustomDragAndDrop>
             </div>
 
