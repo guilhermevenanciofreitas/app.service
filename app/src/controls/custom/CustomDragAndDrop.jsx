@@ -78,21 +78,21 @@ const Card = ({ card, cardIndex, onDrop, style, itemsKey = "items" }) => {
 
   return (
     <Result.Consumer>
-      {({ renderHeader, renderItem, renderItems } = {}) => {
+      {({ renderHeader, renderItem } = {}) => {
 
         return (
           <CardContainer className={isDraggingOver ? "drag-over" : ""} onDragOver={allowDrop} onDrop={handleDrop} onDragLeave={handleDragLeave} style={style}>
             {renderHeader(card)}
             <Divider style={{margin: '12px'}} />
             <ItemsContainer>
-              {_.map(card[itemsKey] || [], (item, idx) => (
-                <Draggable key={item.id || idx} item={item} style={style}>
+              {_.map(card[itemsKey] || [], (item, key) => (
+                <Draggable key={key} item={item} style={style}>
                   {renderItem(item)}
                 </Draggable>
               ))}
             </ItemsContainer>
           </CardContainer>
-        );
+        )
       }}
     </Result.Consumer>
   )
@@ -108,7 +108,7 @@ const Draggable = ({ item, children, style }) => {
   }
 
   const handleDragEnd = () => {
-    setIsDragging(false);
+    setIsDragging(false)
   };
 
   return (
@@ -124,7 +124,7 @@ const CustomDragAndDrop = ({values, onChange, items: renderItems, itemsKey = "it
   const renderFunctions = typeof children === "function" ? { renderItem: children } : children || {}
 
   if (renderItems) {
-    renderFunctions.renderItems = renderItems;
+    renderFunctions.renderItems = renderItems
   }
 
   const handleDrop = (draggedItem, targetCardIndex) => {

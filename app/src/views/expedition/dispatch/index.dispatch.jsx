@@ -4,7 +4,7 @@ import _ from 'lodash'
 
 import { Exception } from '../../../utils/exception'
 
-import { Badge, Button, Divider, Drawer, Nav, Panel, Placeholder, Stack, Text } from 'rsuite';
+import { Badge, Button, Divider, Drawer, Loader, Nav, Panel, Placeholder, Popover, Stack, Text, Whisper } from 'rsuite';
 
 import PageContent from '../../../components/PageContent';
 
@@ -24,6 +24,26 @@ const fields = [
   { label: 'Nº Viagem', value: 'tripTravelId' },
   { label: 'Documento de transporte', value: 'documentTransport' },
 ]
+
+const DefaultPopover = React.forwardRef(({ content, ...props }, ref) => {
+  return (
+    <Popover ref={ref} title="Title" {...props}>
+      <p>This is a Popover </p>
+      <p>{content}</p>
+    </Popover>
+  );
+});
+
+const ShippimentFilter = ({ placement }) => (
+  <Whisper
+    trigger="click"
+    placement={placement}
+    controlId={`control-id-${placement}`}
+    speaker={<DefaultPopover content={`I am positioned to the ${placement}`} />}
+  >
+    <Button appearance="subtle"><FaFilter color='#2196f3' /></Button>
+  </Whisper>
+);
 
 class Filter extends React.Component {
 
@@ -121,18 +141,12 @@ export class ExpeditionDispatches extends React.Component {
 
     try {
 
-      const tripId = target.id
-      const shippimentId = item.id
-
-      console.log(tripId, shippimentId)
+      const tripId = parseInt(target.id)
+      const shippimentId = parseInt(item.id)
 
       this.setState({response: {...this.state?.response, trips}})
 
-      //this.setState({loading: true})
       await new Service().Post('expedition/dispatch/change', {tripId, shippimentId})
-
-
-      //this.setState({...result.data})
 
     } catch (error) {
       this.setState({response: {...this.state?.response, trips: before}})
@@ -141,13 +155,6 @@ export class ExpeditionDispatches extends React.Component {
       this.setState({loading: false})
     }
   }
-
-  columns = [
-    { selector: (row) => row.id, name: 'Id'},
-    { selector: (row) => row.documentNumber, name: 'Documento de transporte'},
-    { selector: (row) => row.sender?.surname, name: 'Remetente'},
-    { selector: (row) => <Badge style={{cursor: 'pointer'}} color={'blue'} onClick={() => this.onViewCtes(row)} content={_.size(row.ctes)}></Badge>, center: true, minWidth: '35px', maxWidth: '35px', style: {padding: '0px'}},
-  ]
 
   render = () => {
 
@@ -182,20 +189,11 @@ export class ExpeditionDispatches extends React.Component {
                     const vehicle = !trip.id ? `-` : `${trip.vehicle?.identity.replace(/[^a-zA-Z0-9]/g, "").replace(/^(.{3})(.)/, "$1-$2")} - ${trip.haulage1?.identity.replace(/[^a-zA-Z0-9]/g, "").replace(/^(.{3})(.)/, "$1-$2") || ''} - ${trip.haulage2?.identity.replace(/[^a-zA-Z0-9]/g, "").replace(/^(.{3})(.)/, "$1-$2") || ''}`
                     return (
                       <div style={{minHeight: '35px', maxHeight: '35px'}}>
-                        <span style={{ 
-                          fontSize: 14, 
-                          fontWeight: "bold", 
-                          whiteSpace: "nowrap", 
-                          overflow: "hidden", 
-                          textOverflow: "ellipsis",
-                          display: 'flex', 
-                          justifyContent: 'space-between',
-                          alignItems: 'center' 
-                        }}>
+                        <span style={{display: 'flex', fontSize: 14, fontWeight: "bold", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", justifyContent: 'space-between', alignItems: 'center'}}>
                           <div>
                             {driver}
                           </div>
-                          {!trip.id && <FaFilter color='#2196f3' />}
+                          {!trip.id && <ShippimentFilter placement="rightStart" />}
                         </span>
                         <center>{vehicle}</center>
                       </div>
@@ -226,7 +224,7 @@ export class ExpeditionDispatches extends React.Component {
           </Stack>
 
         </PageContent>
-        </Panel>
+      </Panel>
     )
   }
 }

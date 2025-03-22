@@ -1,7 +1,5 @@
-import { useLocation } from 'react-router-dom';
 import axios from "axios";
 import Swal from 'sweetalert2'
-import path from 'path-browserify'
 
 export class Service {
 
@@ -10,7 +8,7 @@ export class Service {
         const env = import.meta.env.VITE_API_URL
         const api_url = env + url
 
-        let config = {};
+        let config = {}
 
         let authorization = JSON.parse(localStorage.getItem('Authorization'))
 
@@ -55,7 +53,6 @@ export class Service {
             if (error?.response?.status == 400) {
                 const message = error.response.data.message
                 localStorage.removeItem('Authorization')
-                const to = window.location.hash.slice(1)
                 const redirect = window.location.pathname == '/' ? '' : `?redirect=${window.location.pathname}`
                 window.location.href = `/sign-in${redirect}`
                 throw new Error(message)
