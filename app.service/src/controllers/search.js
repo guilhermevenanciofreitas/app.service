@@ -255,6 +255,40 @@ export class SearchController {
         })
     }
 
+    driver = async (req, res) => {
+        Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
+            try {
+
+                const db = new AppContext()
+
+                const where = []
+
+                where.push({'$companyBusinessId$': companyBusinessId})
+
+                where.push({[Sequelize.Op.or]: [
+                    {'$CpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}},
+                    {'$nome$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}
+                ]})
+
+                const driver = await db.Partner.findAll({
+                    attributes: ['id', 'cpfCnpj', 'surname'],
+                    where,
+                    order: [
+                        ['surname', 'asc']
+                    ],
+                    limit: 20
+                });
+
+                res.status(200).json(driver);
+
+            } catch (error) {
+                Exception.error(res, error)
+            }
+        }).catch((error) => {
+            Exception.unauthorized(res, error);
+        });
+    }
+
     sender = async (req, res) => {
         Authorization.verify(req, res).then(async ({companyBusinessId, companyId, userId}) => {
             try {

@@ -31,6 +31,10 @@ export const Search = {
         return (await new Service().Post("search/city", {search}, undefined, false))?.data
     },
 
+    driver: async (search) => {
+        return (await new Service().Post("search/driver", {search}, undefined, false))?.data
+    },
+
     partner: async (search) => {
         return (await new Service().Post("search/partner", {search}, undefined, false))?.data
     },

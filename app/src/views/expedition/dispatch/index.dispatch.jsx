@@ -21,7 +21,7 @@ import CustomDragAndDrop from '../../../controls/custom/CustomDragAndDrop';
 //import DragAndDrop from './DragAndDrop';
 
 const fields = [
-  { label: 'Nº Viagem', value: 'codeTrip' },
+  { label: 'Nº Viagem', value: 'tripTravelId' },
   { label: 'Documento de transporte', value: 'documentTransport' },
 ]
 
@@ -30,7 +30,7 @@ class Filter extends React.Component {
   state = {
     filter: {
       //company: this.props.filter.company,
-      responsible: this.props.filter.responsible
+      driver: this.props.filter.driver
     }
   }
 
@@ -53,9 +53,9 @@ class Filter extends React.Component {
           <Drawer.Header><Drawer.Title>Filtro</Drawer.Title></Drawer.Header>
           <Drawer.Body style={{padding: '30px'}}>
             <div className="form-control">
-              <AutoComplete label="Motorista" value={this.state?.filter?.responsible} text={(item) => `${item.userName}`} onChange={(responsible) => this.setState({ filter: {...this.state.filter, responsible} })} onSearch={async (search) => await Search.user(search)} autoFocus>
+              <AutoComplete label="Motorista" value={this.state?.filter?.driver} text={(item) => `${item.surname}`} onChange={(driver) => this.setState({ filter: {...this.state.filter, driver} })} onSearch={async (search) => await Search.driver(search)} autoFocus>
                 <AutoComplete.Result>
-                  {(item) => <span>{item.userName}</span>}
+                  {(item) => <span>{item.surname}</span>}
                 </AutoComplete.Result>
               </AutoComplete>
             </div>
@@ -88,13 +88,10 @@ export class ExpeditionDispatches extends React.Component {
   constructor(props) {
     super(props)
 
-    const Authorization = JSON.parse(localStorage.getItem("Authorization"))
-
     this.state = {
       request: {
         filter: {
-          //company: Authorization.company,
-          responsible: Authorization.user
+
         }
       }
     }
@@ -144,14 +141,6 @@ export class ExpeditionDispatches extends React.Component {
 
   render = () => {
 
-    /*
-    const trips1 = _.map(this.state?.response?.rows, (trip) => ({
-      id: trip.id,
-      title: !trip.id ? <span style={{fontSize: 16, fontWeight: 'bold'}}>[Sem viagem]</span> : <span style={{fontSize: 16, fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}></span>,
-      items: [{ id: "drag3", text: <h5>Arraste-me 3</h5> }],
-    }));
-    */
-
     return (
       <Panel header={<CustomBreadcrumb menu={'Expedição'} title={'Despacho'} />}>
 
@@ -162,7 +151,7 @@ export class ExpeditionDispatches extends React.Component {
           
           <Stack direction='row' alignItems='flexStart' justifyContent='space-between'>
             <Stack spacing={5}>
-              <CustomSearch loading={this.state?.loading} fields={fields} defaultPicker={'codeTrip'} value={this.state?.request?.search} onChange={(search) => this.setState({request: {search}}, () => this.onSearch())} />
+              <CustomSearch loading={this.state?.loading} fields={fields} defaultPicker={'tripTravelId'} value={this.state?.request?.search} onChange={(search) => this.setState({request: {search}}, () => this.onSearch())} />
             </Stack>
             <Filter filter={this.state?.request?.filter} onChange={(filter) => this.setState({request: {...this.state?.request, filter}}, () => this.onSearch())} />
           </Stack>
@@ -177,30 +166,6 @@ export class ExpeditionDispatches extends React.Component {
 
           <Row style={{display: 'flex', flexDirection: 'column', overflowX: 'auto', height: 'calc(100vh - 370px)'}} >
             
-            {/*
-            <DragDropContainer values={
-              [
-                {
-                  id: "card1",
-                  title: <b>[Sem viagem]</b>,
-                  items: [
-                    { id: "drag1", text: <h5>Arraste-me 1</h5> },
-                    { id: "drag2", text: <h5>Arraste-me 2</h5> },
-                  ],
-                },
-                {
-                  id: "card2",
-                  items: [{ id: "drag3", text: <h5>Arraste-me 3</h5> }],
-                },
-                {
-                  id: "card3",
-                  items: [{ id: "drag4", text: <h5>Arraste-me 4</h5> }],
-                },
-              ]
-            }
-            />
-            */}
-
             <div style={{height: '100%', padding: '10px', overflow: 'hidden'}}>
               <CustomDragAndDrop values={this.state?.response?.trips || []} onChange={(tripId, shippimentId, values) => {
                 console.log(tripId)

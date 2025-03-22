@@ -23,48 +23,23 @@ export class ExpeditionDispatchController {
 
         const db = new AppContext()
 
-        const limit = req.body.limit || 50
-        const offset = req.body.offset || 0
         const search = req.body.search
-        const cStat = req.body.cStat
+        const filter = req.body.filter
+        const limit = req.body.limit || 10
+        const offset = req.body.offset || 0
 
         const where = []
 
         if (search?.input) {
 
-          if (search?.picker == 'nCT') {
-            where.push({nCT: search.input.match(/\d+/g)})
+          if (search?.picker == 'tripTravelId') {
+            where.push({IDViagem: search.input.match(/\d+/g)})
           }
   
-          if (search?.picker == 'sender') {
-            where.push({'$shippiment.sender.RazaoSocial$': {[Sequelize.Op.like]: `%${search.input.replace(' ', "%")}%`}})
-          }
-
-          if (search?.picker == 'chCTe') {
-            where.push({'$chaveCT$': search.input.match(/\d+/g)})
-          }
-
         }
 
-        const wherePending = {
-          [Sequelize.Op.or]: [
-            { cStat: { [Sequelize.Op.notIn]: [100, 101, 135] } },
-            { cStat: { [Sequelize.Op.eq]: null } }
-          ]
-        }
-        const whereAutorized = {cStat: [100]}
-        const whereCanceled = {cStat: [101, 135]}
-        
-        if (cStat == 'pending') {
-          where.push(wherePending)
-        }
-        
-        if (cStat == 'autorized') {
-          where.push(whereAutorized)
-        }
-
-        if (cStat == 'canceled') {
-          where.push(whereCanceled)
+        if (filter?.driver) {
+          where.push({'$IDMotorista$': filter.driver.id})
         }
 
         await db.transaction(async (transaction) => {

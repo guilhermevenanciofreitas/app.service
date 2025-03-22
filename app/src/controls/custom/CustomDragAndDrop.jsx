@@ -1,20 +1,21 @@
-import _ from "lodash";
-import React, { useState } from "react";
-import { Divider } from "rsuite";
-import styled from "styled-components";
+import _ from "lodash"
+import React, { useState } from "react"
+import { Divider } from "rsuite"
+import styled from "styled-components"
 
 const CardContainer = styled.div`
   display: flex;
   width: 250px;
   height: 94%;
   border: 0.14rem solid #ccc;
+  border-radius: 5px;
   flex-direction: column;
   transition: border 0.2s;
   padding: 6px;
   &.drag-over {
     border: 0.14rem dashed #3498db;
   }
-`;
+`
 
 const DraggableItem = styled.div`
   padding: 10px;
@@ -23,35 +24,34 @@ const DraggableItem = styled.div`
   cursor: grab;
   border-radius: 5px;
   margin: 4px 0;
-`;
+`
 
 const Container = styled.div`
   display: flex;
   gap: 10px;
   height: 100%;
-`;
+`
 
-// Cria o contexto para injeção do render prop
-const Result = React.createContext();
+const Result = React.createContext()
 
 const Card = ({ id, title, items, onDrop, style }) => {
-  const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const [isDraggingOver, setIsDraggingOver] = useState(false)
 
   const allowDrop = (event) => {
-    event.preventDefault();
-    setIsDraggingOver(true);
-  };
+    event.preventDefault()
+    setIsDraggingOver(true)
+  }
 
   const handleDrop = (event) => {
-    event.preventDefault();
-    setIsDraggingOver(false);
-    const itemId = event.dataTransfer.getData("text");
-    onDrop(itemId, id);
-  };
+    event.preventDefault()
+    setIsDraggingOver(false)
+    const itemId = event.dataTransfer.getData("text")
+    onDrop(itemId, id)
+  }
 
   const handleDragLeave = () => {
-    setIsDraggingOver(false);
-  };
+    setIsDraggingOver(false)
+  }
 
   return (
     <CardContainer
@@ -85,37 +85,37 @@ const Card = ({ id, title, items, onDrop, style }) => {
       </div>
       
     </CardContainer>
-  );
-};
+  )
+}
 
 const Draggable = ({ id, children, style }) => {
   const handleDrag = (event) => {
-    event.dataTransfer.setData("text", id);
-  };
+    event.dataTransfer.setData("text", id)
+  }
 
   return (
     <DraggableItem draggable onDragStart={handleDrag} style={style}>
       {children}
     </DraggableItem>
-  );
-};
+  )
+}
 
 const CustomDragAndDrop = ({ values, onChange, children }) => {
   // Extrai a função de renderização do elemento filho passado em <CustomDragAndDrop.Result>
-  const renderFn = React.Children.only(children).props.children;
+  const renderFn = React.Children.only(children).props.children
 
   const handleDrop = (itemId, targetCardId) => {
 
     const draggedItem = values.flatMap((c) => c.items).find((item) => item.id === itemId)
 
-    if (!draggedItem) return;
+    if (!draggedItem) return
 
     const newCards = values.map((card) => {
-      let newItems = card.items.filter((item) => item.id !== itemId);
+      let newItems = card.items.filter((item) => item.id !== itemId)
       if (card.id === targetCardId) {
-        newItems = [...newItems, draggedItem];
+        newItems = [...newItems, draggedItem]
       }
-      return { ...card, items: newItems };
+      return { ...card, items: newItems }
     })
 
     onChange(targetCardId, itemId, newCards)
@@ -130,10 +130,9 @@ const CustomDragAndDrop = ({ values, onChange, children }) => {
         ))}
       </Container>
     </Result.Provider>
-  );
-};
+  )
+}
 
-// Permite usar <CustomDragAndDrop.Result> na composição da UI
-CustomDragAndDrop.Result = ({ children }) => <Result.Consumer>{children}</Result.Consumer>;
+CustomDragAndDrop.Result = ({ children }) => <Result.Consumer>{children}</Result.Consumer>
 
-export default CustomDragAndDrop;
+export default CustomDragAndDrop
