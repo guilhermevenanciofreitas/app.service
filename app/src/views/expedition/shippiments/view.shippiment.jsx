@@ -63,7 +63,7 @@ class ViewShippiment extends React.Component {
                                 <div className='form-control'>
                                     <label class="textfield-filled">
                                         <input type='text' value={this.state?.documento_transporte} onChange={(event) => this.setState({documento_transporte: event.target.value})} />
-                                        <span>Documento transporte</span>
+                                        <span>Doc. de transporte</span>
                                     </label>
                                 </div>
                             </Col>

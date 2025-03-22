@@ -12,6 +12,7 @@ export class ExpeditionDispatchRoute {
 
     intializeRoutes() {
         this.router.post('/dispatches', async (req, res) => await this.controller.dispatches(req, res))
+        this.router.post('/change', async (req, res) => await this.controller.change(req, res))
     }
 
 }

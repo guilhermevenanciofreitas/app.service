@@ -172,11 +172,11 @@ const App = () => {
               <Route path="finance/statements" element={<Statements />} />
 
               {/*Expedition */}
+              <Route path="expedition/shippiments" element={<LogisticShippiments />} />
               <Route path="expedition/dispatches" element={<ExpeditionDispatches />} />
 
               {/*Logistic*/}
               <Route path="logistic/ctes" element={<LogisticCtes />} />
-              <Route path="logistic/shippiments" element={<LogisticShippiments />} />
               <Route path="logistic/trips" element={<LogisticTrips />} />
 
               {/*Integration*/}

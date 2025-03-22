@@ -141,7 +141,6 @@ export class LogisticShippimentController {
 
         let shippiment = {
           id: req.body.id,
-          tripId: 1,
           documentNumber: req.body.documento_transporte,
           senderId: req.body.sender?.id,
           proPred: req.body.proPred,

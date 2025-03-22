@@ -18,7 +18,7 @@ import { Row } from 'react-grid-system';
 
 const fields = [
   { label: 'Número', value: 'code' },
-  { label: 'Documento de transporte', value: 'documentTransport' },
+  { label: 'Doc. de transporte', value: 'documentTransport' },
 ]
 
 export class LogisticShippiments extends React.Component {
@@ -64,7 +64,7 @@ export class LogisticShippiments extends React.Component {
 
   columns = [
     { selector: (row) => row.id, name: 'Id', minWidth: '100px', maxWidth: '100px'},
-    { selector: (row) => row.documentNumber, name: 'Doc. transporte', minWidth: '120px', maxWidth: '120px'},
+    { selector: (row) => row.documentNumber, name: 'Doc. de transporte', minWidth: '120px', maxWidth: '120px'},
     { selector: (row) => row.sender?.surname, name: 'Remetente'},
     { selector: (row) => '', name: 'Destinatário'},
     { selector: (row) => '', name: 'Exepedidor'},

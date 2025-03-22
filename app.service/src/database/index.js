@@ -46,6 +46,7 @@ import { CalledResolution } from './models/calledResolution.model.js'
 import { StatementData } from './models/statementData.model.js'
 import { Trip } from './models/trip.model.js'
 import { StatementDataConciled } from './models/statementDataConciled.model.js'
+import { Vehicle } from './models/vehicle.model.js'
 
 export class AppContext extends Sequelize {
   
@@ -136,6 +137,8 @@ export class AppContext extends Sequelize {
   User = this.define('user', new User(), { tableName: 'aspnet_Users' })
 
   UserMember = this.define('userMember', new UserMember(), { tableName: 'aspnet_Membership' })
+
+  Vehicle = this.define('vehicle', new Vehicle(), { tableName: 'Veiculo' })
   
   constructor() {
 
@@ -247,6 +250,9 @@ export class AppContext extends Sequelize {
     this.Task.hasMany(this.TaskHistory, {as: 'taskHistories', foreignKey: 'taskId'})
 
     this.Trip.belongsTo(this.Partner, {as: 'driver', foreignKey: 'driverId', targetKey: 'id'})
+    this.Trip.belongsTo(this.Vehicle, {as: 'vehicle', foreignKey: 'vehicleId', targetKey: 'id'})
+    this.Trip.belongsTo(this.Vehicle, {as: 'haulage1', foreignKey: 'haulage1Id', targetKey: 'id'})
+    this.Trip.belongsTo(this.Vehicle, {as: 'haulage2', foreignKey: 'haulage2Id', targetKey: 'id'})
     this.Trip.hasMany(this.Shippiment, {as: 'shippiments', foreignKey: 'tripId'})
 
     this.User.hasMany(this.CompanyUser, {as: 'companyUsers', foreignKey: 'userId'})

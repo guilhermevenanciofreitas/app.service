@@ -20,7 +20,7 @@ const ControlSearch = ({placeholder, fields, loading, value, defaultPicker, onCh
         <InputGroup style={{width: '620px'}}>
           
           <InputGroup.Addon style={{padding: 0}}>
-            <SelectPicker placeholder={placeholder} appearance='subtle' size='sm' data={fields} value={picker} searchable={false} style={{ width: 220 }} onChange={onPickerChange} />
+            <SelectPicker placeholder={placeholder} appearance='subtle' size='sm' data={fields} value={picker} searchable={false} style={{ width: 190 }} onChange={onPickerChange} />
           </InputGroup.Addon>
 
           <Input ref={inputRef} value={input} appearance={'default'} placeholder={`Pesquise por ${(picker ? _.filter(fields, (c) => c.value == picker)[0]?.label : _.map(_.filter(fields, (c) => c.value), (c) => c.label).join(', ')).toLowerCase()}`} autoFocus onChange={(input) => setInput(input)} />

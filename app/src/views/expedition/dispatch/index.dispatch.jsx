@@ -115,21 +115,31 @@ export class ExpeditionDispatches extends React.Component {
     }
   }
 
-  onEditShippiment = async (shippiment) => {
-    this.viewShippiment.current.editShippiment(shippiment.id).then((shippiment) => {
-      if (shippiment) this.onSearch()
-    })
-  }
+  onChange = async (trips, {item, target}) => {
 
-  onNewShippiment = () => {
-    this.viewShippiment.current.newShippiment({}).then((shippiment) => {
-      if (shippiment) this.onSearch()
-    })
-  }
+    const before = _.cloneDeep(this.state.response.trips)
 
-  onViewCtes = async (cteNfes) => {
-    await this.viewCtes.current.show(cteNfes)
-    this.onSearch()
+    try {
+
+      const tripId = target.id
+      const shippimentId = item.id
+
+      console.log(tripId, shippimentId)
+
+      this.setState({response: {...this.state?.response, trips}})
+
+      //this.setState({loading: true})
+      await new Service().Post('expedition/dispatch/change', {tripId, shippimentId})
+
+
+      //this.setState({...result.data})
+
+    } catch (error) {
+      this.setState({response: {...this.state?.response, trips: before}})
+      Exception.error(error)
+    } finally {
+      this.setState({loading: false})
+    }
   }
 
   columns = [
@@ -151,7 +161,7 @@ export class ExpeditionDispatches extends React.Component {
           
           <Stack direction='row' alignItems='flexStart' justifyContent='space-between'>
             <Stack spacing={5}>
-              <CustomSearch loading={this.state?.loading} fields={fields} defaultPicker={'tripTravelId'} value={this.state?.request?.search} onChange={(search) => this.setState({request: {search}}, () => this.onSearch())} />
+              <CustomSearch loading={this.state?.loading} fields={fields} defaultPicker={'tripTravelId'} value={this.state?.request?.search} onChange={(search) => this.setState({request: {...this.state.request, search}}, () => this.onSearch())} />
             </Stack>
             <Filter filter={this.state?.request?.filter} onChange={(filter) => this.setState({request: {...this.state?.request, filter}}, () => this.onSearch())} />
           </Stack>
@@ -159,34 +169,45 @@ export class ExpeditionDispatches extends React.Component {
           <hr></hr>
           
           <Nav appearance="subtle">
-            
             <CustomNavItem active={true} loading={this.state?.loading} text='Todos' count={this.state?.response?.count} onClick={() => this.setState({request: {...this.state.request, offset: 0}}, () => this.onSearch())} />
-
           </Nav>
 
           <Row style={{display: 'flex', flexDirection: 'column', overflowX: 'auto', height: 'calc(100vh - 370px)'}} >
             
             <div style={{height: '100%', padding: '10px', overflow: 'hidden'}}>
-              <CustomDragAndDrop values={this.state?.response?.trips || []} items={(trip) => trip.items} onChange={(values, {item, target}) => {
-                console.log(item)
-                console.log(target)
-                this.setState({response: {...this.state?.response, trips: values}})
-              }}>
+              <CustomDragAndDrop values={this.state?.response?.trips} itemsKey='shippiments' onChange={this.onChange}>
                 {{
                   renderHeader: (trip) => {
+                    const driver = !trip.id ? <center>[Sem viagem]</center> : `${trip.tripTravelId} - ${trip.driver?.surname ? trip.driver.surname.charAt(0).toUpperCase() + trip.driver.surname.slice(1).toLowerCase() : ''}`
+                    const vehicle = !trip.id ? `-` : `${trip.vehicle?.identity.replace(/[^a-zA-Z0-9]/g, "").replace(/^(.{3})(.)/, "$1-$2")} - ${trip.haulage1?.identity.replace(/[^a-zA-Z0-9]/g, "").replace(/^(.{3})(.)/, "$1-$2") || ''} - ${trip.haulage2?.identity.replace(/[^a-zA-Z0-9]/g, "").replace(/^(.{3})(.)/, "$1-$2") || ''}`
                     return (
-                      <span style={{fontSize: 14, fontWeight: "bold", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"}}>
-                        {!trip?.tripTravelId ? `[Sem viagem]` : `${trip.tripTravelId} - ${trip.driver?.surname ? trip.driver.surname.charAt(0).toUpperCase() + trip.driver.surname.slice(1).toLowerCase() : ''}`}
-                      </span>
+                      <div style={{minHeight: '35px', maxHeight: '35px'}}>
+                        <span style={{ 
+                          fontSize: 14, 
+                          fontWeight: "bold", 
+                          whiteSpace: "nowrap", 
+                          overflow: "hidden", 
+                          textOverflow: "ellipsis",
+                          display: 'flex', 
+                          justifyContent: 'space-between',
+                          alignItems: 'center' 
+                        }}>
+                          <div>
+                            {driver}
+                          </div>
+                          {!trip.id && <FaFilter color='#2196f3' />}
+                        </span>
+                        <center>{vehicle}</center>
+                      </div>
                     )
                   },
                   renderItem: (item) => (
                     <span>
-                      #{item.documentNumber}
+                      # {item.documentNumber}
                       <br></br>
-                      Rem.: {item.sender?.surname}
+                      <b>Rem.:</b> {item.sender?.surname}
                       <br></br>
-                      Dest.: {item.sender?.surname}
+                      <b>Dest.:</b> {item.sender?.surname}
                     </span>
                   ),
                 }}

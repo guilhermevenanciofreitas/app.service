@@ -19,4 +19,19 @@ export class Trip {
     type: Sequelize.BIGINT,
   }
 
+  vehicleId = {
+    field: 'IDTracao',
+    type: Sequelize.BIGINT,
+  }
+
+  haulage1Id = {
+    field: 'IDReboque',
+    type: Sequelize.BIGINT,
+  }
+
+  haulage2Id = {
+    field: 'ID2Reboque',
+    type: Sequelize.BIGINT,
+  }
+
 }
