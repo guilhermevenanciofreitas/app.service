@@ -48,7 +48,7 @@ import Tasks from './views/task/index.tasks'
 
 import ptBR from 'rsuite/locales/pt_BR';
 import { IntlProvider } from 'react-intl';
-import { ExpeditionDispatch } from './views/expedition/dispatch/index.dispatch';
+import { ExpeditionDispatches } from './views/expedition/dispatch/index.dispatch';
 
 export class Loading extends React.Component {
 
@@ -172,7 +172,7 @@ const App = () => {
               <Route path="finance/statements" element={<Statements />} />
 
               {/*Expedition */}
-              <Route path="expedition/dispatch" element={<ExpeditionDispatch />} />
+              <Route path="expedition/dispatches" element={<ExpeditionDispatches />} />
 
               {/*Logistic*/}
               <Route path="logistic/ctes" element={<LogisticCtes />} />

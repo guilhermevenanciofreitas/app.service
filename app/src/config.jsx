@@ -225,9 +225,9 @@ export const appNavs = [
         ruleId: '6F1F9996-C17B-470A-93B7-A2491DFDF20F'
       },
       {
-        eventKey: 'dispatch',
+        eventKey: 'dispatches',
         title: 'Despacho',
-        to: '/expedition/dispatch',
+        to: '/expedition/dispatches',
         ruleId: '6F1F9996-C17B-470A-93B7-A2491DFDF20F'
       },
     ]

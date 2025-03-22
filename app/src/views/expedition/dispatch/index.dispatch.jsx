@@ -4,7 +4,7 @@ import _ from 'lodash'
 
 import { Exception } from '../../../utils/exception'
 
-import { Card, Badge, Button, Divider, Drawer, Nav, Panel, Placeholder, Stack, Text } from 'rsuite';
+import { Badge, Button, Divider, Drawer, Nav, Panel, Placeholder, Stack, Text } from 'rsuite';
 
 import PageContent from '../../../components/PageContent';
 
@@ -17,7 +17,7 @@ import { CustomNavItem } from '../../../controls/custom/CustomNavItem';
 import { Row } from 'react-grid-system';
 import { FaCheckCircle, FaFilter } from 'react-icons/fa';
 import { Search } from '../../../search';
-import DragDropContainer from './DragAndDrop';
+import CustomDragAndDrop from '../../../controls/custom/CustomDragAndDrop';
 //import DragAndDrop from './DragAndDrop';
 
 const fields = [
@@ -80,7 +80,7 @@ class Filter extends React.Component {
   }
 }
 
-export class ExpeditionDispatch extends React.Component {
+export class ExpeditionDispatches extends React.Component {
 
   viewShippiment = React.createRef()
   viewCtes = React.createRef()
@@ -144,12 +144,14 @@ export class ExpeditionDispatch extends React.Component {
 
   render = () => {
 
+    /*
     const trips1 = _.map(this.state?.response?.rows, (trip) => ({
       id: trip.id,
-      title: trip.title || "Teste",
+      title: !trip.id ? <span style={{fontSize: 16, fontWeight: 'bold'}}>[Sem viagem]</span> : <span style={{fontSize: 16, fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}></span>,
       items: [{ id: "drag3", text: <h5>Arraste-me 3</h5> }],
     }));
-    
+    */
+
     return (
       <Panel header={<CustomBreadcrumb menu={'Expedição'} title={'Despacho'} />}>
 
@@ -199,8 +201,24 @@ export class ExpeditionDispatch extends React.Component {
             />
             */}
 
-            {_.size(trips1)}
-            <DragDropContainer cards={trips1} onChange={(args) => console.log(args)} />
+            <div style={{height: '100%', padding: '10px', overflow: 'hidden'}}>
+              <CustomDragAndDrop values={this.state?.response?.trips || []} onChange={(tripId, shippimentId, values) => {
+                console.log(tripId)
+                console.log(shippimentId)
+                this.setState({response: {...this.state?.response, trips: values}})
+              }}>
+                <CustomDragAndDrop.Result>
+                  {(item) => <span>
+                    #{item.documentNumber}
+                    <br></br>
+                    Rem.: {item.sender?.surname}
+                    <br></br>
+                    Dest.: {item.sender?.surname}
+                    {/*JSON.stringify(item)*/}
+                    </span>}
+                </CustomDragAndDrop.Result>
+              </CustomDragAndDrop>
+            </div>
 
           </Row>
 

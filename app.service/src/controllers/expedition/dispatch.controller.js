@@ -75,18 +75,18 @@ export class ExpeditionDispatchController {
               {model: db.Partner, as: 'sender', attributes: ['surname']}
             ],
             where: [{idViagemGrupo: { [Sequelize.Op.eq]: null }}],
-            limit: 10,
+            limit: 50,
             transaction
           })
 
-          const trips = await db.Trip.findAndCountAll({
+          let trips = await db.Trip.findAndCountAll({
             attributes: ['id', 'tripTravelId'],
             include: [
               {model: db.Partner, as: 'driver', attributes: ['id', 'surname']},
               {model: db.Shippiment, as: 'shippiments', attributes: ['id']}
             ],
-            limit: 2,
-            offset: offset * 2,
+            limit: limit,
+            offset: offset * limit,
             order: [['id', 'desc']],
             where,
             subQuery: false,
@@ -94,14 +94,24 @@ export class ExpeditionDispatchController {
             transaction
           })
 
-          trips.rows.unshift({id: '0', shippiments})
+          trips.rows.unshift({id: null, shippiments})
+
+          trips.rows = _.map(trips.rows, (trip) => ({
+            id: trip.id,
+            title: !trip.id ? `[Sem viagem]` : `${trip.tripTravelId} - ${trip.driver?.surname ? trip.driver.surname.charAt(0).toUpperCase() + trip.driver.surname.slice(1).toLowerCase() : ''}`,
+            /*items: _.map(trip.shippiments, (shippiment) => ({
+              id: shippiment.id,
+              content: shippiment
+            }))*/
+            items: trip.shippiments
+          }))
   
           res.status(200).json({
             request: {
               limit, offset
             },
             response: {
-              rows: trips.rows, count: trips.count
+              trips: trips.rows, count: trips.count
             }
           })
   
