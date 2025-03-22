@@ -111,7 +111,7 @@ export class ExpeditionDispatchController {
               limit, offset
             },
             response: {
-              trips: trips.rows, count: trips.count
+              trips: trips.rows, count: trips.count - 1
             }
           })
   

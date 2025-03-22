@@ -12,7 +12,7 @@ const CardContainer = styled.div`
   transition: border 0.2s;
   padding: 6px;
   &.drag-over {
-    border: 0.14rem dashed #ccc;
+    border: 0.14rem dashed #3498db;
   }
 `;
 
