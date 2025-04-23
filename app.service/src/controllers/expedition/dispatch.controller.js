@@ -15,6 +15,7 @@ export class ExpeditionDispatchController {
 
         const search = req.body.search
         const filter = req.body.filter
+        const shippimentFilter = req.body.shippimentFilter
         const limit = req.body.limit || 10
         const offset = req.body.offset || 0
 
@@ -34,16 +35,27 @@ export class ExpeditionDispatchController {
 
         await db.transaction(async (transaction) => {
 
+          const whereShippiment = []
+
+          whereShippiment.push({idViagemGrupo: { [Sequelize.Op.eq]: null }})
+
+          if (shippimentFilter?.documentNumber) {
+            whereShippiment.push({documento_transporte: shippimentFilter?.documentNumber})
+          }
+
+          const shippiments = []
+          /*
           const shippiments = await db.Shippiment.findAll({
             attributes: ['id', 'documentNumber'],
             include: [
               {model: db.Partner, as: 'sender', attributes: ['surname']}
             ],
-            where: [{idViagemGrupo: { [Sequelize.Op.eq]: null }}],
+            where: whereShippiment,
             limit: 50,
             order: [['id', 'desc']],
             transaction
           })
+          */
 
           let trips = await db.Trip.findAndCountAll({
             attributes: ['id', 'tripTravelId'],
@@ -52,16 +64,14 @@ export class ExpeditionDispatchController {
               {model: db.Vehicle, as: 'vehicle', attributes: ['id', 'identity']},
               {model: db.Vehicle, as: 'haulage1', attributes: ['id', 'identity']},
               {model: db.Vehicle, as: 'haulage2', attributes: ['id', 'identity']},
-              {model: db.Shippiment, as: 'shippiments', attributes: ['id', 'documentNumber'], include: [
-                {model: db.Partner, as: 'sender', attributes: ['surname']}
-              ]}
+              {model: db.Shippiment, as: 'shippiments', attributes: ['id', 'documentNumber']}
             ],
             limit: limit,
             offset: offset * limit,
             order: [['id', 'desc']],
             where,
-            subQuery: false,
-            distinct: true,
+            //subQuery: false,
+            //distinct: true,
             transaction
           })
 

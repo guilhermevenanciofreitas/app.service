@@ -130,12 +130,13 @@ export const appNavs = [
         eventKey: 'bank-accounts',
         title: 'Bancos',
         to: '/finance/bank-accounts'
-      },
+      },*/
       {
         eventKey: 'payments',
         title: 'Contas a pagar',
-        to: '/finance/payments'
-      },
+        to: '/finance/payments',
+        ruleId: '53AFC0B2-7890-4D43-A6E0-B6035ADBFD64'
+      },/*
       {
         eventKey: 'receivements',
         title: 'Contas a receber',

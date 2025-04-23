@@ -9,6 +9,8 @@ import { Exception } from "../../utils/exception.js"
 
 import _ from 'lodash'
 
+import path from 'path'
+
 import 'dotenv/config'
 
 
@@ -48,38 +50,31 @@ export class LoginController {
           return
         }
 
-        if (process.env.AUTH == 'MEMBERSHIP') {
 
-          const data = JSON.stringify({
-            username: user.userName,
-            password: password
-          })
-        
-          const config = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: data
-          }
-  
-          const response = await fetch('http://170.254.135.108:7077/Pesquisas/wsPesquisa.asmx/ValidateUser', config)
-  
-          const result = await response.json()
-  
-          if (!result.d) {
-            res.status(202).json({message: '🤨 Senha incorreta!'})
-            return
-          }
-  
-        } else {
-
-          if (user.dataValues.userMember.dataValues.password != password) {
-            res.status(202).json({message: '🤨 Senha incorreta!'})
-            return
-          }
-
+        const data = JSON.stringify({
+          username: user.userName,
+          password: password
+        })
+      
+        const config = {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: data
         }
+
+        const response = await fetch(path.join(process.env.MEMBERSHIP, `Pesquisas/wsPesquisa.asmx/ValidateUser`), config)
+
+        const result = await response.json()
+
+        console.log(result)
+
+        if (!result.d) {
+          res.status(202).json({message: '🤨 Senha incorreta!'})
+          return
+        }
+
 
         //if (user.status == 'inactived') {
         //  res.status(201).json({message: 'Usuário inativado!'})

@@ -19,6 +19,7 @@ import { FinanceStatementBankStatementsMercadoPagoRoute } from './src/routes/fin
 import { SettingBankAccountRoute } from './src/routes/setting/bank-account.route.js'
 import { LogisticTripRoute } from './src/routes/logistic/trip.route.js'
 import { ExpeditionDispatchRoute } from './src/routes/expedition/dispatch.route.js'
+import { FinancePaymentRoute } from './src/routes/finance/payment.route.js'
 
 export class App {
 
@@ -51,6 +52,7 @@ export class App {
     this.express.use('/api/called', new CalledRoute().router)
 
     //Finance
+    this.express.use('/api/finance/payment', new FinancePaymentRoute().router)
     this.express.use('/api/finance/statement', new FinanceStatementRoute().router)
     
     this.express.use('/api/finance/statement/bank-statements/mercago-pago', new FinanceStatementBankStatementsMercadoPagoRoute().router)

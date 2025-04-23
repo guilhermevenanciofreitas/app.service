@@ -41,9 +41,9 @@ export class LogisticShippimentController {
             ],
             limit: limit,
             offset: offset * limit,
-            order: [['departureDate', 'desc']],
+            order: [['id', 'desc']],
             where,
-            subQuery: false,
+            //subQuery: false,
             transaction
           })
   
