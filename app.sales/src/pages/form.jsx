@@ -10,15 +10,32 @@ import {
   Button,
   Range,
   Block,
+  NavLeft,
+  NavTitle,
+  NavRight,
+  Link,
 } from 'framework7-react';
 
 const FormPage = () => {
 
   return (
     <Page name="form">
-      <Navbar title="Form" backLink="Back"></Navbar>
-  
+      
+      {/* Top Navbar */}
+      <Navbar sliding={false}>
+        <NavLeft>
+          <Link iconIos="f7:menu" iconMd="material:menu" panelOpen="left" />
+        </NavLeft>
+        <NavTitle sliding>Form</NavTitle>
+        <NavRight>
+          <Link iconIos="f7:menu" iconMd="material:menu" panelOpen="right" />
+        </NavRight>
+      </Navbar>
+
+      <Block>
+
       <BlockTitle>Form Example</BlockTitle>
+
       <List strongIos outlineIos dividersIos>
         <ListInput label="Name" type="text" placeholder="Your name"></ListInput>
   
@@ -116,6 +133,8 @@ const FormPage = () => {
         <ListItem radio name="radio" value="Movies" title="Movies"></ListItem>
         <ListItem radio name="radio" value="Food" title="Food"></ListItem>
       </List>
+      </Block>
+      
     </Page>
   );
 

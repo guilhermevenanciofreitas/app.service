@@ -79,7 +79,7 @@ const MyApp = () => {
     <App { ...f7params }>
 
         {/* Left panel with cover effect when hidden */}
-        <Panel left cover dark visibleBreakpoint={960}>
+        <Panel left cover dark visibleBreakpoint={960} swipe>
           <View>
             <Page>
               <Navbar title="Left Panel"/>
