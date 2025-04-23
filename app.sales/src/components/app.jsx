@@ -78,40 +78,40 @@ const MyApp = () => {
   return (
     <App { ...f7params }>
 
-        {/* Left panel with cover effect when hidden */}
-        <Panel left cover dark visibleBreakpoint={960} swipe>
-          <View>
-            <Page>
-              <Navbar title="Left Panel"/>
-              <BlockTitle>Left View Navigation</BlockTitle>
-              <List>
-                <ListItem link="/left-page-1/" title="Left Page 1"/>
-                <ListItem link="/left-page-2/" title="Left Page 2"/>
-              </List>
-              <BlockTitle>Control Main View</BlockTitle>
-              <List>
-                <ListItem link="/about/" view=".view-main" panelClose title="About"/>
-                <ListItem link="/form/" view=".view-main" panelClose title="Form"/>
-                <ListItem link="#" view=".view-main" back panelClose title="Back in history"/>
-              </List>
-            </Page>
-          </View>
-        </Panel>
+      {/* Left panel with cover effect when hidden */}
+      <Panel left cover dark visibleBreakpoint={960} swipe>
+        <View>
+          <Page>
+            <Navbar title="Left Panel"/>
+            <BlockTitle>Left View Navigation</BlockTitle>
+            <List>
+              <ListItem link="/left-page-1/" title="Left Page 1"/>
+              <ListItem link="/left-page-2/" title="Left Page 2"/>
+            </List>
+            <BlockTitle>Control Main View</BlockTitle>
+            <List>
+              <ListItem link="/about/" view=".view-main" panelClose title="About"/>
+              <ListItem link="/form/" view=".view-main" panelClose title="Form"/>
+              <ListItem link="#" view=".view-main" back panelClose title="Back in history"/>
+            </List>
+          </Page>
+        </View>
+      </Panel>
 
 
-        {/* Right panel with reveal effect*/}
-        <Panel right reveal dark>
-          <View>
-            <Page>
-              <Navbar title="Right Panel"/>
-              <Block>Right panel content goes here</Block>
-            </Page>
-          </View>
-        </Panel>
+      {/* Right panel with reveal effect*/}
+      <Panel right reveal dark>
+        <View>
+          <Page>
+            <Navbar title="Right Panel"/>
+            <Block>Right panel content goes here</Block>
+          </Page>
+        </View>
+      </Panel>
 
 
-        {/* Your main view, should have "view-main" class */}
-        <View main className="safe-areas" url="/" />
+      {/* Your main view, should have "view-main" class */}
+      <View main className="safe-areas" url="/" />
 
       {/* Popup */}
       <Popup id="my-popup">
