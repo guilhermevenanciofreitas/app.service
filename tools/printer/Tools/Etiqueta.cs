@@ -15,7 +15,7 @@ namespace DeskTools.Tools
             Impressora.OnConfirm += Confirmar;
 
             Impressora.ShowDialog();
-            
+
         }
 
         private static void Confirmar(string szPrintName, string szString)
@@ -24,7 +24,7 @@ namespace DeskTools.Tools
             byte[] data = Convert.FromBase64String(szString);
             string decodedString = Encoding.UTF8.GetString(data);
 
-            var b = RawPrinterHelper.SendStringToPrinter(szPrintName, decodedString);
+            RawPrinterHelper.SendStringToPrinter(szPrintName, decodedString);
 
             Impressora.Close();
 
