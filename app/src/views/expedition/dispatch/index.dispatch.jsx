@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import _ from 'lodash'
 
@@ -14,7 +14,7 @@ import { Service } from '../../../service';
 import ViewShippiment from './view.shippiment';
 import ViewCtes from './view.ctes';
 import { CustomNavItem } from '../../../controls/custom/CustomNavItem';
-import { Row } from 'react-grid-system';
+import { Col, Row } from 'react-grid-system';
 import { FaCheckCircle, FaFilter } from 'react-icons/fa';
 import { Search } from '../../../search';
 import CustomDragAndDrop from '../../../controls/custom/CustomDragAndDrop';
@@ -27,23 +27,87 @@ const fields = [
 
 const DefaultPopover = React.forwardRef(({ content, ...props }, ref) => {
   return (
-    <Popover ref={ref} title="Title" {...props}>
-      <p>This is a Popover </p>
-      <p>{content}</p>
+    <Popover ref={ref} {...props} style={{width: '300px'}}>
+      {content}
     </Popover>
   );
 });
 
-const ShippimentFilter = ({ placement }) => (
-  <Whisper
-    trigger="click"
-    placement={placement}
-    controlId={`control-id-${placement}`}
-    speaker={<DefaultPopover content={`I am positioned to the ${placement}`} />}
-  >
-    <Button appearance="subtle"><FaFilter color='#2196f3' /></Button>
-  </Whisper>
-);
+class ShippimentFilter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.whisperRef = React.createRef();
+    this.state = {
+      shippimentFilter: {
+        documentNumber: this.props.filter?.shippimentFilter?.documentNumber
+      }
+    };
+  }
+
+  onApply = () => {
+    console.log(this.state.shippimentFilter)
+    this.props.onChange(this.state.shippimentFilter);
+    if (this.whisperRef.current) {
+      this.whisperRef.current.close();
+    }
+  };
+
+  render() {
+    return (
+      <Whisper
+        ref={this.whisperRef}
+        trigger="click"
+        placement={'rightStart'}
+        controlId={`control-id-rightStart`}
+        speaker={
+          <DefaultPopover
+            content={
+              <>
+                <Col md={12}>
+                  <div className="form-control">
+                    <label className="textfield-filled">
+                      <input
+                        type="text"
+                        value={this.state.shippimentFilter.documentNumber}
+                        onChange={(event) =>
+                          this.setState({
+                            shippimentFilter: {
+                              ...this.state.shippimentFilter,
+                              documentNumber: event.target.value
+                            }
+                          })
+                        }
+                        autoFocus
+                      />
+                      <span>Doc. transporte</span>
+                    </label>
+                  </div>
+                </Col>
+                <Col md={12}>
+                  <div className="form-control" style={{ textAlign: 'right' }}>
+                    <Button
+                      appearance="primary"
+                      color="green"
+                      size="sm"
+                      onClick={this.onApply}
+                    >
+                      <FaCheckCircle /> &nbsp; Confirmar
+                    </Button>
+                  </div>
+                </Col>
+              </>
+            }
+          />
+        }
+      >
+        <Button appearance="subtle">
+          <FaFilter color="#2196f3" />
+        </Button>
+      </Whisper>
+    );
+  }
+}
+
 
 class Filter extends React.Component {
 
@@ -89,7 +153,7 @@ class Filter extends React.Component {
             </div>
             */}
             <Divider />
-            <div className='form-control'>
+            <div className='form-control' style={{textAlign: 'right'}}>
                 <Button appearance="primary" color='green' onClick={this.onApply}><FaCheckCircle /> &nbsp; Confirmar</Button>
             </div>
           </Drawer.Body>
@@ -111,6 +175,9 @@ export class ExpeditionDispatches extends React.Component {
     this.state = {
       request: {
         filter: {
+
+        },
+        shippimentFilter: {
 
         }
       }
@@ -186,14 +253,14 @@ export class ExpeditionDispatches extends React.Component {
                 {{
                   renderHeader: (trip) => {
                     const driver = !trip.id ? <center>[Sem viagem]</center> : `${trip.tripTravelId} - ${trip.driver?.surname ? trip.driver.surname.charAt(0).toUpperCase() + trip.driver.surname.slice(1).toLowerCase() : ''}`
-                    const vehicle = !trip.id ? `-` : `${trip.vehicle?.identity.replace(/[^a-zA-Z0-9]/g, "").replace(/^(.{3})(.)/, "$1-$2")} - ${trip.haulage1?.identity.replace(/[^a-zA-Z0-9]/g, "").replace(/^(.{3})(.)/, "$1-$2") || ''} - ${trip.haulage2?.identity.replace(/[^a-zA-Z0-9]/g, "").replace(/^(.{3})(.)/, "$1-$2") || ''}`
+                    const vehicle = !trip.id ? `` : `${trip.vehicle?.identity.replace(/[^a-zA-Z0-9]/g, "").replace(/^(.{3})(.)/, "$1-$2")} - ${trip.haulage1?.identity.replace(/[^a-zA-Z0-9]/g, "").replace(/^(.{3})(.)/, "$1-$2") || ''} - ${trip.haulage2?.identity.replace(/[^a-zA-Z0-9]/g, "").replace(/^(.{3})(.)/, "$1-$2") || ''}`
                     return (
                       <div style={{minHeight: '35px', maxHeight: '35px'}}>
                         <span style={{display: 'flex', fontSize: 14, fontWeight: "bold", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", justifyContent: 'space-between', alignItems: 'center'}}>
                           <div>
                             {driver}
                           </div>
-                          {!trip.id && <ShippimentFilter placement="rightStart" />}
+                          {!trip.id && <ShippimentFilter filter={this.state?.request?.shippimentFilter} onChange={(shippimentFilter) => this.setState({request: {...this.state?.request, shippimentFilter}}, () => this.onSearch())} />}
                         </span>
                         <center>{vehicle}</center>
                       </div>

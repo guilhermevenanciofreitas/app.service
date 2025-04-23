@@ -22,7 +22,6 @@ import { CustomNavItem } from '../../../controls/custom/CustomNavItem'
 
 const fields = [
   { label: 'Número', value: 'nCT' },
-  { label: 'Remetente', value: 'sender' },
   { label: 'Chave de acesso', value: 'chCTe' },
 ]
 
@@ -128,8 +127,8 @@ export class LogisticCtes extends React.Component {
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
-      minWidth: '35px',
-      maxWidth: '35px'
+      minWidth: '40px',
+      maxWidth: '40px'
     },
     { selector: (row) => <Whisper
       trigger="click"
@@ -150,7 +149,7 @@ export class LogisticCtes extends React.Component {
     { selector: (row) => dayjs(row.dhEmi).format('DD/MM/YYYY HH:mm'), name: 'Emissão', minWidth: '120px', maxWidth: '120px'},
     { selector: (row) => row.nCT, name: 'Número', minWidth: '75px', maxWidth: '75px'},
     { selector: (row) => row.serie, name: 'Série', minWidth: '50px', maxWidth: '50px'},
-    { selector: (row) => row.chCTe, name: 'Chave de acesso', minWidth: '325px', maxWidth: '325px'},
+    { selector: (row) => row.chCTe, name: 'Chave de acesso', minWidth: '335px', maxWidth: '335px'},
     { selector: (row) => row.sender?.surname, name: 'Remetente'},
     { selector: (row) => row.recipient?.surname, name: 'Destinatário', minWidth: '350px', maxWidth: '350px'},
     { selector: (row) => new Intl.NumberFormat('pt-BR', {style: 'decimal', minimumFractionDigits: 2}).format(parseFloat(row.baseCalculo)), name: 'Valor', minWidth: '100px', maxWidth: '100px', right: true},

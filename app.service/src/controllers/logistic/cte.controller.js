@@ -85,15 +85,15 @@ export class LogisticCteController {
             offset: offset * limit,
             order: [['dhEmi', 'desc']],
             where,
-            subQuery: false,
-            distinct: true,
+            //subQuery: false,
+            //distinct: true,
             transaction
           })
   
-          const all = await db.Cte.count({transaction})
-          const pending = await db.Cte.count({where: wherePending, transaction})
-          const autorized = await db.Cte.count({where: whereAutorized, transaction})
-          const canceled = await db.Cte.count({where: whereCanceled, transaction})
+          const all = await db.Cte.count({where, transaction})
+          const pending = await db.Cte.count({where: [where, wherePending], transaction})
+          const autorized = await db.Cte.count({where: [where, whereAutorized], transaction})
+          const canceled = await db.Cte.count({where: [where, whereCanceled], transaction})
   
           const statusCount = {
             all, pending, autorized, canceled
@@ -220,7 +220,7 @@ export class LogisticCteController {
               return
             }
 
-            let cte = await db.Cte.findOne({attributes: ['id'], where: [{chaveCT: json.cteProc.protCTe.infProt.chCTe}]})
+            let cte = await db.Cte.findOne({attributes: ['id'], where: [{chaveCT: json.cteProc.protCTe.infProt.chCTe}], transaction})
 
             const sender = await db.Partner.findOne({attributes: ['id', 'diasPrazoPagamento'], where: [{cpfCnpj: json.cteProc.CTe.infCte.rem.CNPJ || json.cteProc.CTe.infCte.rem.CPF}], transaction})
 

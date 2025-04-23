@@ -1,6 +1,5 @@
 import { Exception } from "../../utils/exception.js"
 import { AppContext } from "../../database/index.js"
-import { Sequelize, Op } from "sequelize"
 import dayjs from 'dayjs'
 import { Authorization } from "../authorization.js"
 import _ from 'lodash'
@@ -15,7 +14,7 @@ export class FinancePaymentController {
 
         const limit = req.body.limit || 50
         const offset = req.body.offset || 0
-        const filter = req.body.filter || { situation: ['active'] }
+        //const filter = req.body.filter || { situation: ['active'] }
 
         const where = []
 
@@ -26,12 +25,12 @@ export class FinancePaymentController {
         const payments = await db.Payment.findAndCountAll({
           attributes: ['id', 'amount'],
           include: [
-            {model: db.Partner, as: 'partner', attributes: ['id', 'name', 'surname']},
-            {model: db.ContabilityCategorie, as: 'categorie', attributes: ['id', 'name']},
-            {model: db.PaymentMethod, as: 'paymentMethod', attributes: ['id', 'name']},
-            {model: db.BankAccount, as: 'bankAccount', attributes: ['id'], include: [
-              {model: db.Bank, as: 'bank', attributes: ['id', 'name']}
-            ]}
+            //{model: db.Partner, as: 'partner', attributes: ['id', 'name', 'surname']},
+            //{model: db.ContabilityCategorie, as: 'categorie', attributes: ['id', 'name']},
+            //{model: db.PaymentMethod, as: 'paymentMethod', attributes: ['id', 'name']},
+            //{model: db.BankAccount, as: 'bankAccount', attributes: ['id'], include: [
+            //  {model: db.Bank, as: 'bank', attributes: ['id', 'name']}
+            //]}
           ],
           limit: limit,
           offset: offset * limit,
@@ -41,7 +40,7 @@ export class FinancePaymentController {
 
         res.status(200).json({
           request: {
-            filter, limit, offset
+            limit, offset
           },
           response: {
             rows: payments.rows, count: payments.count

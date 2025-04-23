@@ -15,7 +15,7 @@ export class SearchController {
                 const where = []
 
                 where.push({
-                    '$company.codigo_empresa$': companyBusinessId,
+                    //'$company.codigo_empresa$': companyBusinessId,
                     '$userId$': userId,
                     '$company.nome_fantasia$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}
                 })
@@ -297,24 +297,29 @@ export class SearchController {
 
                 const where = []
 
-                where.push({'$companyBusinessId$': companyBusinessId})
+                //where.push({'$companyBusinessId$': companyBusinessId})
 
                 where.push({[Sequelize.Op.or]: [
                     {'$CpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}},
                     {'$RazaoSocial$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}}
                 ]})
 
-                const sender = await db.Partner.findAll({
-                    attributes: ['id', 'cpfCnpj', 'name', 'surname'],
-                    where,
-                    order: [
-                        ['surname', 'asc']
-                    ],
-                    limit: 20
-                });
+                await db.transaction(async (transaction) => {
 
-                res.status(200).json(sender);
-
+                    const sender = await db.Partner.findAll({
+                        attributes: ['id', 'cpfCnpj', 'name', 'surname'],
+                        where,
+                        order: [
+                            ['surname', 'asc']
+                        ],
+                        limit: 20,
+                        transaction
+                    });
+    
+                    res.status(200).json(sender);
+    
+                })
+                
             } catch (error) {
                 Exception.error(res, error)
             }
@@ -331,7 +336,7 @@ export class SearchController {
 
                 const where = []
 
-                where.push({'$companyBusinessId$': companyBusinessId})
+                //where.push({'$companyBusinessId$': companyBusinessId})
 
                 where.push({[Sequelize.Op.or]: [
                     {'$CpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}},
@@ -365,7 +370,7 @@ export class SearchController {
 
                 const where = []
 
-                where.push({'$companyBusinessId$': companyBusinessId})
+                //where.push({'$companyBusinessId$': companyBusinessId})
 
                 where.push({[Sequelize.Op.or]: [
                     {'$CpfCnpj$': {[Sequelize.Op.like]: `%${req.body?.search.replace(' ', "%").toUpperCase()}%`}},

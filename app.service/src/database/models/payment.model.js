@@ -3,12 +3,13 @@ import Sequelize from 'sequelize'
 export class Payment {
 
   id = {
-    field: 'id',
+    field: 'codigo_movimento_detalhe',
     primaryKey: true,
     autoIncrement: true,
-    type: Sequelize.UUID,
+    type: Sequelize.BIGINT,
   }
 
+  /*
   companyId = {
     field: 'companyId',
     type: Sequelize.UUID
@@ -57,7 +58,7 @@ export class Payment {
   */
 
   amount = {
-    field: 'amount',
+    field: 'valor_parcela',
     type: Sequelize.DECIMAL(18, 2)
   }
 

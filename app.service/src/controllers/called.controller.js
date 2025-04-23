@@ -42,7 +42,7 @@ export class CalledController {
 
         }
 
-        where.push({'$company.codigo_empresa$': companyBusinessId})
+        //where.push({'$company.codigo_empresa$': companyBusinessId})
 
         if (filter?.company) {
           where.push({'$companyId$': filter.company.id})
@@ -88,8 +88,6 @@ export class CalledController {
             offset: offset * limit,
             order: [['createdAt', 'desc'], [{model: db.CalledResolution, as: 'resolutions'}, 'createdAt', 'desc']],
             where,
-            subQuery: false,
-            distinct: true,
             transaction
           })
   

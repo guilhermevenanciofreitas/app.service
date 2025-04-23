@@ -198,8 +198,8 @@ export class Calleds extends React.Component {
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
-      minWidth: '35px',
-      maxWidth: '35px'
+      minWidth: '40px',
+      maxWidth: '40px'
     },
     { selector: (row) => <Whisper
       trigger="click"

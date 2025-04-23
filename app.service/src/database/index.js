@@ -94,7 +94,7 @@ export class AppContext extends Sequelize {
 
   Partner = this.define('partner', new Partner(), { tableName: 'pessoa' })
 
-  Payment = this.define('payment', new Payment(), { tableName: 'payment' })
+  Payment = this.define('payment', new Payment(), { tableName: 'movimentos_detalhe' })
 
   PaymentMethod = this.define('paymentMethod', new PaymentMethod(), { tableName: 'paymentMethod' })
 
@@ -132,7 +132,7 @@ export class AppContext extends Sequelize {
 
   TaskHistory = this.define('taskHistory', new TaskHistory(), { tableName: 'taskHistory' })
 
-  Trip = this.define('task', new Trip(), { tableName: 'ViagemGrupo' })
+  Trip = this.define('trip', new Trip(), { tableName: 'ViagemGrupo' })
 
   User = this.define('user', new User(), { tableName: 'aspnet_Users' })
 
@@ -192,11 +192,11 @@ export class AppContext extends Sequelize {
     this.CompanyUser.belongsTo(this.Role, {as: 'role', foreignKey: 'roleId', targetKey: 'id'})
 
     this.Cte.belongsTo(this.Partner, {as: 'sender', foreignKey: 'senderId', targetKey: 'id'})
-    this.Cte.belongsTo(this.Partner, {as: 'recipient', foreignKey: 'recipientId', targetKey: 'id'})
+    this.Cte.belongsTo(this.Partner, {as: 'recipient', foreignKey: 'IDCliente', targetKey: 'id'})
     this.Cte.belongsTo(this.Partner, {as: 'dispatcher', foreignKey: 'dispatcherId', targetKey: 'id'})
     this.Cte.belongsTo(this.Partner, {as: 'receiver', foreignKey: 'receiverId', targetKey: 'id'})
-    this.Cte.belongsTo(this.Partner, {as: 'taker', foreignKey: 'takerId', targetKey: 'id'})
-    this.Cte.belongsTo(this.Shippiment, {as: 'shippiment', foreignKey: 'shippimentId', targetKey: 'id'})
+    this.Cte.belongsTo(this.Partner, {as: 'taker', foreignKey: 'IdTomador', targetKey: 'id'})
+    //this.Cte.belongsTo(this.Shippiment, {as: 'shippiment', foreignKey: 'IDCarga', targetKey: 'id'})
 
     
     this.Cte.belongsTo(this.City, {as: 'origin', foreignKey: 'originId', targetKey: 'id'})
@@ -235,8 +235,8 @@ export class AppContext extends Sequelize {
     this.Session.belongsTo(this.Company, {as: 'company', foreignKey: 'companyId', targetKey: 'id'})
     this.Session.belongsTo(this.User, {as: 'user', foreignKey: 'userId', targetKey: 'id'})
 
-    this.Shippiment.belongsTo(this.Partner, {as: 'sender', foreignKey: 'senderId', targetKey: 'id'})
-    this.Shippiment.hasMany(this.Cte, {as: 'ctes', foreignKey: 'shippimentId'})
+    this.Shippiment.belongsTo(this.Partner, {as: 'sender', foreignKey: 'codigo_cliente', targetKey: 'id'})
+    //this.Shippiment.hasMany(this.Cte, {as: 'ctes', foreignKey: 'shippimentId'})
 
     
     this.Statement.belongsTo(this.Company, {as: 'company', foreignKey: 'companyId', targetKey: 'id'})
@@ -249,11 +249,11 @@ export class AppContext extends Sequelize {
     this.Task.belongsTo(this.TaskMethod, {as: 'method', foreignKey: 'methodId', targetKey: 'id'})
     this.Task.hasMany(this.TaskHistory, {as: 'taskHistories', foreignKey: 'taskId'})
 
-    this.Trip.belongsTo(this.Partner, {as: 'driver', foreignKey: 'driverId', targetKey: 'id'})
-    this.Trip.belongsTo(this.Vehicle, {as: 'vehicle', foreignKey: 'vehicleId', targetKey: 'id'})
-    this.Trip.belongsTo(this.Vehicle, {as: 'haulage1', foreignKey: 'haulage1Id', targetKey: 'id'})
-    this.Trip.belongsTo(this.Vehicle, {as: 'haulage2', foreignKey: 'haulage2Id', targetKey: 'id'})
-    this.Trip.hasMany(this.Shippiment, {as: 'shippiments', foreignKey: 'tripId'})
+    this.Trip.belongsTo(this.Partner, {as: 'driver', foreignKey: 'IDMotorista', targetKey: 'id'})
+    this.Trip.belongsTo(this.Vehicle, {as: 'vehicle', foreignKey: 'IDTracao', targetKey: 'id'})
+    this.Trip.belongsTo(this.Vehicle, {as: 'haulage1', foreignKey: 'IDReboque', targetKey: 'id'})
+    this.Trip.belongsTo(this.Vehicle, {as: 'haulage2', foreignKey: 'ID2Reboque', targetKey: 'id'})
+    this.Trip.hasMany(this.Shippiment, {as: 'shippiments', foreignKey: 'idViagemGrupo'})
 
     this.User.hasMany(this.CompanyUser, {as: 'companyUsers', foreignKey: 'userId'})
 
