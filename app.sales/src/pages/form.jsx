@@ -16,7 +16,28 @@ import {
   Link,
 } from 'framework7-react';
 
+import { SQLite } from '../utils/sqlite';
+
 const FormPage = () => {
+
+  useEffect(() => {
+    
+    const db = new SQLite();
+
+    (async () => {
+
+      await db.run("INSERT INTO vendedor (codven, nome) VALUES (?, ?)", [1, "Teste direto 1"]);
+
+      //console.log(i)
+
+      const resultado = await db.exec("SELECT * FROM vendedor")
+
+      console.log(resultado);
+
+    })()
+
+  }, [])
+
 
   return (
     <Page name="form">
